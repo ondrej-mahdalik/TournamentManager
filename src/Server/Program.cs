@@ -1,3 +1,4 @@
+using System.Security.Authentication;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.EntityFrameworkCore;
@@ -37,7 +38,17 @@ void ConfigureAuthentication(IServiceCollection serviceCollection)
         .AddApiAuthorization<ApplicationUser, AuthorizationDbContext>();
 
     serviceCollection.AddAuthentication()
-        .AddIdentityServerJwt();
+        .AddIdentityServerJwt()
+        .AddGoogle(options =>
+        {
+            options.ClientId = builder.Configuration["Authentication:Google:ClientId"] ?? throw new AuthenticationException();
+            options.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"] ?? throw new AuthenticationException(); 
+        })
+        .AddMicrosoftAccount(options =>
+        {
+            options.ClientId = builder.Configuration["Authentication:Microsoft:ClientId"] ?? throw new AuthenticationException();
+            options.ClientSecret = builder.Configuration["Authentication:Microsoft:ClientSecret"] ?? throw new AuthenticationException();
+        });
 }
 
 void ConfigureDependencies(IServiceCollection serviceCollection)
