@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.EntityFrameworkCore;
+using NSwag;
 using NSwag.AspNetCore;
 using NSwag.Generation.Processors.Security;
 using TournamentManager.Server.Data;
@@ -55,6 +56,15 @@ void ConfigureOpenApiDocuments(IServiceCollection serviceCollection)
         document.Title = "Tournament Manager API";
         document.DocumentName = "v1";
         document.OperationProcessors.Add(new OperationSecurityScopeProcessor());
+        document.AddSecurity("Bearer", new OpenApiSecurityScheme
+        {
+            In = OpenApiSecurityApiKeyLocation.Header,
+            Description = "Please enter token",
+            Name = "Authorization",
+            Type = OpenApiSecuritySchemeType.Http,
+            BearerFormat = "JWT",
+            Scheme = "bearer"
+        });
     });
 }
 
