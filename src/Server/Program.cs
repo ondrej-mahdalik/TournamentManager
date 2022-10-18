@@ -6,6 +6,7 @@ using NSwag.AspNetCore;
 using NSwag.Generation.Processors.Security;
 using TournamentManager.Server.Data;
 using TournamentManager.Server.Models;
+using TournamentManager.Server.Seeds;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -30,10 +31,10 @@ app.Run();
 void ConfigureAuthentication(IServiceCollection serviceCollection)
 {
     serviceCollection.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
-        .AddEntityFrameworkStores<ApplicationDbContext>();
+        .AddEntityFrameworkStores<AuthorizationDbContext>();
 
     serviceCollection.AddIdentityServer()
-        .AddApiAuthorization<ApplicationUser, ApplicationDbContext>();
+        .AddApiAuthorization<ApplicationUser, AuthorizationDbContext>();
 
     serviceCollection.AddAuthentication()
         .AddIdentityServerJwt();
@@ -41,7 +42,7 @@ void ConfigureAuthentication(IServiceCollection serviceCollection)
 
 void ConfigureDependencies(IServiceCollection serviceCollection)
 {
-    serviceCollection.AddDbContext<ApplicationDbContext>(options =>
+    serviceCollection.AddDbContext<AuthorizationDbContext>(options =>
         options.UseSqlServer(authConnectionString));
     serviceCollection.AddDbContext<TournamentManagerDbContext>(options =>
         options.UseSqlServer(mainConnectionString));
@@ -117,7 +118,19 @@ void SetupDatabase(WebApplication application)
 {
     var scope = application.Services.CreateScope();
     var dbContext = scope.ServiceProvider.GetRequiredService<TournamentManagerDbContext>();
-    MainDbInitializer.Initialize(dbContext, seedDemoData);
+
+    if (seedDemoData)
+    {
+        dbContext.Database.EnsureDeleted();
+        dbContext.Database.EnsureCreated();
+        
+        UserSeeds.Seed(dbContext);
+        // TODO Seed other models
+    }
+    else
+    {
+        dbContext.Database.Migrate();
+    }
 }
 
 // Make the implicit Program class public so test projects can access it
