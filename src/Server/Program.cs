@@ -93,6 +93,7 @@ void UseDevelopmentSettings(WebApplication application)
     {
         application.UseMigrationsEndPoint();
         application.UseWebAssemblyDebugging();
+        application.UseDeveloperExceptionPage();
     }
     else
     {
