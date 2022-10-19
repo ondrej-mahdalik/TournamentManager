@@ -14,14 +14,12 @@ steps:
   inputs:
     command: 'build'
     projects: |
-      **/TournamentManager.Client.csproj
       **/TournamentManager.Server.csproj
 - task: DotNetCoreCLI@2
   inputs:
     command: 'publish'
     publishWebProjects: false
     projects: |
-      **/TournamentManager.Client.csproj
       **/TournamentManager.Server.csproj
     arguments: '--configuration Release --framework net7.0 --output $(Build.ArtifactStagingDirectory)'
 - task: PublishBuildArtifacts@1
