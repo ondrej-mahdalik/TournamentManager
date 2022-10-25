@@ -21,7 +21,7 @@ steps:
     publishWebProjects: false
     projects: |
       **/TournamentManager.Server.csproj
-    arguments: '--configuration Release --framework net7.0 --self-contained --arch win-x86 --output $(Build.ArtifactStagingDirectory)'
+    arguments: '--configuration Release --framework net7.0 --self-contained --arch x86 --output $(Build.ArtifactStagingDirectory)'
 - task: PublishBuildArtifacts@1
   inputs:
     PathtoPublish: '$(Build.ArtifactStagingDirectory)'
