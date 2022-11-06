@@ -3,13 +3,14 @@
 namespace TournamentManager.Shared.Models;
 
 public record UserModel(
-    Guid UserId,
+    Guid Id,
     string FirstName,
     string LastName,
-    string Email)
+    string Email,
+    bool IsAdministrator = false)
 {
     [Key]
-    public Guid UserId { get; set; } = UserId;
+    public Guid Id { get; set; } = Id;
     
     public IList<TournamentModel> Tournaments { get; set; } = new List<TournamentModel>();
     public IList<TeamModel> TeamsAsLeader { get; set; } = new List<TeamModel>();

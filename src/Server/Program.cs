@@ -1,5 +1,8 @@
 using System.Security.Authentication;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.EntityFrameworkCore;
 using NSwag;
@@ -7,7 +10,7 @@ using NSwag.AspNetCore;
 using NSwag.Generation.Processors.Security;
 using TournamentManager.Server.Data;
 using TournamentManager.Server.Models;
-using TournamentManager.Server.Seeds;
+using TournamentManager.Server.MainSeeds;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -32,23 +35,24 @@ app.Run();
 void ConfigureAuthentication(IServiceCollection serviceCollection)
 {
     serviceCollection.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
+        .AddRoles<ApplicationRole>()
         .AddEntityFrameworkStores<AuthorizationDbContext>();
 
     serviceCollection.AddIdentityServer()
         .AddApiAuthorization<ApplicationUser, AuthorizationDbContext>();
 
     serviceCollection.AddAuthentication()
-        .AddIdentityServerJwt()
-        .AddGoogle(options =>
-        {
-            options.ClientId = builder.Configuration["Authentication:Google:ClientId"] ?? throw new AuthenticationException();
-            options.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"] ?? throw new AuthenticationException(); 
-        })
-        .AddMicrosoftAccount(options =>
-        {
-            options.ClientId = builder.Configuration["Authentication:Microsoft:ClientId"] ?? throw new AuthenticationException();
-            options.ClientSecret = builder.Configuration["Authentication:Microsoft:ClientSecret"] ?? throw new AuthenticationException();
-        });
+        .AddIdentityServerJwt();
+    // .AddGoogle(options =>
+    // {
+    //     options.ClientId = builder.Configuration["Authentication:Google:ClientId"] ?? throw new AuthenticationException();
+    //     options.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"] ?? throw new AuthenticationException(); 
+    // })
+    // .AddMicrosoftAccount(options =>
+    // {
+    //     options.ClientId = builder.Configuration["Authentication:Microsoft:ClientId"] ?? throw new AuthenticationException();
+    //     options.ClientSecret = builder.Configuration["Authentication:Microsoft:ClientSecret"] ?? throw new AuthenticationException();
+    // });
 }
 
 void ConfigureDependencies(IServiceCollection serviceCollection)

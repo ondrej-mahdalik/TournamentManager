@@ -2,10 +2,10 @@
 
 namespace TournamentManager.Shared.Models;
 
-public record UserIsInTeam(Guid UserIsInTeamId)
+public record UserIsInTeam(Guid Id)
 {
     [Key]
-    public Guid UserIsInTeamId { get; set; } = UserIsInTeamId;
+    public Guid Id { get; set; } = Id;
     
     public Guid UserId { get; set; }
     public UserModel? User { get; set; }

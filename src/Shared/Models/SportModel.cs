@@ -2,10 +2,10 @@
 
 namespace TournamentManager.Shared.Models;
 
-public record SportModel(Guid SportId,
+public record SportModel(Guid Id,
     string Name)
 {
     [Key]
-    public Guid SportId { get; set; } = SportId;
+    public Guid Id { get; set; } = Id;
     public IList<TournamentModel> Tournaments { get; set; } = new List<TournamentModel>();
 }

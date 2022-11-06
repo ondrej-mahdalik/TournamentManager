@@ -11,13 +11,10 @@ namespace TournamentManager.Server.Controllers;
 [Route("[controller]")]
 public class UserController : ControllerBase
 {
-    private readonly ILogger<UserController> _logger;
-
     private readonly TournamentManagerDbContext _dbContext;
 
-    public UserController(ILogger<UserController> logger, TournamentManagerDbContext dbContext)
+    public UserController(TournamentManagerDbContext dbContext)
     {
-        _logger = logger;
         _dbContext = dbContext;
     }
     

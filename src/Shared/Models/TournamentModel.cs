@@ -2,7 +2,7 @@
 
 namespace TournamentManager.Shared.Models;
 
-public record TournamentModel(Guid TournamentId,
+public record TournamentModel(Guid Id,
     string Name,
     DateTime Date,
     string? Description,
@@ -11,7 +11,7 @@ public record TournamentModel(Guid TournamentId,
     int MaxPlayers)
 {
     [Key]
-    public Guid TournamentId { get; set; } = TournamentId;
+    public Guid Id { get; set; } = Id;
     
     public Guid CreatorId { get; set; }
     public UserModel? Creator { get; set; }

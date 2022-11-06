@@ -1,7 +1,7 @@
 ﻿using TournamentManager.Server.Data;
 using TournamentManager.Shared.Models;
 
-namespace TournamentManager.Server.Seeds;
+namespace TournamentManager.Server.MainSeeds;
 
 public static class UserSeeds
 {
