@@ -14,5 +14,5 @@ public record UserModel(
     
     public IList<TournamentModel> Tournaments { get; set; } = new List<TournamentModel>();
     public IList<TeamModel> TeamsAsLeader { get; set; } = new List<TeamModel>();
-    public IList<UserIsInTeam> TeamsAsMember { get; set; } = new List<UserIsInTeam>();
+    public IList<UserIsInTeamModel> TeamsAsMember { get; set; } = new List<UserIsInTeamModel>();
 }

@@ -2,7 +2,7 @@
 
 namespace TournamentManager.Shared.Models;
 
-public record UserIsInTeam(Guid Id)
+public record UserIsInTeamModel(Guid Id)
 {
     [Key]
     public Guid Id { get; set; } = Id;

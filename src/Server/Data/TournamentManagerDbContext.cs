@@ -13,6 +13,7 @@ public class TournamentManagerDbContext : DbContext
     public DbSet<TeamModel> Teams => Set<TeamModel>();
     public DbSet<TournamentModel> Tournaments => Set<TournamentModel>();
     public DbSet<UserModel> Users => Set<UserModel>();
+    public DbSet<UserIsInTeamModel> UsersIsInTeam => Set<UserIsInTeamModel>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
