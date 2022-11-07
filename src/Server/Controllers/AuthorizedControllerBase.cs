@@ -12,6 +12,7 @@ public class AuthorizedControllerBase : ControllerBase
     public AuthorizedControllerBase(TournamentManagerDbContext dbContext)
     {
         DbContext = dbContext;
+        
         LoggedUser = new UserModel(Guid.NewGuid(), String.Empty, String.Empty, String.Empty);
     }
 }
