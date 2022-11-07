@@ -9,10 +9,6 @@ using TournamentManager.Server.MainSeeds;
 var builder = WebApplication.CreateBuilder(args);
 
 var authConnectionString = builder.Configuration.GetConnectionString("AuthConnection") ?? throw new InvalidOperationException("Connection string 'AuthConnection' not found.");
-
-builder.Services.AddDbContext<AuthorizationDbContext>(options => options.UseSqlServer(authConnectionString));
-
-builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true).AddEntityFrameworkStores<AuthorizationDbContext>();
 var mainConnectionString = builder.Configuration.GetConnectionString("MainConnection") ?? throw new InvalidOperationException("Connection string 'MainConnection' not found.");
 var seedDemoData = builder.Configuration.GetSection("DALOptions").GetValue<bool>("SeedDemoData");
 

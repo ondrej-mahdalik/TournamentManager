@@ -12,7 +12,7 @@ using TournamentManager.Server.Data;
 namespace TournamentManager.Server.Data.Migrations
 {
     [DbContext(typeof(AuthorizationDbContext))]
-    [Migration("20221107185528_AddedMainUserId")]
+    [Migration("20221107191736_AddedMainUserId")]
     partial class AddedMainUserId
     {
         /// <inheritdoc />
