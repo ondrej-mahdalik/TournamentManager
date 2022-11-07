@@ -65,7 +65,7 @@ void ConfigureDependencies(IServiceCollection serviceCollection)
 
 void ConfigureOpenApiDocuments(IServiceCollection serviceCollection)
 {
-    serviceCollection.AddEndpointsApiExplorer();
+    // serviceCollection.AddEndpointsApiExplorer();
     // serviceCollection.AddOpenApiDocument(document =>
     // {
     //     document.Title = "Tournament Manager API";

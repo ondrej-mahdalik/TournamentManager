@@ -9,10 +9,10 @@ using TournamentManager.Server.Data;
 
 #nullable disable
 
-namespace TournamentManager.Server.Migrations
+namespace TournamentManager.Server.Data.Migrations
 {
     [DbContext(typeof(AuthorizationDbContext))]
-    [Migration("20221107174949_AddedMainUserId")]
+    [Migration("20221107185528_AddedMainUserId")]
     partial class AddedMainUserId
     {
         /// <inheritdoc />
@@ -20,7 +20,7 @@ namespace TournamentManager.Server.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "7.0.0-rc.2.22472.11")
+                .HasAnnotation("ProductVersion", "7.0.0")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
