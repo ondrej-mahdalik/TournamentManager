@@ -12,7 +12,7 @@ public record TeamModel(Guid Id,
     public Guid LeaderId { get; set; }
     public UserModel? Leader { get; set; }
     
-    public IList<UserIsInTeam> Members { get; set; } = new List<UserIsInTeam>();
+    public IList<UserIsInTeamModel> Members { get; set; } = new List<UserIsInTeamModel>();
     public IList<MatchModel> Matches { get; set; } = new List<MatchModel>();
     public IList<TeamIsParticipatingModel> Participatings { get; set; } = new List<TeamIsParticipatingModel>();
 }
