@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using TournamentManager.Server.AuthSeeds;
 using TournamentManager.Server.Data;
 using TournamentManager.Server.Models;
@@ -81,7 +82,10 @@ void ConfigureOpenApiDocuments(IServiceCollection serviceCollection)
 
 void ConfigureControllers(IServiceCollection serviceCollection)
 {
-    serviceCollection.AddControllersWithViews();
+    serviceCollection.AddControllersWithViews().AddNewtonsoftJson(options =>
+    {
+        options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+    });
     serviceCollection.AddRazorPages();
 }
 
@@ -139,6 +143,9 @@ void SetupDatabase(WebApplication application)
         authDbContext.Database.EnsureCreated();
         
         UserSeeds.Seed(mainDbContext);
+        TournamentSeeds.Seed(mainDbContext);
+        SportSeeds.Seed(mainDbContext);
+        mainDbContext.SaveChanges();
         // TODO Seed other models
     }
     else

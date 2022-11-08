@@ -2,6 +2,7 @@
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
 @using TournamentManager.Shared
+@using TournamentManager.Shared.Models
 @attribute [Authorize]
 @inject HttpClient Http
 
@@ -11,7 +12,7 @@
 
 <p>This component demonstrates fetching data from the server.</p>
 
-@if (forecasts == null)
+@if (tournaments == null)
 {
     <p><em>Loading...</em></p>
 }
@@ -27,13 +28,13 @@ else
             </tr>
         </thead>
         <tbody>
-            @foreach (var forecast in forecasts)
+            @foreach (var tournament in tournaments)
             {
                 <tr>
-                    <td>@forecast.Date.ToShortDateString()</td>
-                    <td>@forecast.TemperatureC</td>
-                    <td>@forecast.TemperatureF</td>
-                    <td>@forecast.Summary</td>
+                    <td>@tournament.Date.ToShortDateString()</td>
+                    <td>@tournament.Name</td>
+                    <td>@tournament.IsPublic</td>
+                    <td></td>
                 </tr>
             }
         </tbody>
@@ -41,13 +42,13 @@ else
 }
 
 @code {
-    private WeatherForecast[]? forecasts;
+    private TournamentModel[]? tournaments;
 
     protected override async Task OnInitializedAsync()
     {
         try
         {
-            forecasts = await Http.GetFromJsonAsync<WeatherForecast[]>("WeatherForecast");
+            tournaments = await Http.GetFromJsonAsync<TournamentModel[]>("Tournament");
         }
         catch (AccessTokenNotAvailableException exception)
         {

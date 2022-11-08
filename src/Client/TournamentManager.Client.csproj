@@ -23,4 +23,35 @@
     <ServiceWorker Include="wwwroot\service-worker.js" PublishedContent="wwwroot\service-worker.published.js" />
   </ItemGroup>
 
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="wwwroot\SoftUI\assets\css\nucleo-icons.css" />
+    <_ContentIncludedByDefault Remove="wwwroot\SoftUI\assets\css\nucleo-svg.css" />
+    <_ContentIncludedByDefault Remove="wwwroot\SoftUI\assets\css\soft-ui-dashboard.css" />
+    <_ContentIncludedByDefault Remove="wwwroot\SoftUI\assets\css\soft-ui-dashboard.css.map" />
+    <_ContentIncludedByDefault Remove="wwwroot\SoftUI\assets\css\soft-ui-dashboard.min.css" />
+    <_ContentIncludedByDefault Remove="wwwroot\SoftUI\assets\fonts\nucleo-icons.eot" />
+    <_ContentIncludedByDefault Remove="wwwroot\SoftUI\assets\fonts\nucleo-icons.svg" />
+    <_ContentIncludedByDefault Remove="wwwroot\SoftUI\assets\fonts\nucleo-icons.ttf" />
+    <_ContentIncludedByDefault Remove="wwwroot\SoftUI\assets\fonts\nucleo-icons.woff" />
+    <_ContentIncludedByDefault Remove="wwwroot\SoftUI\assets\fonts\nucleo-icons.woff2" />
+    <_ContentIncludedByDefault Remove="wwwroot\SoftUI\assets\fonts\nucleo.eot" />
+    <_ContentIncludedByDefault Remove="wwwroot\SoftUI\assets\fonts\nucleo.ttf" />
+    <_ContentIncludedByDefault Remove="wwwroot\SoftUI\assets\fonts\nucleo.woff" />
+    <_ContentIncludedByDefault Remove="wwwroot\SoftUI\assets\fonts\nucleo.woff2" />
+    <_ContentIncludedByDefault Remove="wwwroot\SoftUI\assets\img\down-arrow-dark.svg" />
+    <_ContentIncludedByDefault Remove="wwwroot\SoftUI\assets\img\down-arrow-white.svg" />
+    <_ContentIncludedByDefault Remove="wwwroot\SoftUI\assets\img\down-arrow.svg" />
+    <_ContentIncludedByDefault Remove="wwwroot\SoftUI\assets\js\core\bootstrap.bundle.min.js" />
+    <_ContentIncludedByDefault Remove="wwwroot\SoftUI\assets\js\core\bootstrap.min.js" />
+    <_ContentIncludedByDefault Remove="wwwroot\SoftUI\assets\js\core\popper.min.js" />
+    <_ContentIncludedByDefault Remove="wwwroot\SoftUI\assets\js\plugins\bootstrap-notify.js" />
+    <_ContentIncludedByDefault Remove="wwwroot\SoftUI\assets\js\plugins\Chart.extension.js" />
+    <_ContentIncludedByDefault Remove="wwwroot\SoftUI\assets\js\plugins\chartjs.min.js" />
+    <_ContentIncludedByDefault Remove="wwwroot\SoftUI\assets\js\plugins\perfect-scrollbar.min.js" />
+    <_ContentIncludedByDefault Remove="wwwroot\SoftUI\assets\js\plugins\smooth-scrollbar.min.js" />
+    <_ContentIncludedByDefault Remove="wwwroot\SoftUI\assets\js\soft-ui-dashboard.js" />
+    <_ContentIncludedByDefault Remove="wwwroot\SoftUI\assets\js\soft-ui-dashboard.js.map" />
+    <_ContentIncludedByDefault Remove="wwwroot\SoftUI\assets\js\soft-ui-dashboard.min.js" />
+  </ItemGroup>
+
 </Project>

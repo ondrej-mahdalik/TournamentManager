@@ -4,9 +4,6 @@ namespace TournamentManager.Shared.Models;
 
 public record UserModel(
     Guid Id,
-    string FirstName,
-    string LastName,
-    string Email,
     bool IsAdministrator = false)
 {
     [Key]
