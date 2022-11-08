@@ -14,16 +14,18 @@ public class UserIsInTeamController : AuthorizedControllerBase
     public UserIsInTeamController(TournamentManagerDbContext dbContext) : base(dbContext)
     {
     }
-    
 
-    [HttpGet("{id:guid}")]
-    public async Task<ActionResult<UserIsInTeamModel>> GetById(Guid teamId)
+    [HttpGet]
+    public async Task<ActionResult<List<UserIsInTeamModel>>> GetAll()
     {
-        var usersInTeam = await DbContext.UsersIsInTeam.Where(
-            x => x.TeamId == teamId).ToListAsync();
+        return Ok(await DbContext.UsersIsInTeam.ToListAsync());
+    }
 
-        return Ok(usersInTeam);
-
+    [HttpGet("Team/{id:guid}")]
+    public async Task<ActionResult<List<UserIsInTeamModel>>> GetById(Guid teamId)
+    {
+        return Ok(await DbContext.UsersIsInTeam.Where(
+            x => x.TeamId == teamId).ToListAsync());
     }
 
     [HttpPut]
@@ -32,8 +34,9 @@ public class UserIsInTeamController : AuthorizedControllerBase
         if (newUserInTeam is null)
             return BadRequest();
 
-        var team = await DbContext.Teams.FirstOrDefaultAsync(x => x.Id == newUserInTeam.TeamId);
-        var teamLeaderId = team?.LeaderId;
+        var teamLeaderId = (await DbContext.Teams.FirstOrDefaultAsync(x => x.Id == newUserInTeam.Id))?.LeaderId;
+        if (teamLeaderId is null)
+            return BadRequest();
 
         if (!(LoggedUser.IsAdministrator || LoggedUser.Id == teamLeaderId))
             return Forbid();
@@ -48,9 +51,7 @@ public class UserIsInTeamController : AuthorizedControllerBase
         if (userFromTeamToDelete is null)
             return NoContent();
 
-        var team = await DbContext.Teams.FirstOrDefaultAsync(x => x.Id == userFromTeamToDelete.TeamId);
-        var teamLeaderId = team?.LeaderId;
-
+        var teamLeaderId = (await DbContext.Teams.FirstOrDefaultAsync(x => x.Id == userFromTeamToDelete.TeamId))?.LeaderId;
         if (!(LoggedUser.IsAdministrator || LoggedUser.Id == teamLeaderId))
             return Forbid();
         

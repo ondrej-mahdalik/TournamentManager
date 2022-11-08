@@ -18,21 +18,15 @@ public class UserController : AuthorizedControllerBase
     [HttpGet]
     public async Task<ActionResult<List<UserModel>>> Get()
     {
-        if (!LoggedUser.IsAdministrator)
-            return Forbid();
-        
         return Ok(await DbContext.Users.ToListAsync());
     }
 
     [HttpGet("{id:guid}")]
-    public async Task<ActionResult<TournamentModel>> GetById(Guid id)
+    public async Task<ActionResult<UserModel>> GetById(Guid id)
     {
         var user = await DbContext.Users.FirstOrDefaultAsync(x => x.Id == id);
         if (user is null)
             return NotFound();
-        
-        if (!(LoggedUser.IsAdministrator || LoggedUser.Id == id))
-            return Forbid();
 
         return Ok(user);
     }
@@ -40,11 +34,11 @@ public class UserController : AuthorizedControllerBase
     [HttpPut]
     public async Task<ActionResult> InsertOrUpdate([FromBody] UserModel? user)
     {
-        if (!LoggedUser.IsAdministrator)
-            return Forbid();
-
         if (user is null)
             return BadRequest();
+        
+        if (!LoggedUser.IsAdministrator && LoggedUser.Id != user.Id)
+            return Forbid();
 
         return Ok(await DbContext.Users.AddAsync(user));
     }
@@ -56,7 +50,7 @@ public class UserController : AuthorizedControllerBase
         if (user is null)
             return NoContent();
 
-        if (!LoggedUser.IsAdministrator)
+        if (!LoggedUser.IsAdministrator && user.Id != LoggedUser.Id)
             return Forbid();
 
         DbContext.Remove(user);
