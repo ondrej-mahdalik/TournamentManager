@@ -1,13 +1,7 @@
-using System.Security.Authentication;
 using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc.Authorization;
-using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.EntityFrameworkCore;
-using NSwag;
-using NSwag.AspNetCore;
-using NSwag.Generation.Processors.Security;
+using TournamentManager.Server.AuthSeeds;
 using TournamentManager.Server.Data;
 using TournamentManager.Server.Models;
 using TournamentManager.Server.MainSeeds;
@@ -35,10 +29,11 @@ app.Run();
 void ConfigureAuthentication(IServiceCollection serviceCollection)
 {
     serviceCollection.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
-        .AddRoles<ApplicationRole>()
+        .AddRoles<IdentityRole>()
         .AddEntityFrameworkStores<AuthorizationDbContext>();
 
     serviceCollection.AddIdentityServer()
+        .AddTestUsers(ApplicationUserSeeds.Users)
         .AddApiAuthorization<ApplicationUser, AuthorizationDbContext>();
 
     serviceCollection.AddAuthentication()
@@ -66,22 +61,22 @@ void ConfigureDependencies(IServiceCollection serviceCollection)
 
 void ConfigureOpenApiDocuments(IServiceCollection serviceCollection)
 {
-    serviceCollection.AddEndpointsApiExplorer();
-    serviceCollection.AddOpenApiDocument(document =>
-    {
-        document.Title = "Tournament Manager API";
-        document.DocumentName = "v1";
-        document.OperationProcessors.Add(new OperationSecurityScopeProcessor());
-        document.AddSecurity("Bearer", new OpenApiSecurityScheme
-        {
-            In = OpenApiSecurityApiKeyLocation.Header,
-            Description = "Please enter token",
-            Name = "Authorization",
-            Type = OpenApiSecuritySchemeType.Http,
-            BearerFormat = "JWT",
-            Scheme = "bearer"
-        });
-    });
+    // serviceCollection.AddEndpointsApiExplorer();
+    // serviceCollection.AddOpenApiDocument(document =>
+    // {
+    //     document.Title = "Tournament Manager API";
+    //     document.DocumentName = "v1";
+    //     document.OperationProcessors.Add(new OperationSecurityScopeProcessor());
+    //     document.AddSecurity("Bearer", new OpenApiSecurityScheme
+    //     {
+    //         In = OpenApiSecurityApiKeyLocation.Header,
+    //         Description = "Please enter token",
+    //         Name = "Authorization",
+    //         Type = OpenApiSecuritySchemeType.Http,
+    //         BearerFormat = "JWT",
+    //         Scheme = "bearer"
+    //     });
+    // });
 }
 
 void ConfigureControllers(IServiceCollection serviceCollection)
@@ -122,30 +117,34 @@ void UseRoutingAndSecurityFeatures(WebApplication application)
 
 void UseOpenApi(WebApplication application)
 {
-    application.UseOpenApi();
-    application.UseSwaggerUi3(settings =>
-    {
-        settings.DocumentTitle = "Tournament Manager Swagger UI";
-        settings.SwaggerRoutes.Add(new SwaggerUi3Route("default", "/swagger/v1/swagger.json"));
-    });
+    // application.UseOpenApi();
+    // application.UseSwaggerUi3(settings =>
+    // {
+    //     settings.DocumentTitle = "Tournament Manager Swagger UI";
+    //     settings.SwaggerRoutes.Add(new SwaggerUi3Route("default", "/swagger/v1/swagger.json"));
+    // });
 }
 
 void SetupDatabase(WebApplication application)
 {
     var scope = application.Services.CreateScope();
-    var dbContext = scope.ServiceProvider.GetRequiredService<TournamentManagerDbContext>();
+    var mainDbContext = scope.ServiceProvider.GetRequiredService<TournamentManagerDbContext>();
+    var authDbContext = scope.ServiceProvider.GetRequiredService<AuthorizationDbContext>();
 
     if (seedDemoData)
     {
-        dbContext.Database.EnsureDeleted();
-        dbContext.Database.EnsureCreated();
+        mainDbContext.Database.EnsureDeleted();
+        mainDbContext.Database.EnsureCreated();
+        authDbContext.Database.EnsureDeleted();
+        authDbContext.Database.EnsureCreated();
         
-        UserSeeds.Seed(dbContext);
+        UserSeeds.Seed(mainDbContext);
         // TODO Seed other models
     }
     else
     {
-        dbContext.Database.Migrate();
+        mainDbContext.Database.Migrate();
+        authDbContext.Database.Migrate();
     }
 }
 

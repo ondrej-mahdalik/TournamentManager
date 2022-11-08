@@ -1,17 +1,22 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Security.Claims;
+using Microsoft.AspNetCore.Mvc;
 using TournamentManager.Server.Data;
+using TournamentManager.Shared.Enums;
 using TournamentManager.Shared.Models;
 
 namespace TournamentManager.Server.Controllers;
 
 public class AuthorizedControllerBase : ControllerBase
 {
-    public readonly UserModel LoggedUser;
-    public readonly TournamentManagerDbContext DbContext;
+    protected readonly UserModel LoggedUser;
+    protected readonly TournamentManagerDbContext DbContext;
 
     public AuthorizedControllerBase(TournamentManagerDbContext dbContext)
     {
         DbContext = dbContext;
-        LoggedUser = new UserModel(Guid.NewGuid(), String.Empty, String.Empty, String.Empty);
+        if (!Guid.TryParse(HttpContext.User.FindFirstValue(CustomClaimTypes.MainUserId), out var userId))
+            throw new NotImplementedException(); // TODO properly handle missing Id
+
+        LoggedUser = DbContext.Users.FirstOrDefault(x => x.Id == userId) ?? throw new NotImplementedException(); // TODO properly handle non-existing user
     }
 }
