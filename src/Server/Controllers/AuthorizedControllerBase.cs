@@ -8,8 +8,8 @@ namespace TournamentManager.Server.Controllers;
 
 public class AuthorizedControllerBase : ControllerBase
 {
-    public readonly UserModel LoggedUser;
-    public readonly TournamentManagerDbContext DbContext;
+    protected readonly UserModel LoggedUser;
+    protected readonly TournamentManagerDbContext DbContext;
 
     public AuthorizedControllerBase(TournamentManagerDbContext dbContext)
     {
