@@ -16,7 +16,7 @@ public class TeamIsParticipatingController : AuthorizedControllerBase
     }
     
     [HttpGet]
-    public async Task<ActionResult<List<TeamIsParticipatingModel>>> Get()
+    public async Task<ActionResult<List<TeamIsParticipatingModel>>> GetAll()
     {
           return Ok(await DbContext.Participatings.ToListAsync());
     }
@@ -32,22 +32,35 @@ public class TeamIsParticipatingController : AuthorizedControllerBase
     }
 
     [HttpPut]
-    public async Task<ActionResult> InsertOrUpdate([FromBody] TeamModel? participation)
+    public async Task<ActionResult> InsertOrUpdate([FromBody] TeamIsParticipatingModel? participation)
     {
-        if (participation is null || participation.TeamId is null || participation.TournamentId is null )
+        if (participation is null)
             return BadRequest();
 
-        return Ok(await DbContext.Participatings.AddAsync(participation));
+        var tournament = await DbContext.Tournaments.FirstOrDefaultAsync(x => x.Id == participation.TournamentId);
+        var team = await DbContext.Teams.FirstOrDefaultAsync(x => x.Id == participation.TeamId);
+        if (tournament is null || team is null)
+            return BadRequest();
+        
+        if (LoggedUser.IsAdministrator || tournament.CreatorId == LoggedUser.Id || (tournament.IsPublic && team.LeaderId == LoggedUser.Id))
+            return Ok(await DbContext.Participatings.AddAsync(participation));
+
+        return Forbid();
     }
 
     [HttpDelete("{id:guid}")]
     public async Task<ActionResult> Delete(Guid id)
     {
-        var participation = await DbContext.Participatings.FirstOrDefaultAsync(x => x.Id == id);
+        var participation = await DbContext.Participatings
+            .Include(x => x.Team)
+            .Include(x => x.Tournament)
+            .FirstOrDefaultAsync(x => x.Id == id);
+        
         if (participation is null)
             return NoContent();
 
-        if (participation.Team.LeaderId != LoggedUser.Id && participation.Tournament.CreatorId != LoggedUser.Id && !LoggedUser.IsAdministrator)
+        if (!LoggedUser.IsAdministrator && participation.Team?.LeaderId != LoggedUser.Id &&
+            participation.Tournament?.CreatorId != LoggedUser.Id)
             return Forbid();
 
         DbContext.Remove(participation);

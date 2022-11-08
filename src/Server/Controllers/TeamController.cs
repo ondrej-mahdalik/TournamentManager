@@ -16,7 +16,7 @@ public class TeamController : AuthorizedControllerBase
     }
     
     [HttpGet]
-    public async Task<ActionResult<List<TeamModel>>> Get()
+    public async Task<ActionResult<List<TeamModel>>> GetAll()
     {
           return Ok(await DbContext.Teams.ToListAsync());
     }
@@ -34,8 +34,11 @@ public class TeamController : AuthorizedControllerBase
     [HttpPut]
     public async Task<ActionResult> InsertOrUpdate([FromBody] TeamModel? team)
     {
-        if (team is null || team.LeaderId is null )
+        if (team is null)
             return BadRequest();
+
+        if (team.LeaderId != LoggedUser.Id && !LoggedUser.IsAdministrator)
+            return Forbid();
 
         return Ok(await DbContext.Teams.AddAsync(team));
     }
