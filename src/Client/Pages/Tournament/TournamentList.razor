@@ -1,0 +1,127 @@
+﻿@page "/Tournament/List"
+@using TournamentManager.Shared.Models
+
+<PageTitle>Tournaments List</PageTitle>
+
+<div class="d-flex flex-column" id="content-wrapper">
+    <div id="content">
+        <div class="container-fluid">
+            <div class="row mb-3">
+                <div class="col d-xl-flex d-flex align-items-center">
+                    <h3 class="text-dark d-xl-flex">Tournaments</h3>
+                </div>
+                <div class="col col-auto d-flex align-items-center"><a href="Tournament/Create"><button class="btn btn-primary" type="button">Create New</button></a></div>
+            </div>
+            <div class="card shadow">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6 text-nowrap">
+                            <div id="dataTable_length" class="dataTables_length" aria-controls="dataTable"><label class="form-label">Show&nbsp;<select class="d-inline-block form-select form-select-sm">
+                                <option value="10" selected="">10</option>
+                                <option value="25">25</option>
+                                <option value="50">50</option>
+                                <option value="100">100</option>
+                            </select>&nbsp;</label></div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="text-md-end dataTables_filter" id="dataTable_filter"><label class="form-label"><input type="search" class="form-control form-control-sm" aria-controls="dataTable" placeholder="Search"></label></div>
+                        </div>
+                    </div>
+                    <div class="table-responsive table mt-2" id="dataTable" role="grid" aria-describedby="dataTable_info">
+                        <table class="table my-0" id="dataTable">
+                            <thead>
+                            <tr>
+                                <th>Sport<i class="fas fa-baseball-ball" style="padding-right: 0px;padding-bottom: 0px;margin-left: 2%;"></i></th>
+                                <th>Name</th>
+                                <th>Date</th>
+                                <th>Visibility</th>
+                                <th>Occupation</th>
+                                <th>Winner</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var tournament in tournaments)
+                                {
+                                    <tr>
+                                        <td>Sport</td>
+                                        <td>@tournament.Name</td>
+                                        <td>@tournament.Date.ToString("dd. mm. yyyy")</td>
+                                        <td>@(tournament.IsPublic ? "Public" : "Private")</td>
+                                        <td>20 / @tournament.MaxPlayers</td>
+                                    </tr>
+                                }
+                            @* <tr> *@
+                            @*     <td>Football</td> *@
+                            @*     <td>@tournaments[0].Name</td> *@
+                            @*     <td>25.5.2000</td> *@
+                            @*     <td>Public</td> *@
+                            @*     <td>22/22</td> *@
+                            @*     <td><img class="rounded-circle me-2" width="30" height="30" src="../assets/img/avatars/avatar1.jpeg">Team1</td> *@
+                            @* </tr> *@
+                            @* <tr> *@
+                            @*     <td>Basketball</td> *@
+                            @*     <td>Tournament2<br></td> *@
+                            @*     <td>25.5.2002<br></td> *@
+                            @*     <td>Private</td> *@
+                            @*     <td>30/30<br></td> *@
+                            @*     <td><img class="rounded-circle me-2" width="30" height="30" src="../assets/img/avatars/avatar1.jpeg">Team2</td> *@
+                            @* </tr> *@
+                            @* <tr> *@
+                            @*     <td>Golf</td> *@
+                            @*     <td>Tournament3<br></td> *@
+                            @*     <td>25.5.2004<br></td> *@
+                            @*     <td>Private</td> *@
+                            @*     <td>10/15<br></td> *@
+                            @*     <td></td> *@
+                            @* </tr> *@
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 align-self-center">
+                            <p id="dataTable_info" class="dataTables_info" role="status" aria-live="polite">Showing 1 to 10 of 27</p>
+                        </div>
+                        <div class="col-md-6">
+                            <nav class="d-lg-flex justify-content-lg-end dataTables_paginate paging_simple_numbers">
+                                <ul class="pagination">
+                                    <li class="page-item disabled"><a class="page-link" aria-label="Previous" href="#"><span aria-hidden="true">«</span></a></li>
+                                    <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                                    <li class="page-item"><a class="page-link" href="#">2</a></li>
+                                    <li class="page-item"><a class="page-link" href="#">3</a></li>
+                                    <li class="page-item"><a class="page-link" aria-label="Next" href="#"><span aria-hidden="true">»</span></a></li>
+                                </ul>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div><a class="border rounded d-inline scroll-to-top" href="#page-top"><i class="fas fa-angle-up"></i></a>
+
+@code
+{
+    List<TournamentModel> tournaments = new List<TournamentModel>()
+    {
+        new TournamentModel(
+            Guid.NewGuid(),
+            "Tournament1",
+            DateTime.Now,
+            "Desc",
+            true,
+            true,
+            30
+            ),
+        new TournamentModel(
+            Guid.NewGuid(),
+            "Tournament2",
+            DateTime.Now,
+            "Desc2",
+            true,
+            true,
+            25
+            ), 
+    }
+
+    ;
+}
