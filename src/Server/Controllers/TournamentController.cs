@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TournamentManager.Server.Data;
+using TournamentManager.Server.Models;
 using TournamentManager.Shared.Models;
 
 namespace TournamentManager.Server.Controllers;
@@ -11,17 +13,19 @@ namespace TournamentManager.Server.Controllers;
 [Route("[controller]")]
 public class TournamentController : AuthorizedControllerBase
 {
-    public TournamentController(TournamentManagerDbContext dbContext) : base(dbContext)
+    public TournamentController(TournamentManagerDbContext dbContext,
+        UserManager<ApplicationUser> userManager) : base(dbContext, userManager)
     {
     }
     
     [HttpGet]
     public async Task<ActionResult<List<TournamentModel>>> Get()
     {
-        if (LoggedUser.IsAdministrator)
+        var user = await GetLoggedUser();
+        if (user.IsAdministrator)
             return Ok(await DbContext.Tournaments.ToListAsync());
-        
-        return Ok(await DbContext.Tournaments.Where(x => x.IsPublic || x.CreatorId == LoggedUser.Id).ToListAsync());
+
+        return Ok(await DbContext.Tournaments.Where(x => x.IsPublic || x.CreatorId == user.Id).ToListAsync());
     }
 
     [HttpGet("{id:guid}")]
@@ -30,7 +34,9 @@ public class TournamentController : AuthorizedControllerBase
         var tournament = await DbContext.Tournaments.FirstOrDefaultAsync(x => x.Id == id);
         if (tournament is null)
             return NotFound();
-        if (!LoggedUser.IsAdministrator && !tournament.IsPublic && tournament.CreatorId != LoggedUser.Id)
+        
+        var user = await GetLoggedUser();
+        if (!user.IsAdministrator && !tournament.IsPublic && tournament.CreatorId != user.Id)
             return Forbid();
 
         return Ok(tournament);
@@ -52,7 +58,8 @@ public class TournamentController : AuthorizedControllerBase
         if (tournament is null)
             return NoContent();
 
-        if (tournament.CreatorId != LoggedUser.Id && !LoggedUser.IsAdministrator)
+        var user = await GetLoggedUser();
+        if (tournament.CreatorId != user.Id && !user.IsAdministrator)
             return Forbid();
 
         DbContext.Remove(tournament);

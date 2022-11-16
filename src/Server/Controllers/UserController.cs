@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TournamentManager.Server.Data;
+using TournamentManager.Server.Models;
 using TournamentManager.Shared.Models;
 
 namespace TournamentManager.Server.Controllers;
@@ -11,7 +13,8 @@ namespace TournamentManager.Server.Controllers;
 [Route("[controller]")]
 public class UserController : AuthorizedControllerBase
 {
-    public UserController(TournamentManagerDbContext dbContext) : base(dbContext)
+    public UserController(TournamentManagerDbContext dbContext,
+        UserManager<ApplicationUser> userManager) : base(dbContext, userManager)
     {
     }
     
@@ -37,7 +40,8 @@ public class UserController : AuthorizedControllerBase
         if (user is null)
             return BadRequest();
         
-        if (!LoggedUser.IsAdministrator && LoggedUser.Id != user.Id)
+        var loggedUser = await GetLoggedUser();
+        if (!loggedUser.IsAdministrator && loggedUser.Id != user.Id)
             return Forbid();
 
         return Ok(await DbContext.Users.AddAsync(user));
@@ -50,7 +54,8 @@ public class UserController : AuthorizedControllerBase
         if (user is null)
             return NoContent();
 
-        if (!LoggedUser.IsAdministrator && user.Id != LoggedUser.Id)
+        var loggedUser = await GetLoggedUser();
+        if (!loggedUser.IsAdministrator && loggedUser.Id != user.Id)
             return Forbid();
 
         DbContext.Remove(user);

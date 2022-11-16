@@ -1,11 +1,13 @@
+using System.Security.Claims;
+using Duende.IdentityServer.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
-using TournamentManager.Server.AuthSeeds;
 using TournamentManager.Server.Data;
 using TournamentManager.Server.Models;
 using TournamentManager.Server.MainSeeds;
+using TournamentManager.Server.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -33,12 +35,18 @@ void ConfigureAuthentication(IServiceCollection serviceCollection)
         .AddRoles<IdentityRole>()
         .AddEntityFrameworkStores<AuthorizationDbContext>();
 
+    serviceCollection.AddTransient<IProfileService, ApplicationProfileService>();
+
     serviceCollection.AddIdentityServer()
-        .AddTestUsers(ApplicationUserSeeds.Users)
         .AddApiAuthorization<ApplicationUser, AuthorizationDbContext>();
 
     serviceCollection.AddAuthentication()
         .AddIdentityServerJwt();
+
+    serviceCollection.Configure<IdentityOptions>(options =>
+    {
+        options.ClaimsIdentity.UserIdClaimType = ClaimTypes.NameIdentifier;
+    });
     // .AddGoogle(options =>
     // {
     //     options.ClientId = builder.Configuration["Authentication:Google:ClientId"] ?? throw new AuthenticationException();

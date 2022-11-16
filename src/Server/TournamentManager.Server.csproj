@@ -8,12 +8,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Duende.IdentityServer.AspNetIdentity" Version="6.2.0-rc.1" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.Facebook" Version="7.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="7.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.MicrosoftAccount" Version="7.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="7.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="7.0.0" />
-    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="7.0.0-rc.2.22510.1" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="7.0.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -55,6 +56,32 @@
     <_ContentIncludedByDefault Remove="wwwroot\lib\jquery\dist\jquery.min.js" />
     <_ContentIncludedByDefault Remove="wwwroot\lib\jquery\dist\jquery.min.map" />
     <_ContentIncludedByDefault Remove="wwwroot\lib\jquery\LICENSE.txt" />
+    <_ContentIncludedByDefault Remove="wwwroot\assets\fonts\fa-brands-400.eot" />
+    <_ContentIncludedByDefault Remove="wwwroot\assets\fonts\fa-brands-400.svg" />
+    <_ContentIncludedByDefault Remove="wwwroot\assets\fonts\fa-brands-400.ttf" />
+    <_ContentIncludedByDefault Remove="wwwroot\assets\fonts\fa-brands-400.woff" />
+    <_ContentIncludedByDefault Remove="wwwroot\assets\fonts\fa-brands-400.woff2" />
+    <_ContentIncludedByDefault Remove="wwwroot\assets\fonts\fa-regular-400.eot" />
+    <_ContentIncludedByDefault Remove="wwwroot\assets\fonts\fa-regular-400.svg" />
+    <_ContentIncludedByDefault Remove="wwwroot\assets\fonts\fa-regular-400.ttf" />
+    <_ContentIncludedByDefault Remove="wwwroot\assets\fonts\fa-regular-400.woff" />
+    <_ContentIncludedByDefault Remove="wwwroot\assets\fonts\fa-regular-400.woff2" />
+    <_ContentIncludedByDefault Remove="wwwroot\assets\fonts\fa-solid-900.eot" />
+    <_ContentIncludedByDefault Remove="wwwroot\assets\fonts\fa-solid-900.svg" />
+    <_ContentIncludedByDefault Remove="wwwroot\assets\fonts\fa-solid-900.ttf" />
+    <_ContentIncludedByDefault Remove="wwwroot\assets\fonts\fa-solid-900.woff" />
+    <_ContentIncludedByDefault Remove="wwwroot\assets\fonts\fa-solid-900.woff2" />
+    <_ContentIncludedByDefault Remove="wwwroot\assets\fonts\fontawesome-all.min.css" />
+    <_ContentIncludedByDefault Remove="wwwroot\assets\fonts\s\nunito\v25\XRXV3I6Li01BKofIMeaBXso.woff2" />
+    <_ContentIncludedByDefault Remove="wwwroot\assets\fonts\s\nunito\v25\XRXV3I6Li01BKofINeaB.woff2" />
+    <_ContentIncludedByDefault Remove="wwwroot\assets\fonts\s\nunito\v25\XRXV3I6Li01BKofIO-aBXso.woff2" />
+    <_ContentIncludedByDefault Remove="wwwroot\assets\fonts\s\nunito\v25\XRXV3I6Li01BKofIOOaBXso.woff2" />
+    <_ContentIncludedByDefault Remove="wwwroot\assets\fonts\s\nunito\v25\XRXV3I6Li01BKofIOuaBXso.woff2" />
+    <_ContentIncludedByDefault Remove="wwwroot\assets\fonts\s\nunito\v25\XRXX3I6Li01BKofIMNaDRs4.woff2" />
+    <_ContentIncludedByDefault Remove="wwwroot\assets\fonts\s\nunito\v25\XRXX3I6Li01BKofIMNaHRs71cA.woff2" />
+    <_ContentIncludedByDefault Remove="wwwroot\assets\fonts\s\nunito\v25\XRXX3I6Li01BKofIMNaMRs71cA.woff2" />
+    <_ContentIncludedByDefault Remove="wwwroot\assets\fonts\s\nunito\v25\XRXX3I6Li01BKofIMNaNRs71cA.woff2" />
+    <_ContentIncludedByDefault Remove="wwwroot\assets\fonts\s\nunito\v25\XRXX3I6Li01BKofIMNaORs71cA.woff2" />
   </ItemGroup>
 
 </Project>
