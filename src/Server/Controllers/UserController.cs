@@ -18,6 +18,12 @@ public class UserController : AuthorizedControllerBase
     {
     }
     
+    [HttpGet("current")]
+    public async Task<ActionResult<UserModel?>> GetCurrentUser()
+    {
+        return Ok(await GetLoggedUser());
+    }
+    
     [HttpGet]
     public async Task<ActionResult<List<UserModel>>> Get()
     {

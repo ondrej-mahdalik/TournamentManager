@@ -20,7 +20,7 @@ public class AuthorizedControllerBase : ControllerBase
 
     public async Task<UserModel> GetLoggedUser()
     {
-        var applicationUser = await UserManager.GetUserAsync(User) ?? throw new Exception("Failed to obtain logged user");
-        return await DbContext.Users.FirstOrDefaultAsync(x => x.Id == applicationUser.MainUserId) ?? throw new Exception("User not found");
+        var applicationUser = await UserManager.GetUserAsync(User) ?? throw new("Failed to obtain logged user");
+        return await DbContext.Users.FirstOrDefaultAsync(x => x.Id == applicationUser.MainUserId) ?? throw new("User not found");
     }
 }
