@@ -3,15 +3,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace TournamentManager.Shared.Models;
 
-public record MatchModel(Guid Id,
+public record MatchModel(
     int Score1,
     int Score2,
     int Round,
-    int Order)
+    int Order) : ModelBase
 {
-    [Key]
-    public Guid Id { get; set; } = Id;
-    
     public Guid TournamentId { get; set; }
     public TournamentModel? Tournament { get; set; }
     

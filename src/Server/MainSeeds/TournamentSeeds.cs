@@ -6,7 +6,6 @@ namespace TournamentManager.Server.MainSeeds;
 public static class TournamentSeeds
 {
     public static readonly TournamentModel Tournament1 = new(
-        Guid.Parse("83D0C8E4-E38B-43B2-8E64-3EBA5EC773FD"),
         "Awesome Tournament",
         DateTime.Now,
         "This is a tournament",
@@ -14,6 +13,7 @@ public static class TournamentSeeds
         true,
         20)
     {
+        Id = Guid.Parse("83D0C8E4-E38B-43B2-8E64-3EBA5EC773FD"),
         CreatorId = UserSeeds.JohnDoe.Id,
         SportId = SportSeeds.Football.Id
     };

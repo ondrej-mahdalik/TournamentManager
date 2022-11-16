@@ -2,15 +2,11 @@
 
 namespace TournamentManager.Shared.Models;
 
-public record TeamIsParticipatingModel(Guid Id,
-    bool Approved)
+public record TeamIsParticipatingModel(bool Approved) : ModelBase
 {
-    [Key]
-    public Guid Id { get; set; } = Id;
-    
     public Guid TeamId { get; set; }
     public TeamModel? Team { get; set; }
-    
+
     public Guid TournamentId { get; set; }
     public TournamentModel? Tournament { get; set; }
 }

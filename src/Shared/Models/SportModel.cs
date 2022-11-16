@@ -2,10 +2,8 @@
 
 namespace TournamentManager.Shared.Models;
 
-public record SportModel(Guid Id,
-    string Name)
+public record SportModel(
+    string Name) : ModelBase
 {
-    [Key]
-    public Guid Id { get; set; } = Id;
     public IList<TournamentModel> Tournaments { get; set; } = new List<TournamentModel>();
 }
