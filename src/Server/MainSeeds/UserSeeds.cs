@@ -5,8 +5,10 @@ namespace TournamentManager.Server.MainSeeds;
 
 public static class UserSeeds
 {
-    public static readonly UserModel JohnDoe = new UserModel(
-        Guid.Parse("817A00B4-6A3A-427E-B569-1C72342483A3"));
+    public static readonly UserModel JohnDoe = new()
+    {
+        Id = Guid.Parse("817A00B4-6A3A-427E-B569-1C72342483A3")
+    };
     
     // TODO User seeds
 

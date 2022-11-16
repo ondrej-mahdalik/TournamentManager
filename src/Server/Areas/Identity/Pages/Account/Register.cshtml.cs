@@ -119,7 +119,7 @@ namespace TournamentManager.Server.Areas.Identity.Pages.Account
             if (ModelState.IsValid)
             {
                 var authUser = CreateUser();
-                var mainUser = new UserModel(Guid.NewGuid());
+                var mainUser = new UserModel();
                 await _dbContext.Users.AddAsync(mainUser);
                 await _dbContext.SaveChangesAsync();
                 authUser.MainUserId = mainUser.Id;

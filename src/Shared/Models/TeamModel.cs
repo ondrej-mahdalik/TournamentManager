@@ -2,13 +2,9 @@
 
 namespace TournamentManager.Shared.Models;
 
-public record TeamModel(Guid Id,
-    string Name,
-    string? LogoUrl)
+public record TeamModel(string Name,
+    string? LogoUrl) : ModelBase
 {
-    [Key]
-    public Guid Id { get; set; } = Id;
-    
     public Guid LeaderId { get; set; }
     public UserModel? Leader { get; set; }
     

@@ -5,8 +5,10 @@ namespace TournamentManager.Server.MainSeeds;
 
 public static class SportSeeds
 {
-    public static readonly SportModel Football = new(Guid.Parse("3F20807D-34FC-49E5-BAE0-AF64D984D7CF"),
-        "Football");
+    public static readonly SportModel Football = new("Football")
+    {
+        Id = Guid.Parse("3F20807D-34FC-49E5-BAE0-AF64D984D7CF")
+    };
 
     public static void Seed(TournamentManagerDbContext dbContext)
     {
