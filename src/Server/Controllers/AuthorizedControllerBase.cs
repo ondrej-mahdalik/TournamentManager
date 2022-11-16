@@ -1,26 +1,26 @@
-﻿using System.Security.Claims;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TournamentManager.Server.Data;
-using TournamentManager.Server.MainSeeds;
-using TournamentManager.Shared.Enums;
+using TournamentManager.Server.Models;
 using TournamentManager.Shared.Models;
 
 namespace TournamentManager.Server.Controllers;
 
 public class AuthorizedControllerBase : ControllerBase
 {
-    protected readonly UserModel LoggedUser;
     protected readonly TournamentManagerDbContext DbContext;
-
-    public AuthorizedControllerBase(TournamentManagerDbContext dbContext)
+    protected readonly UserManager<ApplicationUser> UserManager;
+    
+    public AuthorizedControllerBase(TournamentManagerDbContext dbContext, UserManager<ApplicationUser> userManager)
     {
         DbContext = dbContext;
-        // if (!Guid.TryParse(HttpContext.User.FindFirstValue(CustomClaimTypes.MainUserId), out var userId))
-        //     throw new NotImplementedException(); // TODO properly handle missing Id
-        //
-        // LoggedUser = DbContext.Users.FirstOrDefault(x => x.Id == userId) ?? throw new NotImplementedException(); // TODO properly handle non-existing user
+        UserManager = userManager;
+    }
 
-        LoggedUser = DbContext.Users.First(x => x.Id == UserSeeds.JohnDoe.Id);
+    public async Task<UserModel> GetLoggedUser()
+    {
+        var applicationUser = await UserManager.GetUserAsync(User) ?? throw new Exception("Failed to obtain logged user");
+        return await DbContext.Users.FirstOrDefaultAsync(x => x.Id == applicationUser.MainUserId) ?? throw new Exception("User not found");
     }
 }

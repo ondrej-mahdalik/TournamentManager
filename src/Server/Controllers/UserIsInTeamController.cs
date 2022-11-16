@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TournamentManager.Server.Data;
+using TournamentManager.Server.Models;
 using TournamentManager.Shared.Models;
 
 namespace TournamentManager.Server.Controllers;
@@ -11,7 +13,8 @@ namespace TournamentManager.Server.Controllers;
 [Route("[controller]")]
 public class UserIsInTeamController : AuthorizedControllerBase
 {
-    public UserIsInTeamController(TournamentManagerDbContext dbContext) : base(dbContext)
+    public UserIsInTeamController(TournamentManagerDbContext dbContext,
+        UserManager<ApplicationUser> userManager) : base(dbContext, userManager)
     {
     }
 
@@ -38,7 +41,8 @@ public class UserIsInTeamController : AuthorizedControllerBase
         if (teamLeaderId is null)
             return BadRequest();
 
-        if (!(LoggedUser.IsAdministrator || LoggedUser.Id == teamLeaderId))
+        var user = await GetLoggedUser();
+        if (!(user.IsAdministrator || user.Id == teamLeaderId))
             return Forbid();
 
         return Ok(await DbContext.UsersIsInTeam.AddAsync(newUserInTeam));
@@ -51,8 +55,9 @@ public class UserIsInTeamController : AuthorizedControllerBase
         if (userFromTeamToDelete is null)
             return NoContent();
 
+        var user = await GetLoggedUser();
         var teamLeaderId = (await DbContext.Teams.FirstOrDefaultAsync(x => x.Id == userFromTeamToDelete.TeamId))?.LeaderId;
-        if (!(LoggedUser.IsAdministrator || LoggedUser.Id == teamLeaderId))
+        if (!(user.IsAdministrator || user.Id == teamLeaderId))
             return Forbid();
         
         DbContext.Remove(userFromTeamToDelete);

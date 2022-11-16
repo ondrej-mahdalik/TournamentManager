@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TournamentManager.Server.Data;
+using TournamentManager.Server.Models;
 using TournamentManager.Shared.Models;
 
 namespace TournamentManager.Server.Controllers;
@@ -11,7 +13,8 @@ namespace TournamentManager.Server.Controllers;
 [Route("[controller]")]
 public class TeamIsParticipatingController : AuthorizedControllerBase
 {
-    public TeamIsParticipatingController(TournamentManagerDbContext dbContext) : base(dbContext)
+    public TeamIsParticipatingController(TournamentManagerDbContext dbContext,
+        UserManager<ApplicationUser> userManager) : base(dbContext, userManager)
     {
     }
     
@@ -42,7 +45,9 @@ public class TeamIsParticipatingController : AuthorizedControllerBase
         if (tournament is null || team is null)
             return BadRequest();
         
-        if (LoggedUser.IsAdministrator || tournament.CreatorId == LoggedUser.Id || (tournament.IsPublic && team.LeaderId == LoggedUser.Id))
+        var user = await GetLoggedUser();
+        if (user.IsAdministrator || tournament.CreatorId == user.Id ||
+            (tournament.IsPublic && team.LeaderId == user.Id))
             return Ok(await DbContext.Participatings.AddAsync(participation));
 
         return Forbid();
@@ -59,8 +64,9 @@ public class TeamIsParticipatingController : AuthorizedControllerBase
         if (participation is null)
             return NoContent();
 
-        if (!LoggedUser.IsAdministrator && participation.Team?.LeaderId != LoggedUser.Id &&
-            participation.Tournament?.CreatorId != LoggedUser.Id)
+        var user = await GetLoggedUser();
+        if (!user.IsAdministrator && participation.Team?.LeaderId != user.Id &&
+            participation.Tournament?.CreatorId != user.Id)
             return Forbid();
 
         DbContext.Remove(participation);

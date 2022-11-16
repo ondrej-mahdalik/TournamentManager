@@ -52,6 +52,14 @@
     <_ContentIncludedByDefault Remove="wwwroot\SoftUI\assets\js\soft-ui-dashboard.js" />
     <_ContentIncludedByDefault Remove="wwwroot\SoftUI\assets\js\soft-ui-dashboard.js.map" />
     <_ContentIncludedByDefault Remove="wwwroot\SoftUI\assets\js\soft-ui-dashboard.min.js" />
+    <_ContentIncludedByDefault Remove="wwwroot\css\bootstrap\bootstrap.min.css" />
+    <_ContentIncludedByDefault Remove="wwwroot\css\bootstrap\bootstrap.min.css.map" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Update="wwwroot\assets\bootstrap\css\bootstrap.min.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
 </Project>

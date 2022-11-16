@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TournamentManager.Server.Data;
+using TournamentManager.Server.Models;
 using TournamentManager.Shared.Models;
 
 namespace TournamentManager.Server.Controllers;
@@ -11,7 +13,8 @@ namespace TournamentManager.Server.Controllers;
 [Route("[controller]")]
 public class MatchController : AuthorizedControllerBase
 {
-    public MatchController(TournamentManagerDbContext dbContext) : base(dbContext)
+    public MatchController(TournamentManagerDbContext dbContext,
+        UserManager<ApplicationUser> userManager) : base(dbContext, userManager)
     {
     }
 
@@ -61,7 +64,9 @@ public class MatchController : AuthorizedControllerBase
         var tournament = await DbContext.Tournaments.FirstOrDefaultAsync(
             x => x.Id == match.TournamentId);
 
-        if (!(LoggedUser.IsAdministrator || LoggedUser.Id == tournament?.CreatorId))
+        var user = await GetLoggedUser();
+
+        if (!(user.IsAdministrator || user.Id == tournament?.CreatorId))
             return Forbid();
 
         await DbContext.Matches.AddAsync(match);
@@ -74,9 +79,11 @@ public class MatchController : AuthorizedControllerBase
         var match = await DbContext.Matches.FirstOrDefaultAsync(x => x.Id == id);
         if (match is null)
             return NoContent();
-
+        
+        var user = await GetLoggedUser();
+        
         var tournament = await DbContext.Tournaments.FirstOrDefaultAsync(x => x.Id == match.TournamentId);
-        if (!(LoggedUser.IsAdministrator || LoggedUser.Id == tournament?.CreatorId))
+        if (!(user.IsAdministrator || user.Id == tournament?.CreatorId))
             return Forbid();
 
         DbContext.Remove(match);
@@ -87,9 +94,10 @@ public class MatchController : AuthorizedControllerBase
 
     private async Task<bool> CanViewTournament(TournamentModel tournament)
     {
-        return tournament.IsPublic || LoggedUser.IsAdministrator || tournament.CreatorId == LoggedUser.Id ||
+        var user = await GetLoggedUser();
+        return tournament.IsPublic || user.IsAdministrator || tournament.CreatorId == user.Id ||
                await DbContext.Participatings.AnyAsync(x =>
                    x.TournamentId == tournament.Id && x.Team != null &&
-                   x.Team.Members.Any(y => y.UserId == LoggedUser.Id));
+                   x.Team.Members.Any(y => y.UserId == user.Id));
     }
 }
