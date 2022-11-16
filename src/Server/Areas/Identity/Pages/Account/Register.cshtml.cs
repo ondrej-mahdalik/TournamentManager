@@ -48,6 +48,7 @@ namespace TournamentManager.Server.Areas.Identity.Pages.Account
             _signInManager = signInManager;
             _logger = logger;
             _emailSender = emailSender;
+            _dbContext = dbContext;
         }
 
         /// <summary>
@@ -117,22 +118,23 @@ namespace TournamentManager.Server.Areas.Identity.Pages.Account
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
             if (ModelState.IsValid)
             {
-                var user = CreateUser();
+                var authUser = CreateUser();
+                var mainUser = new UserModel(Guid.NewGuid());
+                await _dbContext.Users.AddAsync(mainUser);
+                await _dbContext.SaveChangesAsync();
+                authUser.MainUserId = mainUser.Id;
 
-                await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
-                await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
-                var result = await _userManager.CreateAsync(user, Input.Password);
+                await _userStore.SetUserNameAsync(authUser, Input.Email, CancellationToken.None);
+                await _emailStore.SetEmailAsync(authUser, Input.Email, CancellationToken.None);
+                var result = await _userManager.CreateAsync(authUser, Input.Password);
 
                 if (result.Succeeded)
                 {
-                    var mainUser = new UserModel(Guid.NewGuid());
-                    await _dbContext.Users.AddAsync(mainUser);
-                    await _dbContext.SaveChangesAsync();
-                    // TODO link
+                    
                     _logger.LogInformation("User created a new account with password.");
 
-                    var userId = await _userManager.GetUserIdAsync(user);
-                    var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                    var userId = await _userManager.GetUserIdAsync(authUser);
+                    var code = await _userManager.GenerateEmailConfirmationTokenAsync(authUser);
                     code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
                     var callbackUrl = Url.Page(
                         "/Account/ConfirmEmail",
@@ -149,7 +151,7 @@ namespace TournamentManager.Server.Areas.Identity.Pages.Account
                     }
                     else
                     {
-                        await _signInManager.SignInAsync(user, isPersistent: false);
+                        await _signInManager.SignInAsync(authUser, isPersistent: false);
                         return LocalRedirect(returnUrl);
                     }
                 }

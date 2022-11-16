@@ -21,8 +21,7 @@ public class ApplicationUserSeeds
                 new Claim(JwtClaimTypes.GivenName, "John"),
                 new Claim(JwtClaimTypes.FamilyName, "Doe"),
                 new Claim(JwtClaimTypes.Email, "john.doe@gmail.com"),
-                new Claim(JwtClaimTypes.EmailVerified, "true", ClaimValueTypes.Boolean),
-                new Claim(CustomClaimTypes.MainUserId, UserSeeds.JohnDoe.Id.ToString())
+                new Claim(JwtClaimTypes.EmailVerified, "true", ClaimValueTypes.Boolean)
             }
         }
     };
