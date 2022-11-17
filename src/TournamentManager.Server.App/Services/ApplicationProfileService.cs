@@ -3,8 +3,8 @@ using Duende.IdentityServer.AspNetIdentity;
 using Duende.IdentityServer.Models;
 using IdentityModel;
 using Microsoft.AspNetCore.Identity;
-using TournamentManager.Server.App.Models;
 using TournamentManager.Common.Enums;
+using TournamentManager.Server.Auth.Models;
 
 namespace TournamentManager.Server.App.Services;
 
@@ -26,15 +26,5 @@ public class ApplicationProfileService : ProfileService<ApplicationUser>
         // Email
         var roleClaims = context.Subject.FindAll(JwtClaimTypes.Role);
         context.IssuedClaims.AddRange(roleClaims);
-        
-        // Main User Id
-        var principal = await GetUserClaimsAsync(user);
-        var id = (ClaimsIdentity?)principal.Identity;
-        if (id is null)
-            return;
-        
-        id.AddClaim(new Claim(CustomClaimTypes.MainUserId, user.MainUserId.ToString()));
-        
-        context.AddRequestedClaims(principal.Claims);
     }
 }
