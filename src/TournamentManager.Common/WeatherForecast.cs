@@ -1,4 +1,4 @@
-namespace TournamentManager.Shared
+namespace TournamentManager.Common
 {
     public class WeatherForecast
     {

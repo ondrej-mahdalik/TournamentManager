@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TournamentManager.Server.Ap
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TournamentManager.Client.App", "TournamentManager.Client.App\TournamentManager.Client.App.csproj", "{6CA8B400-F201-460D-B680-92EB24D3538F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TournamentManager.Shared", "TournamentManager.Shared\TournamentManager.Shared.csproj", "{ED331F2B-7C1B-4B84-ADA6-2CE523D1FF01}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TournamentManager.Common", "TournamentManager.Common\TournamentManager.Common.csproj", "{ED331F2B-7C1B-4B84-ADA6-2CE523D1FF01}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TournamentManager.Server.DAL", "TournamentManager.Server.DAL\TournamentManager.Server.DAL.csproj", "{2DD377CE-A63A-4D66-B757-4BCA9DD5E061}"
 EndProject
@@ -15,36 +15,29 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TournamentManager.Server.BL
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TournamentManager.Server.Common", "TournamentManager.Server.Common\TournamentManager.Server.Common.csproj", "{83CC973E-D179-44E3-811C-E809ABACA924}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TournamentManager.Server.Seeds", "TournamentManager.Server.Seeds\TournamentManager.Server.Seeds.csproj", "{3DA8D377-6E3A-47DA-AC85-129EB3111645}"
+EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Server", "Server", "{77977A28-0913-4709-A5F0-CACA52A1BEE4}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Client", "Client", "{D49B587F-1601-463A-92D3-52E086D51EED}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Shared", "Shared", "{E2871C99-D84A-414C-84DE-9348B87654A3}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common", "Common", "{E2871C99-D84A-414C-84DE-9348B87654A3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TournamentManager.Server.Seeds", "TournamentManager.Server.Seeds\TournamentManager.Server.Seeds.csproj", "{3DA8D377-6E3A-47DA-AC85-129EB3111645}"
-EndProject
+
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{CC189A6C-C592-4E48-94E5-66C9C6EC286E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{CC189A6C-C592-4E48-94E5-66C9C6EC286E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{CC189A6C-C592-4E48-94E5-66C9C6EC286E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{CC189A6C-C592-4E48-94E5-66C9C6EC286E}.Release|Any CPU.Build.0 = Release|Any CPU
 		{6CA8B400-F201-460D-B680-92EB24D3538F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{6CA8B400-F201-460D-B680-92EB24D3538F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6CA8B400-F201-460D-B680-92EB24D3538F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6CA8B400-F201-460D-B680-92EB24D3538F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{ED331F2B-7C1B-4B84-ADA6-2CE523D1FF01}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{ED331F2B-7C1B-4B84-ADA6-2CE523D1FF01}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{ED331F2B-7C1B-4B84-ADA6-2CE523D1FF01}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{ED331F2B-7C1B-4B84-ADA6-2CE523D1FF01}.Release|Any CPU.Build.0 = Release|Any CPU
-		{2DD377CE-A63A-4D66-B757-4BCA9DD5E061}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{2DD377CE-A63A-4D66-B757-4BCA9DD5E061}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{2DD377CE-A63A-4D66-B757-4BCA9DD5E061}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{2DD377CE-A63A-4D66-B757-4BCA9DD5E061}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CC189A6C-C592-4E48-94E5-66C9C6EC286E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CC189A6C-C592-4E48-94E5-66C9C6EC286E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CC189A6C-C592-4E48-94E5-66C9C6EC286E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CC189A6C-C592-4E48-94E5-66C9C6EC286E}.Release|Any CPU.Build.0 = Release|Any CPU
 		{C956C3F6-9878-49B5-9D96-71C0B552FFCE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{C956C3F6-9878-49B5-9D96-71C0B552FFCE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C956C3F6-9878-49B5-9D96-71C0B552FFCE}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -53,24 +46,26 @@ Global
 		{83CC973E-D179-44E3-811C-E809ABACA924}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{83CC973E-D179-44E3-811C-E809ABACA924}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{83CC973E-D179-44E3-811C-E809ABACA924}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2DD377CE-A63A-4D66-B757-4BCA9DD5E061}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2DD377CE-A63A-4D66-B757-4BCA9DD5E061}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2DD377CE-A63A-4D66-B757-4BCA9DD5E061}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2DD377CE-A63A-4D66-B757-4BCA9DD5E061}.Release|Any CPU.Build.0 = Release|Any CPU
 		{3DA8D377-6E3A-47DA-AC85-129EB3111645}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{3DA8D377-6E3A-47DA-AC85-129EB3111645}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3DA8D377-6E3A-47DA-AC85-129EB3111645}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3DA8D377-6E3A-47DA-AC85-129EB3111645}.Release|Any CPU.Build.0 = Release|Any CPU
-	EndGlobalSection
-	GlobalSection(SolutionProperties) = preSolution
-		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {C2CD1ED5-32D6-4487-9EE6-BA0DB2BD3697}
+		{ED331F2B-7C1B-4B84-ADA6-2CE523D1FF01}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ED331F2B-7C1B-4B84-ADA6-2CE523D1FF01}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ED331F2B-7C1B-4B84-ADA6-2CE523D1FF01}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ED331F2B-7C1B-4B84-ADA6-2CE523D1FF01}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
+		{6CA8B400-F201-460D-B680-92EB24D3538F} = {D49B587F-1601-463A-92D3-52E086D51EED}
+		{ED331F2B-7C1B-4B84-ADA6-2CE523D1FF01} = {E2871C99-D84A-414C-84DE-9348B87654A3}
 		{CC189A6C-C592-4E48-94E5-66C9C6EC286E} = {77977A28-0913-4709-A5F0-CACA52A1BEE4}
 		{C956C3F6-9878-49B5-9D96-71C0B552FFCE} = {77977A28-0913-4709-A5F0-CACA52A1BEE4}
 		{83CC973E-D179-44E3-811C-E809ABACA924} = {77977A28-0913-4709-A5F0-CACA52A1BEE4}
 		{2DD377CE-A63A-4D66-B757-4BCA9DD5E061} = {77977A28-0913-4709-A5F0-CACA52A1BEE4}
-		{6CA8B400-F201-460D-B680-92EB24D3538F} = {D49B587F-1601-463A-92D3-52E086D51EED}
-		{ED331F2B-7C1B-4B84-ADA6-2CE523D1FF01} = {E2871C99-D84A-414C-84DE-9348B87654A3}
 		{3DA8D377-6E3A-47DA-AC85-129EB3111645} = {77977A28-0913-4709-A5F0-CACA52A1BEE4}
 	EndGlobalSection
 EndGlobal

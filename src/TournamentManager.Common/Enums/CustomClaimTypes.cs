@@ -1,4 +1,4 @@
-﻿namespace TournamentManager.Shared.Enums;
+﻿namespace TournamentManager.Common.Enums;
 
 public static class CustomClaimTypes
 {

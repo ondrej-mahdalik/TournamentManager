@@ -7,14 +7,19 @@ using Newtonsoft.Json;
 using TournamentManager.Server.App.Data;
 using TournamentManager.Server.App.Models;
 using TournamentManager.Server.App.Services;
+using TournamentManager.Server.BL.Installers;
 using TournamentManager.Server.DAL;
+using TournamentManager.Server.DAL.Extensions;
+using TournamentManager.Server.DAL.Installers;
 using TournamentManager.Server.Seeds.MainSeeds;
+using TournamentManager.Server.Common.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
 var authConnectionString = builder.Configuration.GetConnectionString("AuthConnection") ?? throw new InvalidOperationException("Connection string 'AuthConnection' not found.");
 var mainConnectionString = builder.Configuration.GetConnectionString("MainConnection") ?? throw new InvalidOperationException("Connection string 'MainConnection' not found.");
-var seedDemoData = builder.Configuration.GetSection("DALOptions").GetValue<bool>("SeedDemoData");
+var skipMigrationAndSeedDemoData = builder.Configuration.GetSection("DALOptions").GetValue<bool>("SkipMigrationAndSeedDemoData");
+var dalType = builder.Configuration.GetSection("DALOptions")["Type"];
 
 ConfigureControllers(builder.Services);
 ConfigureOpenApiDocuments(builder.Services);
@@ -64,9 +69,24 @@ void ConfigureDependencies(IServiceCollection serviceCollection)
 {
     serviceCollection.AddDbContext<AuthorizationDbContext>(options =>
         options.UseSqlServer(authConnectionString));
-    serviceCollection.AddDbContext<TournamentManagerDbContext>(options =>
-        options.UseSqlServer(mainConnectionString));
+
+    switch (dalType)
+    {
+        case "SQLServer":
+            serviceCollection.AddInstaller<DALSQLServerInstaller>(mainConnectionString);
+            break;
+        
+        default:
+        case "SQLite":
+            serviceCollection.AddInstaller<DALSQLiteInstaller>(mainConnectionString);
+            break;
+    }
+    
+    serviceCollection.AddInstaller<BLInstaller>();
+
+#if DEBUG
     serviceCollection.AddDatabaseDeveloperPageExceptionFilter();
+#endif
 }
 
 void ConfigureOpenApiDocuments(IServiceCollection serviceCollection)
@@ -141,10 +161,13 @@ void UseOpenApi(WebApplication application)
 void SetupDatabase(WebApplication application)
 {
     var scope = application.Services.CreateScope();
-    var mainDbContext = scope.ServiceProvider.GetRequiredService<TournamentManagerDbContext>();
     var authDbContext = scope.ServiceProvider.GetRequiredService<AuthorizationDbContext>();
+    
+    var dbContextFactory = scope.ServiceProvider.GetRequiredService<IDbContextFactory<TournamentManagerDbContext>>();
+    using var mainDbContext = dbContextFactory.CreateDbContext();
+    
 
-    if (seedDemoData)
+    if (skipMigrationAndSeedDemoData)
     {
         mainDbContext.Database.EnsureDeleted();
         mainDbContext.Database.EnsureCreated();

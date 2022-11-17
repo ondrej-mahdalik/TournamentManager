@@ -21,7 +21,7 @@ using Microsoft.Extensions.Logging;
 using TournamentManager.Server.App.Data;
 using TournamentManager.Server.App.Models;
 using TournamentManager.Server.BL.Facades;
-using TournamentManager.Shared.Models;
+using TournamentManager.Common.Models;
 
 namespace TournamentManager.Server.App.Areas.Identity.Pages.Account
 {

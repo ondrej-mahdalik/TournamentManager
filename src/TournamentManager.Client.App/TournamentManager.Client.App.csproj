@@ -20,7 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\TournamentManager.Shared\TournamentManager.Shared.csproj" />
+    <ProjectReference Include="..\TournamentManager.Common\TournamentManager.Common.csproj" />
   </ItemGroup>
 
 </Project>

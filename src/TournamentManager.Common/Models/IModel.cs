@@ -1,4 +1,4 @@
-﻿namespace TournamentManager.Shared.Models;
+﻿namespace TournamentManager.Common.Models;
 
 public interface IModel
 {

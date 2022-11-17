@@ -19,10 +19,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\TournamentManager.Client.App\TournamentManager.Client.App.csproj" />
     <ProjectReference Include="..\TournamentManager.Server.BL\TournamentManager.Server.BL.csproj" />
     <ProjectReference Include="..\TournamentManager.Server.DAL\TournamentManager.Server.DAL.csproj" />
     <ProjectReference Include="..\TournamentManager.Server.Seeds\TournamentManager.Server.Seeds.csproj" />
-    <ProjectReference Include="..\TournamentManager.Shared\TournamentManager.Shared.csproj" />
+    <ProjectReference Include="..\TournamentManager.Common\TournamentManager.Common.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -35,10 +36,6 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="MainSeeds" />
   </ItemGroup>
 
 </Project>

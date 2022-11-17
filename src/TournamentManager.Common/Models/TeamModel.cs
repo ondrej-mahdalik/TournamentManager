@@ -1,11 +1,15 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace TournamentManager.Shared.Models;
+namespace TournamentManager.Common.Models;
 
 public record TeamModel(string Name,
-    string? LogoUrl) : ModelBase
+    string? LogoUrl,
+    Guid LeaderId) : ModelBase
 {
-    public Guid LeaderId { get; set; }
+    public string Name { get; set; } = Name;
+    public string? LogoUrl { get; set; } = LogoUrl;
+    
+    public Guid LeaderId { get; set; } = LeaderId;
     public UserModel? Leader { get; set; }
     
     public IList<UserIsInTeamModel> Members { get; set; } = new List<UserIsInTeamModel>();

@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace TournamentManager.Shared.Models;
+namespace TournamentManager.Common.Models;
 
 public abstract record ModelBase : IModel
 {

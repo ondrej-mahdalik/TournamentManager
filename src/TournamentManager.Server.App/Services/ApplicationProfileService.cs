@@ -4,7 +4,7 @@ using Duende.IdentityServer.Models;
 using IdentityModel;
 using Microsoft.AspNetCore.Identity;
 using TournamentManager.Server.App.Models;
-using TournamentManager.Shared.Enums;
+using TournamentManager.Common.Enums;
 
 namespace TournamentManager.Server.App.Services;
 

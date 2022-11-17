@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using TournamentManager.Server.App.Data;
 using TournamentManager.Server.App.Models;
 using TournamentManager.Server.BL.Facades;
-using TournamentManager.Shared.Models;
+using TournamentManager.Common.Models;
 
 namespace TournamentManager.Server.App.Controllers;
 

@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using TournamentManager.Server.DAL.Entities;
-using TournamentManager.Shared.Models;
+using TournamentManager.Common.Models;
 
 namespace TournamentManager.Server.BL.MapperProfiles;
 

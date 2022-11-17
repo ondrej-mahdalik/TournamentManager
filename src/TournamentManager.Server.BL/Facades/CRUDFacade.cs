@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using TournamentManager.Server.DAL.Entities;
 using TournamentManager.Server.DAL.UnitOfWork;
-using TournamentManager.Shared.Models;
+using TournamentManager.Common.Models;
 
 namespace TournamentManager.Server.BL.Facades;
 

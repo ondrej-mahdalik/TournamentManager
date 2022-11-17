@@ -1,12 +1,12 @@
 ﻿using AutoMapper;
 using TournamentManager.Server.DAL.Entities;
-using TournamentManager.Shared.Models;
+using TournamentManager.Common.Models;
 
 namespace TournamentManager.Server.BL.MapperProfiles;
 
 public class UserMapperProfile : Profile
 {
-    protected UserMapperProfile()
+    public UserMapperProfile()
     {
         CreateMap<DAL.Entities.UserEntity, UserModel>()
             .MaxDepth(3)
