@@ -1,10 +1,8 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using TournamentManager.Server.App.Data;
-using TournamentManager.Server.App.Models;
 using TournamentManager.Server.BL.Facades;
 using TournamentManager.Common.Models;
+using TournamentManager.Server.Auth.Models;
 
 namespace TournamentManager.Server.App.Controllers;
 

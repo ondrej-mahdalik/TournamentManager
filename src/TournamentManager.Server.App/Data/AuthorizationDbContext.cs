@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.ApiAuthorization.IdentityServer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
-using TournamentManager.Server.App.Models;
+using TournamentManager.Server.Auth.Models;
 
 namespace TournamentManager.Server.App.Data
 {
