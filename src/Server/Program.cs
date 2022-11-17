@@ -4,10 +4,10 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
-using TournamentManager.Server.Data;
-using TournamentManager.Server.Models;
-using TournamentManager.Server.MainSeeds;
-using TournamentManager.Server.Services;
+using TournamentManager.Server.App.Data;
+using TournamentManager.Server.App.Models;
+using TournamentManager.Server.App.MainSeeds;
+using TournamentManager.Server.App.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 

@@ -2,11 +2,12 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using TournamentManager.Server.Data;
-using TournamentManager.Server.Models;
+using TournamentManager.Server.App.Data;
+using TournamentManager.Server.App.Models;
 using TournamentManager.Shared.Models;
+using TournamentManager.Shared.Structs;
 
-namespace TournamentManager.Server.Controllers;
+namespace TournamentManager.Server.App.Controllers;
 
 [Authorize]
 [ApiController]
@@ -38,6 +39,13 @@ public class UserController : AuthorizedControllerBase
             return NotFound();
 
         return Ok(user);
+    }
+    
+    [HttpGet("{id:guid}/userinfo")]
+    public async Task<ActionResult<UserInfo>> GetUserInfoById(Guid id)
+    {
+        var userInfo = new UserInfo(String.Empty, String.Empty, String.Empty, String.Empty, String.Empty);
+        return Ok(userInfo);
     }
 
     [HttpPut]

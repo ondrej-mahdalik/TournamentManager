@@ -1,11 +1,11 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using TournamentManager.Server.Data;
-using TournamentManager.Server.Models;
+using TournamentManager.Server.App.Data;
+using TournamentManager.Server.App.Models;
 using TournamentManager.Shared.Models;
 
-namespace TournamentManager.Server.Controllers;
+namespace TournamentManager.Server.App.Controllers;
 
 public class AuthorizedControllerBase : ControllerBase
 {

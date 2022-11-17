@@ -3,10 +3,10 @@ using Duende.IdentityServer.AspNetIdentity;
 using Duende.IdentityServer.Models;
 using IdentityModel;
 using Microsoft.AspNetCore.Identity;
-using TournamentManager.Server.Models;
+using TournamentManager.Server.App.Models;
 using TournamentManager.Shared.Enums;
 
-namespace TournamentManager.Server.Services;
+namespace TournamentManager.Server.App.Services;
 
 public class ApplicationProfileService : ProfileService<ApplicationUser>
 {

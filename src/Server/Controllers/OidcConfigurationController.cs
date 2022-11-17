@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.ApiAuthorization.IdentityServer;
 using Microsoft.AspNetCore.Mvc;
 
-namespace TournamentManager.Server.Controllers
+namespace TournamentManager.Server.App.Controllers
 {
     public class OidcConfigurationController : Controller
     {

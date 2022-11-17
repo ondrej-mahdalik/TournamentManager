@@ -12,9 +12,9 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
-using TournamentManager.Server.Models;
+using TournamentManager.Server.App.Models;
 
-namespace TournamentManager.Server.Areas.Identity.Pages.Account.Manage
+namespace TournamentManager.Server.App.Areas.Identity.Pages.Account.Manage
 {
     public class EmailModel : PageModel
     {

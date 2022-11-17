@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore.Migrations;
 using System;
 
-namespace TournamentManager.Server.Data.Migrations
+namespace TournamentManager.Server.App.Data.Migrations
 {
     public partial class CreateIdentitySchema : Migration
     {

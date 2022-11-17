@@ -18,11 +18,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
-using TournamentManager.Server.Data;
-using TournamentManager.Server.Models;
+using TournamentManager.Server.App.Data;
+using TournamentManager.Server.App.Models;
 using TournamentManager.Shared.Models;
 
-namespace TournamentManager.Server.Areas.Identity.Pages.Account
+namespace TournamentManager.Server.App.Areas.Identity.Pages.Account
 {
     public class RegisterModel : PageModel
     {
@@ -119,7 +119,7 @@ namespace TournamentManager.Server.Areas.Identity.Pages.Account
             if (ModelState.IsValid)
             {
                 var authUser = CreateUser();
-                var mainUser = new UserModel();
+                var mainUser = new UserModel(Input.Email);
                 await _dbContext.Users.AddAsync(mainUser);
                 await _dbContext.SaveChangesAsync();
                 authUser.MainUserId = mainUser.Id;

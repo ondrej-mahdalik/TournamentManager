@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace TournamentManager.Server.Data.Migrations
+namespace TournamentManager.Server.App.Data.Migrations
 {
     /// <inheritdoc />
     public partial class AddedMainUserId : Migration

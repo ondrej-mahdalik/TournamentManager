@@ -5,9 +5,9 @@ using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using System;
-using TournamentManager.Server.Data;
+using TournamentManager.Server.App.Data;
 
-namespace TournamentManager.Server.Data.Migrations
+namespace TournamentManager.Server.App.Data.Migrations
 {
     [DbContext(typeof(AuthorizationDbContext))]
     [Migration("00000000000000_CreateIdentitySchema")]
@@ -21,7 +21,7 @@ namespace TournamentManager.Server.Data.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("ProductVersion", "5.0.0-rc.1.20417.2");
 
-            modelBuilder.Entity("TournamentManager.Server.Models.ApplicationUser", b =>
+            modelBuilder.Entity("TournamentManager.Server.App.Models.ApplicationUser", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
@@ -376,7 +376,7 @@ namespace TournamentManager.Server.Data.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
-                    b.HasOne("TournamentManager.Server.Models.ApplicationUser", null)
+                    b.HasOne("TournamentManager.Server.App.Models.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -385,7 +385,7 @@ namespace TournamentManager.Server.Data.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
-                    b.HasOne("TournamentManager.Server.Models.ApplicationUser", null)
+                    b.HasOne("TournamentManager.Server.App.Models.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -400,7 +400,7 @@ namespace TournamentManager.Server.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("TournamentManager.Server.Models.ApplicationUser", null)
+                    b.HasOne("TournamentManager.Server.App.Models.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -409,7 +409,7 @@ namespace TournamentManager.Server.Data.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
-                    b.HasOne("TournamentManager.Server.Models.ApplicationUser", null)
+                    b.HasOne("TournamentManager.Server.App.Models.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)

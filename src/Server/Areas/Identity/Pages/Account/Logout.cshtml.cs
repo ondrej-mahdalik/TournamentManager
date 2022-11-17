@@ -9,9 +9,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
-using TournamentManager.Server.Models;
+using TournamentManager.Server.App.Models;
 
-namespace TournamentManager.Server.Areas.Identity.Pages.Account
+namespace TournamentManager.Server.App.Areas.Identity.Pages.Account
 {
     public class LogoutModel : PageModel
     {

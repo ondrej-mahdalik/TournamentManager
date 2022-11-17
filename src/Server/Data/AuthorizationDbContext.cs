@@ -2,9 +2,9 @@
 using Microsoft.AspNetCore.ApiAuthorization.IdentityServer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
-using TournamentManager.Server.Models;
+using TournamentManager.Server.App.Models;
 
-namespace TournamentManager.Server.Data
+namespace TournamentManager.Server.App.Data
 {
     public class AuthorizationDbContext : ApiAuthorizationDbContext<ApplicationUser>
     {

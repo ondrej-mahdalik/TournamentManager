@@ -1,10 +1,10 @@
 ﻿using System.Security.Claims;
 using Duende.IdentityServer.Test;
 using IdentityModel;
-using TournamentManager.Server.MainSeeds;
+using TournamentManager.Server.App.MainSeeds;
 using TournamentManager.Shared.Enums;
 
-namespace TournamentManager.Server.AuthSeeds;
+namespace TournamentManager.Server.App.AuthSeeds;
 
 public class ApplicationUserSeeds
 {

@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using TournamentManager.Shared.Models;
 
-namespace TournamentManager.Server.Data;
+namespace TournamentManager.Server.App.Data;
 
 public class TournamentManagerDbContext : DbContext
 {
@@ -48,11 +48,11 @@ public class TournamentManagerDbContext : DbContext
         {
             entity.HasMany(i => i.Matches)
                 .WithOne(i => i.Tournament)
-                .OnDelete(DeleteBehavior.ClientCascade); // TODO
+                .OnDelete(DeleteBehavior.ClientCascade); // TODO Handle in facade
 
             entity.HasMany(i => i.Participatings)
                 .WithOne(i => i.Tournament)
-                .OnDelete(DeleteBehavior.ClientCascade); // TODO
+                .OnDelete(DeleteBehavior.ClientCascade); // TODO Handle in facade
         });
 
         modelBuilder.Entity<UserModel>(entity =>
@@ -67,7 +67,7 @@ public class TournamentManagerDbContext : DbContext
 
             entity.HasMany(i => i.TeamsAsMember)
                 .WithOne(i => i.User)
-                .OnDelete(DeleteBehavior.ClientCascade); // TODO
+                .OnDelete(DeleteBehavior.ClientCascade); // TODO Handle in facade
         });
     }
 }
