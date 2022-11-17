@@ -10,6 +10,9 @@ public class UserMapperProfile : Profile
     {
         CreateMap<DAL.Entities.UserEntity, UserModel>()
             .MaxDepth(3)
+            .ForMember(x => x.FirstName, action => action.Ignore())
+            .ForMember(x => x.LastName, action => action.Ignore())
+            .ForMember(x => x.Email, action => action.Ignore())
             .ReverseMap()
             .ForMember(x => x.Tournaments, action => action.Ignore())
             .ForMember(x => x.TeamsAsLeader, action => action.Ignore())

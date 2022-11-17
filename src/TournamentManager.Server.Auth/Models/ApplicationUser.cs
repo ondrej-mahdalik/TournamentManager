@@ -4,6 +4,8 @@ namespace TournamentManager.Server.Auth.Models
 {
     public class ApplicationUser : IdentityUser
     {
-        public Guid MainUserId { get; set; }
+        public string? FirstName { get; set; }
+        public string? LastName { get; set; }
+        public string? ProfilePictureUrl { get; set; }
     }
 }

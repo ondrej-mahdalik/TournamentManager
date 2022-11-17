@@ -3,50 +3,50 @@ using IdentityModel;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using TournamentManager.Server.Auth.Models;
-using TournamentManager.Server.Seeds.MainSeeds;
 
 namespace TournamentManager.Server.Auth.Seeds;
 
 public static class ApplicationUserSeeds
 {
+    public static readonly ApplicationUser Admin = new()
+    {
+        Id = Guid.Parse("3C1D10EE-22D9-4BC9-BAA0-A2B13887206C").ToString(),
+        UserName = "admin@localhost.com",
+        Email = "admin@localhost.com",
+        EmailConfirmed = true,
+        PhoneNumber = "1234567890",
+        PhoneNumberConfirmed = true,
+        SecurityStamp = Guid.NewGuid().ToString("D")
+    };
+
+    public static readonly ApplicationUser User1 = new()
+    {
+        Id = Guid.Parse("A0941FA5-DEFF-45C3-ADE7-96475B77FC47").ToString(),
+        UserName = "john.doe@gmail.com",
+        Email = "john.doe@gmail.com",
+        EmailConfirmed = true,
+        SecurityStamp = Guid.NewGuid().ToString("D")
+    };
+    
     public static async Task SeedAsync(IServiceProvider serviceProvider)
     {
         var userManager = serviceProvider.GetRequiredService<UserManager<ApplicationUser>>();
         
-        var admin = new ApplicationUser
-        {
-            UserName = "admin@localhost.com",
-            Email = "admin@localhost.com",
-            EmailConfirmed = true,
-            PhoneNumber = "1234567890",
-            PhoneNumberConfirmed = true,
-            MainUserId = UserSeeds.Admin.Id,
-            SecurityStamp = Guid.NewGuid().ToString("D")
-        };
-        var user1 = new ApplicationUser
-        {
-            UserName = "john.doe@gmail.com",
-            Email = "john.doe@gmail.com",
-            EmailConfirmed = true,
-            MainUserId = UserSeeds.JohnDoe.Id,
-            SecurityStamp = Guid.NewGuid().ToString("D")
-        };
-
-        await userManager.CreateAsync(admin, "Pass123$");
-        await userManager.CreateAsync(user1, "Pass123$");
+        await userManager.CreateAsync(Admin, "Pass123$");
+        await userManager.CreateAsync(User1, "Pass123$");
         
-        await userManager.AddClaimsAsync(admin, new List<Claim>
+        await userManager.AddClaimsAsync(Admin, new List<Claim>
         {
-            new Claim(JwtClaimTypes.Name, "Admin"),
-            new Claim(JwtClaimTypes.GivenName, "Admin"),
-            new Claim(JwtClaimTypes.FamilyName, "Admin")
+            new(JwtClaimTypes.Name, "Admin"),
+            new(JwtClaimTypes.GivenName, "Admin"),
+            new(JwtClaimTypes.FamilyName, "Admin")
         });
 
-        await userManager.AddClaimsAsync(user1, new List<Claim>
+        await userManager.AddClaimsAsync(User1, new List<Claim>
         {
-            new Claim(JwtClaimTypes.Name, "John Doe"),
-            new Claim(JwtClaimTypes.GivenName, "John"),
-            new Claim(JwtClaimTypes.FamilyName, "Doe")
+            new(JwtClaimTypes.Name, "John Doe"),
+            new(JwtClaimTypes.GivenName, "John"),
+            new(JwtClaimTypes.FamilyName, "Doe")
         });
     }
 }

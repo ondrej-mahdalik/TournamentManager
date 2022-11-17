@@ -112,10 +112,7 @@ namespace TournamentManager.Server.App.Areas.Identity.Pages.Account
             if (ModelState.IsValid)
             {
                 var authUser = CreateUser();
-                var mainUser = new UserModel(Input.Email);
-                await _userFacade.SaveAsync(mainUser);
-                authUser.MainUserId = mainUser.Id;
-
+                
                 await _userStore.SetUserNameAsync(authUser, Input.Email, CancellationToken.None);
                 await _emailStore.SetEmailAsync(authUser, Input.Email, CancellationToken.None);
                 var result = await _userManager.CreateAsync(authUser, Input.Password);
@@ -126,6 +123,9 @@ namespace TournamentManager.Server.App.Areas.Identity.Pages.Account
                     _logger.LogInformation("User created a new account with password");
 
                     var userId = await _userManager.GetUserIdAsync(authUser);
+                    var mainUser = new UserModel(Input.Email);
+                    await _userFacade.CreateAsync(mainUser, userId);
+                    
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(authUser);
                     code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
                     var callbackUrl = Url.Page(
