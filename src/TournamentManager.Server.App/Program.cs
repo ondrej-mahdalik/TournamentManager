@@ -5,8 +5,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using TournamentManager.Server.App.Data;
-using TournamentManager.Server.App.Models;
 using TournamentManager.Server.App.Services;
+using TournamentManager.Server.Auth.Models;
+using TournamentManager.Server.Auth.Seeds;
 using TournamentManager.Server.BL.Installers;
 using TournamentManager.Server.DAL;
 using TournamentManager.Server.DAL.Extensions;
@@ -31,7 +32,7 @@ var app = builder.Build();
 UseDevelopmentSettings(app);
 UseRoutingAndSecurityFeatures(app);
 UseOpenApi(app);
-SetupDatabase(app);
+await SetupDatabase(app);
 
 app.Run();
 
@@ -158,27 +159,29 @@ void UseOpenApi(WebApplication application)
     // });
 }
 
-void SetupDatabase(WebApplication application)
+async Task SetupDatabase(WebApplication application)
 {
     var scope = application.Services.CreateScope();
     var authDbContext = scope.ServiceProvider.GetRequiredService<AuthorizationDbContext>();
     
     var dbContextFactory = scope.ServiceProvider.GetRequiredService<IDbContextFactory<TournamentManagerDbContext>>();
-    using var mainDbContext = dbContextFactory.CreateDbContext();
+    await using var mainDbContext = dbContextFactory.CreateDbContext();
     
 
     if (skipMigrationAndSeedDemoData)
     {
-        mainDbContext.Database.EnsureDeleted();
-        mainDbContext.Database.EnsureCreated();
-        authDbContext.Database.EnsureDeleted();
-        authDbContext.Database.EnsureCreated();
+        await mainDbContext.Database.EnsureDeletedAsync();
+        await mainDbContext.Database.EnsureCreatedAsync();
+        await authDbContext.Database.EnsureDeletedAsync();
+        await authDbContext.Database.EnsureCreatedAsync();
         
         UserSeeds.Seed(mainDbContext);
         TournamentSeeds.Seed(mainDbContext);
         SportSeeds.Seed(mainDbContext);
-        mainDbContext.SaveChanges();
+        await mainDbContext.SaveChangesAsync();
         // TODO Seed other models
+
+        await ApplicationUserSeeds.SeedAsync(scope.ServiceProvider);
     }
     else
     {

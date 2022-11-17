@@ -20,6 +20,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\TournamentManager.Client.App\TournamentManager.Client.App.csproj" />
+    <ProjectReference Include="..\TournamentManager.Server.Auth\TournamentManager.Server.Auth.csproj" />
     <ProjectReference Include="..\TournamentManager.Server.BL\TournamentManager.Server.BL.csproj" />
     <ProjectReference Include="..\TournamentManager.Server.DAL\TournamentManager.Server.DAL.csproj" />
     <ProjectReference Include="..\TournamentManager.Server.Seeds\TournamentManager.Server.Seeds.csproj" />

@@ -1,6 +1,7 @@
 ﻿namespace TournamentManager.Server.DAL.Entities;
 
 public record UserEntity(
+    string? ApplicationUserId = null,
     bool IsAdministrator = false) : EntityBase
 {
     public IList<TournamentEntity> Tournaments { get; set; } = new List<TournamentEntity>();
