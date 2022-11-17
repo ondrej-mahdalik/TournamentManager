@@ -8,7 +8,7 @@ public class UserMapperProfile : Profile
 {
     protected UserMapperProfile()
     {
-        CreateMap<UserEntity, UserModel>()
+        CreateMap<DAL.Entities.UserEntity, UserModel>()
             .MaxDepth(3)
             .ReverseMap()
             .ForMember(x => x.Tournaments, action => action.Ignore())

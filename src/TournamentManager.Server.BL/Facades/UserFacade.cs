@@ -5,7 +5,7 @@ using TournamentManager.Shared.Models;
 
 namespace TournamentManager.Server.BL.Facades;
 
-public class UserFacade : CRUDFacade<UserEntity, UserModel>
+public class UserFacade : CRUDFacade<DAL.Entities.UserEntity, UserModel>
 {
     public UserFacade(IMapper mapper, IUnitOfWorkFactory unitOfWorkFactory) : base(mapper, unitOfWorkFactory)
     {

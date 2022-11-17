@@ -1,11 +1,15 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using TournamentManager.Server.DAL.Entities;
 
 namespace TournamentManager.Server.DAL;
 
 public class TournamentManagerDbContext : DbContext
 {
-    public TournamentManagerDbContext(DbContextOptions<TournamentManagerDbContext> dbContextOptions) : base(dbContextOptions) { }
+    public TournamentManagerDbContext(DbContextOptions<TournamentManagerDbContext> dbContextOptions)
+        : base(dbContextOptions)
+    {
+    }
 
     public DbSet<MatchEntity> Matches => Set<MatchEntity>();
     public DbSet<SportEntity> Sports => Set<SportEntity>();
