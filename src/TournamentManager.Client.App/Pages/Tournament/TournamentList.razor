@@ -55,38 +55,15 @@
                                 <tbody>
                                 @foreach (var tournament in _tournaments)
                                 {
-                                    <tr>
-                                        <td>Sport</td>
-                                        <td>@tournament.Name</td>
-                                        <td>@tournament.Date.ToString("dd. mm. yyyy")</td>
-                                        <td>@(tournament.IsPublic ? "Public" : "Private")</td>
-                                        <td>20 / @tournament.MaxPlayers</td>
-                                    </tr>
+                                    
+                                        <tr>
+                                            <td>@tournament.Sport.Name</td>
+                                            <a href="/Tournament/Detail/@tournament.Id"><td>@tournament.Name</td></a>
+                                            <td>@tournament.Date.ToString("dd. MM. yyyy")</td>
+                                            <td>@(tournament.IsPublic ? "Public" : "Private")</td>
+                                            <td>20 / @tournament.MaxPlayers</td>
+                                        </tr>
                                 }
-                                @* <tr> *@
-                                @*     <td>Football</td> *@
-                                @*     <td>@tournaments[0].Name</td> *@
-                                @*     <td>25.5.2000</td> *@
-                                @*     <td>Public</td> *@
-                                @*     <td>22/22</td> *@
-                                @*     <td><img class="rounded-circle me-2" width="30" height="30" src="../assets/img/avatars/avatar1.jpeg">Team1</td> *@
-                                @* </tr> *@
-                                @* <tr> *@
-                                @*     <td>Basketball</td> *@
-                                @*     <td>Tournament2<br></td> *@
-                                @*     <td>25.5.2002<br></td> *@
-                                @*     <td>Private</td> *@
-                                @*     <td>30/30<br></td> *@
-                                @*     <td><img class="rounded-circle me-2" width="30" height="30" src="../assets/img/avatars/avatar1.jpeg">Team2</td> *@
-                                @* </tr> *@
-                                @* <tr> *@
-                                @*     <td>Golf</td> *@
-                                @*     <td>Tournament3<br></td> *@
-                                @*     <td>25.5.2004<br></td> *@
-                                @*     <td>Private</td> *@
-                                @*     <td>10/15<br></td> *@
-                                @*     <td></td> *@
-                                @* </tr> *@
                                 </tbody>
                             </table>
                         </div>

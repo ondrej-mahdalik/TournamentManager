@@ -3,6 +3,7 @@
 @using Microsoft.AspNetCore.Authorization
 @attribute [Authorize]
 @inject HttpClient Http
+@inject NavigationManager Navigation
 
 <PageTitle>Create Tournament</PageTitle>
 
@@ -22,8 +23,8 @@
                     <div class="col">
                         <form>
                             <div class="mb-2"><label class="form-label" for="name">Name</label><input id="name" name="name" class="form-control" type="text" @bind="_tournamentName"></div>
-                            <div class="mb-2"><label class="form-label" for="description" @bind="_tournamentDescription">Description</label><textarea id="description" name="description" class="form-control"></textarea></div>
-                            <div class="mb-2"><label class="form-label" for="date" @bind="_tournamentDate">Date of beginning</label><input id="date" name="date" class="form-control" type="date"></div>
+                            <div class="mb-2"><label class="form-label" for="description">Description</label><textarea @bind="_tournamentDescription" id="description" name="description" class="form-control"></textarea></div>
+                            <div class="mb-2"><label class="form-label" for="date">Date of beginning</label><input  @bind="_tournamentDate" id="date" name="date" class="form-control" type="date"></div>
                             <div class="mb-2"><label class="form-label" for="sport">Sport</label>
                                 <select id="sport" name="sport" class="form-select">
                                     <option value="12" selected>This is item 1</option>
@@ -37,9 +38,9 @@
                                     <option value="13">Teams</option>
                                 </select>
                                 </div>
-                            <div class="mb-2"><label class="form-label" for="max-players">Maximum number of players</label><input id="max-players" name="max-players" class="form-control" min="1" type="number" style="width: 30%;"></div>
+                            <div class="mb-2"><label class="form-label" for="max-players">Maximum number of players</label><input id="max-players" @bind="_maxNumberOfPlayers" name="max-players" class="form-control" min="1" type="number" style="width: 30%;"></div>
                             <div class="mb-2">
-                                <div class="form-check"><input class="form-check-input" type="checkbox" id="formCheck-1"><label class="form-check-label" for="formCheck-1">Public</label></div>
+                                <div class="form-check"><input class="form-check-input" @bind="@_isPublic" type="checkbox" id="formCheck-1"><label class="form-check-label" for="formCheck-1">Public</label></div>
                             </div>
                             <div class="d-xl-flex justify-content-xl-end"><button class="btn btn-pribmary text-end d-xl-flex" type="button" @onclick="Test">Create</button></div>
                         </form>
@@ -54,10 +55,20 @@
 {
     private string? _tournamentName;
     private string? _tournamentDescription;
-    private DateTime _tournamentDate;
+    private DateTime _tournamentDate = DateTime.Now;
     private int _maxNumberOfPlayers = 0;
-    private bool _isPublic = false;
+    private bool _isPublic = true;
 
+    private List<SportModel>? _sports;
+
+    // protected override async Task OnInitializedAsync()
+    // {
+    //     try
+    //     {
+    //         _sports = await Http.GetFromJsonAsync<List<SportModel>>("api")
+    //     }
+    // }
+    
     private async void Test()
     {
         var newTournament = new TournamentModel(
@@ -66,12 +77,13 @@
             _isPublic,
             false,
             _maxNumberOfPlayers,
-            Guid.NewGuid(),
             (await Http.GetFromJsonAsync<UserModel>("api/User/current"))?.Id ?? throw new NotImplementedException(),
+            Guid.Parse("3F20807D-34FC-49E5-BAE0-AF64D984D7CF"), 
             _tournamentDescription
             ); // TODO Handle nulls
 
         await Http.PutAsJsonAsync("api/Tournament", newTournament);
+        Navigation.NavigateTo("/Tournament/List");
     }
 
 }
