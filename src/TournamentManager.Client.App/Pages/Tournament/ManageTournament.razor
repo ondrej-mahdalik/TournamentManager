@@ -1,0 +1,309 @@
+﻿@page "/Tournament/Manage"
+@using TournamentManager.Common.Models
+
+<PageTitle>Manage Tournament</PageTitle>
+
+<div id="wrapper">
+<div class="d-flex flex-column" id="content-wrapper">
+<div id="content">
+<div class="container-fluid">
+<div class="row mb-3">
+    <div class="col d-xl-flex d-flex align-items-center">
+        <h3 class="text-dark d-xl-flex">Tournament 1</h3>
+    </div>
+    <div class="col col-auto"><a href="/Tournament/List"><button class="btn btn-light" type="button">Back to All Tournaments</button></a></div>
+    <div class="col col-auto d-flex align-items-center"><a href="#"><button class="btn btn-danger" type="button">Delete Tournament</button></a></div>
+</div>
+<div class="row">
+    <div class="col">
+        <div class="card shadow mb-4">
+            <div class="card-header">
+                <h6 class="text-primary mb-0">Pending sign-ups</h6>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6 text-nowrap">
+                        <div id="dataTable_length" class="dataTables_length" aria-controls="dataTable"><label class="form-label">Show&nbsp;<select class="d-inline-block form-select form-select-sm">
+                            <option value="10" selected="">10</option>
+                            <option value="25">25</option>
+                            <option value="50">50</option>
+                            <option value="100">100</option>
+                        </select>&nbsp;</label></div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="text-md-end dataTables_filter" id="dataTable_filter"><label class="form-label"><input type="search" class="form-control form-control-sm" aria-controls="dataTable" placeholder="Search"></label></div>
+                    </div>
+                </div>
+                <div class="table-responsive table mt-2" id="dataTable-1" role="grid" aria-describedby="dataTable_info">
+                    <table class="table my-0" id="dataTable">
+                        <thead>
+                        <tr>
+                            <th>Team Name</th>
+                            <th>Team Leader</th>
+                            <th>Date Registered</th>
+                            <th>Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td>John's Team</td>
+                            <td>John Doe</td>
+                            <td>25.5.2019</td>
+                            <td class="text-center"><i class="fas fa-user-check me-1" data-bs-toggle="tooltip" data-bss-tooltip="" data-bs-placement="right" title="Approve participant"></i><i class="fas fa-user-times" data-bs-toggle="tooltip" data-bss-tooltip="" data-bs-placement="right" title="Reject participant"></i></td>
+                        </tr>
+                        <tr>
+                            <td>Hot Shots</td>
+                            <td>Bob<br></td>
+                            <td>25.5.2002<br></td>
+                            <td class="text-center"><i class="fas fa-user-check me-1" data-bs-toggle="tooltip" data-bss-tooltip="" data-bs-placement="right" title="Approve participant"></i><i class="fas fa-user-times" data-bs-toggle="tooltip" data-bss-tooltip="" data-bs-placement="right" title="Reject participant"></i></td>
+                        </tr>
+                        <tr>
+                            <td>Trained Monkeys</td>
+                            <td>Alice<br></td>
+                            <td>25.5.2004<br></td>
+                            <td class="text-center"><i class="fas fa-user-check me-1" data-bs-toggle="tooltip" data-bss-tooltip="" data-bs-placement="right" title="Approve participant"></i><i class="fas fa-user-times" data-bs-toggle="tooltip" data-bss-tooltip="" data-bs-placement="right" title="Reject participant"></i></td>
+                        </tr>
+                        </tbody>
+                        <tfoot>
+                        <tr></tr>
+                        </tfoot>
+                    </table>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 align-self-center">
+                        <p id="dataTable_info" class="dataTables_info" role="status" aria-live="polite">Showing 1 to 10 of 27</p>
+                    </div>
+                    <div class="col-md-6">
+                        <nav class="d-lg-flex justify-content-lg-end dataTables_paginate paging_simple_numbers">
+                            <ul class="pagination">
+                                <li class="page-item disabled"><a class="page-link" aria-label="Previous" href="#"><span aria-hidden="true">«</span></a></li>
+                                <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                                <li class="page-item"><a class="page-link" href="#">2</a></li>
+                                <li class="page-item"><a class="page-link" href="#">3</a></li>
+                                <li class="page-item"><a class="page-link" aria-label="Next" href="#"><span aria-hidden="true">»</span></a></li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col">
+        <div class="card shadow">
+            <div class="card-header">
+                <h6 class="text-primary mb-0">Pariticipants</h6>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6 text-nowrap">
+                        <div id="dataTable_length-3" class="dataTables_length" aria-controls="dataTable"><label class="form-label">Show&nbsp;<select class="d-inline-block form-select form-select-sm">
+                            <option value="10" selected="">10</option>
+                            <option value="25">25</option>
+                            <option value="50">50</option>
+                            <option value="100">100</option>
+                        </select>&nbsp;</label></div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="text-md-end dataTables_filter" id="dataTable_filter-3"><label class="form-label"><input type="search" class="form-control form-control-sm" aria-controls="dataTable" placeholder="Search"></label></div>
+                    </div>
+                </div>
+                <div class="table-responsive table mt-2" id="dataTable-4" role="grid" aria-describedby="dataTable_info">
+                    <table class="table my-0" id="dataTable">
+                        <thead>
+                        <tr>
+                            <th>Team Name</th>
+                            <th>Team Leader</th>
+                            <th>Date Registered</th>
+                            <th>Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td>Football</td>
+                            <td>Tournament1</td>
+                            <td>25.5.2000</td>
+                            <td class="text-center"><i class="fas fa-user-times" data-bs-toggle="tooltip" data-bss-tooltip="" data-bs-placement="right" title="Remove participant"></i></td>
+                        </tr>
+                        <tr>
+                            <td>Basketball</td>
+                            <td>Tournament2<br></td>
+                            <td>25.5.2002<br></td>
+                            <td class="text-center"><i class="fas fa-user-times" data-bs-toggle="tooltip" data-bss-tooltip="" data-bs-placement="right" title="Remove participant"></i></td>
+                        </tr>
+                        <tr>
+                            <td>Golf</td>
+                            <td>Tournament3<br></td>
+                            <td>25.5.2004<br></td>
+                            <td class="text-center"><i class="fas fa-user-times" data-bs-toggle="tooltip" data-bss-tooltip="" data-bs-placement="right" title="Remove participant"></i></td>
+                        </tr>
+                        </tbody>
+                        <tfoot>
+                        <tr></tr>
+                        </tfoot>
+                    </table>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 align-self-center">
+                        <p id="dataTable_info-3" class="dataTables_info" role="status" aria-live="polite">Showing 1 to 10 of 27</p>
+                    </div>
+                    <div class="col-md-6">
+                        <nav class="d-lg-flex justify-content-lg-end dataTables_paginate paging_simple_numbers">
+                            <ul class="pagination">
+                                <li class="page-item disabled"><a class="page-link" aria-label="Previous" href="#"><span aria-hidden="true">«</span></a></li>
+                                <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                                <li class="page-item"><a class="page-link" href="#">2</a></li>
+                                <li class="page-item"><a class="page-link" href="#">3</a></li>
+                                <li class="page-item"><a class="page-link" aria-label="Next" href="#"><span aria-hidden="true">»</span></a></li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col">
+        <h4 class="text-center text-primary"><span style="color: rgba(var(--bs-primary-rgb), var(--bs-text-opacity)) ;">Tournament Matches</span><br></h4>
+    </div>
+</div>
+<div class="row">
+    <div class="col">
+        <div class="card mb-4 shadow">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col">
+                        <h6 class="text-primary">Round 1</h6>
+                    </div>
+                    <div class="col">
+                        <p>25. 5. 2020<br></p>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <p><img class="img-fluid" width="60" height="60" src="../assets/img/avatars/avatar3.jpeg">Team1</p>
+                    </div>
+                    <div class="col align-self-center">
+                        <p class="lead text-center">0</p>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <p><img class="img-fluid" width="60" height="60" src="../assets/img/avatars/avatar3.jpeg">Team2</p>
+                    </div>
+                    <div class="col align-self-center">
+                        <p class="lead text-center">3</p>
+                    </div>
+                </div>
+                <div class="row justify-content-end">
+                    <div class="col col-auto"><button class="btn btn-primary" type="button">Manage</button></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col">
+        <div class="card mb-4 shadow">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col">
+                        <h6 class="text-primary">Round 1</h6>
+                    </div>
+                    <div class="col">
+                        <p>25. 5. 2020</p>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <p><img class="img-fluid" width="60" height="60" src="../assets/img/avatars/avatar3.jpeg">Team1</p>
+                    </div>
+                    <div class="col align-self-center">
+                        <p class="lead text-center">0</p>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <p><img class="img-fluid" width="60" height="60" src="../assets/img/avatars/avatar3.jpeg">Team2</p>
+                    </div>
+                    <div class="col align-self-center">
+                        <p class="lead text-center">3</p>
+                    </div>
+                </div>
+                <div class="row justify-content-end">
+                    <div class="col col-auto"><button class="btn btn-primary" type="button">Manage</button></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col">
+        <div class="card mb-4 shadow">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col">
+                        <h6 class="text-primary">Round 1</h6>
+                    </div>
+                    <div class="col">
+                        <p>25. 5. 2020<br></p>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <p><img class="img-fluid" width="60" height="60" src="../assets/img/avatars/avatar3.jpeg">Team1</p>
+                    </div>
+                    <div class="col align-self-center">
+                        <p class="lead text-center">0</p>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <p><img class="img-fluid" width="60" height="60" src="../assets/img/avatars/avatar3.jpeg">Team2</p>
+                    </div>
+                    <div class="col align-self-center">
+                        <p class="lead text-center">3</p>
+                    </div>
+                </div>
+                <div class="row justify-content-end">
+                    <div class="col col-auto"><button class="btn btn-primary" type="button">Manage</button></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col">
+        <div class="card mb-4 shadow">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col">
+                        <h6 class="text-primary">Round 1</h6>
+                    </div>
+                    <div class="col">
+                        <p>25. 5. 2020<br></p>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <p><img class="img-fluid" width="60" height="60" src="../assets/img/avatars/avatar3.jpeg">Team1</p>
+                    </div>
+                    <div class="col align-self-center">
+                        <p class="lead text-center">0</p>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <p><img class="img-fluid" width="60" height="60" src="../assets/img/avatars/avatar3.jpeg">Team2</p>
+                    </div>
+                    <div class="col align-self-center">
+                        <p class="lead text-center">3</p>
+                    </div>
+                </div>
+                <div class="row justify-content-end">
+                    <div class="col col-auto"><button class="btn btn-primary" type="button">Manage</button></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+</div>
+</div><a class="border rounded d-inline scroll-to-top" href="#page-top"><i class="fas fa-angle-up"></i></a>
+</div>
