@@ -32,7 +32,6 @@ public record TournamentModel(string Name,
     [Display(Name = "Maximum number of attendees")]
     public int MaxAttendees { get; set; } = MaxAttendees;
     
-    [Required]
     [Display(Name = "Description")]
     public string? Description { get; set; } = Description;
 
