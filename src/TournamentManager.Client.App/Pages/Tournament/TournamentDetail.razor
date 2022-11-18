@@ -1,5 +1,10 @@
-﻿@page "/Tournament/Detail"
+﻿@page "/Tournament/Detail/{Id}"
 @using TournamentManager.Common.Models
+@using System.Net
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize]
+@inject HttpClient Http
 
 <PageTitle>Tournament Detail</PageTitle>
 
@@ -9,35 +14,46 @@
 <div class="container-fluid">
 <div class="row mb-3">
     <div class="col text-center d-xl-flex d-flex align-items-center">
-        <h3 class="text-dark d-xl-flex">Tournament 1</h3>
+        <h3 class="text-dark d-xl-flex">@_tournament?.Name</h3>
     </div>
     <div class="col col-auto"><a href="/Tournament/list"><button class="btn btn-light" type="button">Back to All Tournaments</button></a></div>
     <div class="col col-auto"><a href="#"><button class="btn btn-primary" type="button">Participate</button></a></div>
+    @if (_loggedUser is not null && _loggedUser.Id == _tournament?.CreatorId)
+    {
+        <div class="col col-auto"><a href="/Tournament/Manage/@_tournament.Id"><button class="btn btn-primary" type="button">Manage Tournament</button></a></div>
+    }
 </div>
 <div class="row mb-4">
     <div class="col">
         <div class="card shadow">
             <div class="card-body">
-                <div class="row mb-3">
-                    <div class="col">
-                        <div>
-                            <h6 class="text-primary">Date</h6><span>7. 8. 2020</span>
+                @if (_tournament is null)
+                {
+                    <p><em>Loading...</em></p>
+                }
+                else
+                {
+                    <div class="row mb-3">
+                        <div class="col">
+                            <div>
+                                <h6 class="text-primary">Date</h6><span>@_tournament.Date.ToString("dd. MM. yyyy")</span>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div>
+                                <h6 class="text-primary">Players participating</h6><span>18/@_tournament.MaxPlayers</span>
+                            </div>
                         </div>
                     </div>
-                    <div class="col">
-                        <div>
-                            <h6 class="text-primary">Players participating</h6><span>18/30</span>
+                    <div class="row">
+                        <div class="col">
+                            <div>
+                                <h6 class="text-primary">Description</h6>
+                                <p>@_tournament.Description<br></p>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="row">
-                    <div class="col">
-                        <div>
-                            <h6 class="text-primary">Description</h6>
-                            <p>The best tournament ever created. Feel free to participate<br></p>
-                        </div>
-                    </div>
-                </div>
+                }
             </div>
         </div>
     </div>
@@ -235,3 +251,24 @@
 </div>
 </div><a class="border rounded d-inline scroll-to-top" href="#page-top"><i class="fas fa-angle-up"></i></a>
 </div>
+
+@code {
+    [Parameter]
+    public string? Id { get; set; }
+
+    private TournamentModel? _tournament;
+    private UserModel? _loggedUser;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            _tournament = await Http.GetFromJsonAsync<TournamentModel>($"/api/Tournament/{Id}");
+            _loggedUser = await Http.GetFromJsonAsync<UserModel>("/api/User/current");
+        }
+        catch (AccessTokenNotAvailableException exception)
+        {
+            exception.Redirect();
+        }
+    }
+}

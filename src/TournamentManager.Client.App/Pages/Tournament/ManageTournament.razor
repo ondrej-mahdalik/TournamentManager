@@ -1,5 +1,11 @@
-﻿@page "/Tournament/Manage"
+﻿@page "/Tournament/Manage/{Id}"
 @using TournamentManager.Common.Models
+@using System.Net
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize]
+@inject HttpClient Http
+@inject NavigationManager Navigation
 
 <PageTitle>Manage Tournament</PageTitle>
 
@@ -9,10 +15,13 @@
 <div class="container-fluid">
 <div class="row mb-3">
     <div class="col d-xl-flex d-flex align-items-center">
-        <h3 class="text-dark d-xl-flex">Tournament 1</h3>
+        <h3 class="text-dark d-xl-flex">@_tournament?.Name</h3>
     </div>
     <div class="col col-auto"><a href="/Tournament/List"><button class="btn btn-light" type="button">Back to All Tournaments</button></a></div>
-    <div class="col col-auto d-flex align-items-center"><a href="#"><button class="btn btn-danger" type="button">Delete Tournament</button></a></div>
+    @if (_loggedUser is not null && _loggedUser.Id == _tournament?.CreatorId)
+    {
+        <div class="col col-auto d-flex align-items-center"><button class="btn btn-danger" @onclick="DeleteTournament" type="button">Delete Tournament</button></div>
+    }
 </div>
 <div class="row">
     <div class="col">
@@ -307,3 +316,44 @@
 </div>
 </div><a class="border rounded d-inline scroll-to-top" href="#page-top"><i class="fas fa-angle-up"></i></a>
 </div>
+
+@code {
+
+    [Parameter]
+    public string? Id { get; set; }
+
+    private TournamentModel? _tournament;
+    private UserModel? _loggedUser;
+    
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            _tournament = await Http.GetFromJsonAsync<TournamentModel>($"/api/Tournament/{Id}");
+            _loggedUser = await Http.GetFromJsonAsync<UserModel>("/api/User/current");
+        }
+        catch (AccessTokenNotAvailableException exception)
+        {
+            exception.Redirect();
+        }
+    }
+
+    private async Task DeleteTournament()
+    {
+        try
+        {
+            if (_tournament is not null)
+            {
+                await Http.DeleteAsync($"/api/Tournament/{_tournament.Id}");
+                Navigation.NavigateTo("/Tournament/List");
+            }
+        }
+        catch (AccessTokenNotAvailableException exception)
+        {
+            exception.Redirect();
+        }
+    }
+    
+    
+
+}
