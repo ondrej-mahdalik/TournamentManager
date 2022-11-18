@@ -42,7 +42,7 @@
                             <div class="mb-2">
                                 <div class="form-check"><input class="form-check-input" @bind="@_isPublic" type="checkbox" id="formCheck-1"><label class="form-check-label" for="formCheck-1">Public</label></div>
                             </div>
-                            <div class="d-xl-flex justify-content-xl-end"><button class="btn btn-pribmary text-end d-xl-flex" type="button" @onclick="Test">Create</button></div>
+                            <div class="d-xl-flex justify-content-xl-end"><button class="btn btn-pribmary text-end d-xl-flex" type="button" @onclick="CreateNewTournament">Create</button></div>
                         </form>
                     </div>
                 </div>
@@ -69,7 +69,7 @@
     //     }
     // }
     
-    private async void Test()
+    private async void CreateNewTournament()
     {
         var newTournament = new TournamentModel(
             _tournamentName ?? throw new NotImplementedException(),
