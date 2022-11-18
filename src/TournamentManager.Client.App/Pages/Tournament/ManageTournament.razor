@@ -1,5 +1,10 @@
-﻿@page "/Tournament/Manage"
+﻿@page "/Tournament/Manage/{Id}"
 @using TournamentManager.Common.Models
+@using System.Net
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize]
+@inject HttpClient Http
 
 <PageTitle>Manage Tournament</PageTitle>
 
@@ -9,7 +14,7 @@
 <div class="container-fluid">
 <div class="row mb-3">
     <div class="col d-xl-flex d-flex align-items-center">
-        <h3 class="text-dark d-xl-flex">Tournament 1</h3>
+        <h3 class="text-dark d-xl-flex">@_tournament.Name</h3>
     </div>
     <div class="col col-auto"><a href="/Tournament/List"><button class="btn btn-light" type="button">Back to All Tournaments</button></a></div>
     <div class="col col-auto d-flex align-items-center"><a href="#"><button class="btn btn-danger" type="button">Delete Tournament</button></a></div>
@@ -307,3 +312,24 @@
 </div>
 </div><a class="border rounded d-inline scroll-to-top" href="#page-top"><i class="fas fa-angle-up"></i></a>
 </div>
+
+@code {
+
+    [Parameter]
+    public string Id { get; set; }
+
+    private TournamentModel? _tournament;
+    
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            _tournament = await Http.GetFromJsonAsync<TournamentModel>($"/api/Tournament/{Id}");
+        }
+        catch (AccessTokenNotAvailableException exception)
+        {
+            exception.Redirect();
+        }
+    }
+
+}

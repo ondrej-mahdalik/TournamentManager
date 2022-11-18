@@ -18,6 +18,10 @@
     </div>
     <div class="col col-auto"><a href="/Tournament/list"><button class="btn btn-light" type="button">Back to All Tournaments</button></a></div>
     <div class="col col-auto"><a href="#"><button class="btn btn-primary" type="button">Participate</button></a></div>
+    @if (_loggedUser is not null && _loggedUser.Id == _tournament.CreatorId)
+    {
+        <div class="col col-auto"><a href="/Tournament/Manage/@_tournament.Id"><button class="btn btn-primary" type="button">Manage Tournament</button></a></div>
+    }
 </div>
 <div class="row mb-4">
     <div class="col">
@@ -252,13 +256,15 @@
     [Parameter]
     public string Id { get; set; }
 
-    private TournamentModel? _tournament = null;
+    private TournamentModel? _tournament;
+    private UserModel? _loggedUser;
 
     protected override async Task OnInitializedAsync()
     {
         try
         {
             _tournament = await Http.GetFromJsonAsync<TournamentModel>($"/api/Tournament/{Id}");
+            _loggedUser = await Http.GetFromJsonAsync<UserModel>("/api/User/current");
         }
         catch (AccessTokenNotAvailableException exception)
         {
