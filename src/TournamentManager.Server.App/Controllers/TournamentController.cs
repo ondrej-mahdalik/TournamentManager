@@ -47,7 +47,7 @@ public class TournamentController : AuthorizedControllerBase
     [HttpPut]
     public async Task<ActionResult> InsertOrUpdate([FromBody] TournamentModel? tournament)
     {
-        if (tournament is null || tournament.MaxPlayers < 1)
+        if (tournament is null || tournament.MaxAttendees < 1)
             return BadRequest();
 
         return Ok(await _tournamentFacade.SaveAsync(tournament));
