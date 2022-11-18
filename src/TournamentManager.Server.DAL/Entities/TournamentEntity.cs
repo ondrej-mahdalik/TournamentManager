@@ -5,7 +5,7 @@ public record TournamentEntity(string Name,
     string? Description,
     bool IsPublic,
     bool IsApproved,
-    int MaxPlayers) : EntityBase
+    int MaxAttendees) : EntityBase
 {
     public Guid CreatorId { get; set; }
     public UserEntity? Creator { get; set; }

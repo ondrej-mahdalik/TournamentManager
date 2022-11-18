@@ -20,29 +20,32 @@
             <div class="card-body">
                 <div class="row">
                     <div class="col">
-                        <form>
-                            <div class="mb-2"><label class="form-label" for="name">Name</label><input id="name" name="name" class="form-control" type="text" @bind="_tournamentName"></div>
-                            <div class="mb-2"><label class="form-label" for="description" @bind="_tournamentDescription">Description</label><textarea id="description" name="description" class="form-control"></textarea></div>
-                            <div class="mb-2"><label class="form-label" for="date" @bind="_tournamentDate">Date of beginning</label><input id="date" name="date" class="form-control" type="date"></div>
+                        <EditForm Model="@_model" OnValidSubmit="@HandleValidSubmit">
+                            <DataAnnotationsValidator/>
+                            <ValidationSummary/>
+                            <div class="mb-2"><label class="form-label" for="name">Name</label><InputText id="name" name="name" class="form-control" type="text" @bind-Value="_model.Name"/></div>
+                            <div class="mb-2"><label class="form-label" for="description" >Description</label><InputTextArea id="description" name="description" @bind-Value="_model.Description" class="form-control"/></div>
+                            <div class="mb-2"><label class="form-label" for="date" >Date of beginning</label><InputDate TValue="DateTime" id="date" name="date" class="form-control" @bind-Value="_model.Date" Type="InputDateType.Date"></InputDate></div>
                             <div class="mb-2"><label class="form-label" for="sport">Sport</label>
-                                <select id="sport" name="sport" class="form-select">
-                                    <option value="12" selected>This is item 1</option>
-                                    <option value="13">This is item 2</option>
-                                    <option value="14">This is item 3</option>
-                                </select>
-                                </div>
+                                <InputSelect TValue="Guid?" id="sport" name="sport" class="form-select" @bind-Value="_model.SportId">
+                                    @foreach(var sport in _sports)
+                                    {
+                                        <option value="@sport.Id">@sport.Name</option>
+                                    }
+                                </InputSelect>
+                            </div>
                             <div class="mb-2"><label class="form-label" for="signup-type">Play mode</label>
                                 <select id="signup-type" name="signup-type" class="form-select">
                                     <option value="12" selected>Individual</option>
                                     <option value="13">Teams</option>
                                 </select>
-                                </div>
-                            <div class="mb-2"><label class="form-label" for="max-players">Maximum number of players</label><input id="max-players" name="max-players" class="form-control" min="1" type="number" style="width: 30%;"></div>
-                            <div class="mb-2">
-                                <div class="form-check"><input class="form-check-input" type="checkbox" id="formCheck-1"><label class="form-check-label" for="formCheck-1">Public</label></div>
                             </div>
-                            <div class="d-xl-flex justify-content-xl-end"><button class="btn btn-pribmary text-end d-xl-flex" type="button" @onclick="Test">Create</button></div>
-                        </form>
+                            <div class="mb-2"><label class="form-label" for="max-players">Maximum number of players</label><InputNumber TValue="int" id="max-players" name="max-players" @bind-Value="_model.MaxAttendees" class="form-control" min="1" type="number" style="width: 30%;"></InputNumber></div>
+                            <div class="mb-2">
+                                <div class="form-check"><InputCheckbox class="form-check-input" type="checkbox" id="formCheck-1" @bind-Value="_model.IsPublic"><label class="form-check-label" for="formCheck-1">Public</label></InputCheckbox></div>
+                            </div>
+                            <div class="d-xl-flex justify-content-xl-end"><button class="btn btn-pribmary text-end d-xl-flex" type="submit">Create</button></div>
+                        </EditForm>
                     </div>
                 </div>
             </div>
@@ -52,26 +55,17 @@
 
 @code
 {
-    private string? _tournamentName;
-    private string? _tournamentDescription;
-    private DateTime _tournamentDate;
-    private int _maxNumberOfPlayers = 0;
-    private bool _isPublic = false;
+    private List<SportModel> _sports = new List<SportModel>();
+    private TournamentModel _model = TournamentModel.Empty;
 
-    private async void Test()
+    private async Task HandleValidSubmit()
     {
-        var newTournament = new TournamentModel(
-            _tournamentName ?? throw new NotImplementedException(),
-            _tournamentDate,
-            _isPublic,
-            false,
-            _maxNumberOfPlayers,
-            Guid.NewGuid(),
-            (await Http.GetFromJsonAsync<UserModel>("api/User/current"))?.Id ?? throw new NotImplementedException(),
-            _tournamentDescription
-            ); // TODO Handle nulls
-
-        await Http.PutAsJsonAsync("api/Tournament", newTournament);
+        await Http.PutAsJsonAsync("api/tournament", _model);
     }
 
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        _sports = await Http.GetFromJsonAsync<List<SportModel>>("api/Sport") ?? new List<SportModel>();
+    }
 }
