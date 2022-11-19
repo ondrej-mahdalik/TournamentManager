@@ -27,7 +27,7 @@
     <div class="col">
         <div class="card shadow">
             <div class="card-body">
-                @if (_isLoading)
+                @if (_isLoading || _tournament is null)
                 {
                     <p class="text-center fw-bold">Loading...</p>
                 }
