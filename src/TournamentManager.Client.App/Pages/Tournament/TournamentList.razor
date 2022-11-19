@@ -70,7 +70,7 @@
                                 <a href="/Tournament/Detail/@tournament.Id"><td>@tournament.Name</td></a>
                                 <td>@tournament.Date.ToString("dd. MM. yyyy")</td>
                                 <td>@(tournament.IsPublic ? "Public" : "Private")</td>
-                                <td>20 / @tournament.MaxAttendees</td>
+                                <td>@tournament.Participatings.Count / @tournament.MaxAttendees</td>
                             </tr>
                         }
                         </tbody>

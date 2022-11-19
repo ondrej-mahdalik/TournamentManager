@@ -7,16 +7,16 @@ public record TournamentEntity(string Name,
     bool IsApproved,
     int MaxAttendees) : EntityBase
 {
-    public Guid CreatorId { get; set; }
-    public UserEntity? Creator { get; set; }
+    public Guid CreatorId { get; init; }
+    public UserEntity? Creator { get; init; }
     
-    public Guid? WinnerTeamOverrideId { get; set; }
+    public Guid? WinnerTeamOverrideId { get; init; }
     
-    public TeamEntity? WinnerTeamOverride { get; set; }
+    public TeamEntity? WinnerTeamOverride { get; init; }
     
-    public Guid SportId { get; set; }
-    public SportEntity? Sport { get; set; }
+    public Guid? SportId { get; init; }
+    public SportEntity? Sport { get; init; }
     
-    public IList<TeamIsParticipatingEntity> Participatings { get; set; } = new List<TeamIsParticipatingEntity>();
-    public IList<MatchEntity> Matches { get; set; } = new List<MatchEntity>();
+    public IList<TeamIsParticipatingEntity> Participatings { get; init; } = new List<TeamIsParticipatingEntity>();
+    public IList<MatchEntity> Matches { get; init; } = new List<MatchEntity>();
 }

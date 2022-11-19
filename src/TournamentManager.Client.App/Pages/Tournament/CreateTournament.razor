@@ -33,6 +33,7 @@
                                     {
                                         <option value="@sport.Id">@sport.Name</option>
                                     }
+                                    <option value="" selected>Other</option>
                                 </InputSelect>
                             </div>
                             <div class="mb-2"><label class="form-label" for="signup-type">Play mode</label>
@@ -45,7 +46,7 @@
                             <div class="mb-2">
                                 <div class="form-check"><label class="form-check-label" for="formCheck-1">Public</label><InputCheckbox class="form-check-input" type="checkbox" id="formCheck-1" @bind-Value="_model.IsPublic"></InputCheckbox></div>
                             </div>
-                            <div class="d-xl-flex justify-content-xl-end"><button class="btn btn-pribmary text-end d-xl-flex" type="submit">Create</button></div>
+                            <div class="d-xl-flex justify-content-xl-end"><button class="btn btn-primary text-end d-xl-flex" type="submit">Create</button></div>
                         </EditForm>
                     </div>
                 </div>
@@ -56,12 +57,15 @@
 
 @code
 {
-    private List<SportModel> _sports = new List<SportModel>();
+    private List<SportModel> _sports = new();
     private TournamentModel _model = TournamentModel.Empty;
 
     private async Task HandleValidSubmit()
     {
-        await Http.PutAsJsonAsync("api/tournament", _model);
+        _model.CreatorId = (await Http.GetFromJsonAsync<UserModel>("api/User/current"))?.Id;
+        var result = await Http.PutAsJsonAsync("api/Tournament", _model);
+        // TODO Handle unsuccessful result
+        
         Navigation.NavigateTo("/Tournament/List");
     }
 

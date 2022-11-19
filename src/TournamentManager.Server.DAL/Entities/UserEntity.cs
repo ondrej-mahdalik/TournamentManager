@@ -4,7 +4,7 @@ public record UserEntity(
     string? ApplicationUserId = null,
     bool IsAdministrator = false) : EntityBase
 {
-    public IList<TournamentEntity> Tournaments { get; set; } = new List<TournamentEntity>();
-    public IList<TeamEntity> TeamsAsLeader { get; set; } = new List<TeamEntity>();
-    public IList<UserIsInTeamEntity> TeamsAsMember { get; set; } = new List<UserIsInTeamEntity>();
+    public IList<TournamentEntity> Tournaments { get; init; } = new List<TournamentEntity>();
+    public IList<TeamEntity> TeamsAsLeader { get; init; } = new List<TeamEntity>();
+    public IList<UserIsInTeamEntity> TeamsAsMember { get; init; } = new List<UserIsInTeamEntity>();
 }

@@ -3,10 +3,10 @@
 public record TeamEntity(string Name,
     string? LogoUrl) : EntityBase
 {
-    public Guid LeaderId { get; set; }
-    public UserEntity? Leader { get; set; }
+    public Guid LeaderId { get; init; }
+    public UserEntity? Leader { get; init; }
     
-    public IList<UserIsInTeamEntity> Members { get; set; } = new List<UserIsInTeamEntity>();
-    public IList<MatchEntity> Matches { get; set; } = new List<MatchEntity>();
-    public IList<TeamIsParticipatingEntity> Participatings { get; set; } = new List<TeamIsParticipatingEntity>();
+    public IList<UserIsInTeamEntity> Members { get; init; } = new List<UserIsInTeamEntity>();
+    public IList<MatchEntity> Matches { get; init; } = new List<MatchEntity>();
+    public IList<TeamIsParticipatingEntity> Participatings { get; init; } = new List<TeamIsParticipatingEntity>();
 }

@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using TournamentManager.Server.BL.Facades;
 using TournamentManager.Common.Models;
 using TournamentManager.Server.Auth.Models;
@@ -47,6 +48,8 @@ public class TournamentController : AuthorizedControllerBase
     [HttpPut]
     public async Task<ActionResult> InsertOrUpdate([FromBody] TournamentModel? tournament)
     {
+        Console.WriteLine(JsonConvert.SerializeObject(tournament));
+        
         if (tournament is null || tournament.MaxAttendees < 1)
             return BadRequest();
 
