@@ -2,9 +2,9 @@
 
 public record TeamIsParticipatingEntity(bool Approved) : EntityBase
 {
-    public Guid TeamId { get; set; }
-    public TeamEntity? Team { get; set; }
+    public Guid TeamId { get; init; }
+    public TeamEntity? Team { get; init; }
 
-    public Guid TournamentId { get; set; }
-    public TournamentEntity? Tournament { get; set; }
+    public Guid TournamentId { get; init; }
+    public TournamentEntity? Tournament { get; init; }
 }
