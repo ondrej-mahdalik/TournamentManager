@@ -2,9 +2,9 @@
 
 public record UserIsInTeamEntity : EntityBase
 {
-    public Guid UserId { get; set; }
-    public UserEntity? User { get; set; }
+    public Guid UserId { get; init; }
+    public UserEntity? User { get; init; }
     
-    public Guid TeamId { get; set; }
-    public TeamEntity? Team { get; set; }
+    public Guid TeamId { get; init; }
+    public TeamEntity? Team { get; init; }
 }
