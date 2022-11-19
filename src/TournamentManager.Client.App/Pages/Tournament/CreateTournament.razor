@@ -3,6 +3,7 @@
 @using Microsoft.AspNetCore.Authorization
 @attribute [Authorize]
 @inject HttpClient Http
+@inject NavigationManager Navigation
 
 <PageTitle>Create Tournament</PageTitle>
 
@@ -24,7 +25,7 @@
                             <DataAnnotationsValidator/>
                             <ValidationSummary/>
                             <div class="mb-2"><label class="form-label" for="name">Name</label><InputText id="name" name="name" class="form-control" type="text" @bind-Value="_model.Name"/></div>
-                            <div class="mb-2"><label class="form-label" for="description" >Description</label><InputTextArea id="description" name="description" @bind-Value="_model.Description" class="form-control"/></div>
+                            <div class="mb-2"><label class="form-label" for="description" >Description (optional)</label><InputTextArea id="description" name="description" @bind-Value="_model.Description" class="form-control"/></div>
                             <div class="mb-2"><label class="form-label" for="date" >Date of beginning</label><InputDate TValue="DateTime" id="date" name="date" class="form-control" @bind-Value="_model.Date" Type="InputDateType.Date"></InputDate></div>
                             <div class="mb-2"><label class="form-label" for="sport">Sport</label>
                                 <InputSelect TValue="Guid?" id="sport" name="sport" class="form-select" @bind-Value="_model.SportId">
@@ -42,7 +43,7 @@
                             </div>
                             <div class="mb-2"><label class="form-label" for="max-players">Maximum number of players</label><InputNumber TValue="int" id="max-players" name="max-players" @bind-Value="_model.MaxAttendees" class="form-control" min="1" type="number" style="width: 30%;"></InputNumber></div>
                             <div class="mb-2">
-                                <div class="form-check"><InputCheckbox class="form-check-input" type="checkbox" id="formCheck-1" @bind-Value="_model.IsPublic"><label class="form-check-label" for="formCheck-1">Public</label></InputCheckbox></div>
+                                <div class="form-check"><label class="form-check-label" for="formCheck-1">Public</label><InputCheckbox class="form-check-input" type="checkbox" id="formCheck-1" @bind-Value="_model.IsPublic"></InputCheckbox></div>
                             </div>
                             <div class="d-xl-flex justify-content-xl-end"><button class="btn btn-pribmary text-end d-xl-flex" type="submit">Create</button></div>
                         </EditForm>
@@ -61,6 +62,7 @@
     private async Task HandleValidSubmit()
     {
         await Http.PutAsJsonAsync("api/tournament", _model);
+        Navigation.NavigateTo("/Tournament/List");
     }
 
     protected override async Task OnInitializedAsync()
