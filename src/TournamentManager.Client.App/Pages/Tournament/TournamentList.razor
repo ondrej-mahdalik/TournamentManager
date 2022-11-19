@@ -19,9 +19,9 @@
             </div>
             <div class="card shadow">
                 <div class="card-body">
-                    @if (_tournaments is null)
+                    @if (_isLoading)
                     {
-                        <p><em>Loading...</em></p>
+                        <p class="text-center fw-bold">Loading...</p>
                     }
                     else
                     {
@@ -93,16 +93,20 @@
 @code
 {
     private List<TournamentModel>? _tournaments;
+    private bool _isLoading = false;
 
     protected override async Task OnInitializedAsync()
     {
         try
         {
-            _tournaments = await Http.GetFromJsonAsync<List<TournamentModel>>("api/Tournament");
+            _isLoading = true;
+            _tournaments = await Http.GetFromJsonAsync<List<TournamentModel>>("api/Tournament") ?? new List<TournamentModel>();
+            _isLoading = false;
         }
         catch (AccessTokenNotAvailableException exception)
         {
             exception.Redirect();
         }
+        
     }
 }

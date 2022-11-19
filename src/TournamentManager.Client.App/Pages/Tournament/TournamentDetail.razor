@@ -27,9 +27,9 @@
     <div class="col">
         <div class="card shadow">
             <div class="card-body">
-                @if (_tournament is null)
+                @if (_isLoading)
                 {
-                    <p><em>Loading...</em></p>
+                    <p class="text-center fw-bold">Loading...</p>
                 }
                 else
                 {
@@ -258,13 +258,18 @@
 
     private TournamentModel? _tournament;
     private UserModel? _loggedUser;
+    private List<MatchModel>? _matches;
+    private bool _isLoading = false;
 
     protected override async Task OnInitializedAsync()
     {
         try
         {
+            _isLoading = true;
             _tournament = await Http.GetFromJsonAsync<TournamentModel>($"/api/Tournament/{Id}");
+            _matches = _tournament?.Matches.ToList() ?? new List<MatchModel>();
             _loggedUser = await Http.GetFromJsonAsync<UserModel>("/api/User/current");
+            _isLoading = false;
         }
         catch (AccessTokenNotAvailableException exception)
         {
