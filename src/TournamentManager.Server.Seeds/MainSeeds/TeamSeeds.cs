@@ -35,7 +35,6 @@ public static class TeamSeeds
 
     public static void Seed(TournamentManagerDbContext dbContext)
     {
-        JohnsTeam.Members.Add(UserIsInTeamSeeds.JohnInJohns);
         dbContext.Teams.Add(JohnsTeam);
         dbContext.Teams.Add(Team1);
         dbContext.Teams.Add(Team2);

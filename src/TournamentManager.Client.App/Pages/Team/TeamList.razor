@@ -20,7 +20,7 @@
             <div class="card-body shadow">
                 @if(_teams is null)
                 {
-                    <p><em>Loading...</em></p>
+                    <p class="text-center fw-bold">Loading...</p>
                 }
                 else
                 {
@@ -139,6 +139,6 @@
 
     protected override async Task OnInitializedAsync()
     {
-        _teams = await Http.GetFromJsonAsync<List<TeamModel>>("api/Team");    
+        _teams = await Http.GetFromJsonAsync<List<TeamModel>>("api/Team") ?? new List<TeamModel>();    
     }
 }
