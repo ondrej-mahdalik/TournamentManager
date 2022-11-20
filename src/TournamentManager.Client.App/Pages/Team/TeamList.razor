@@ -12,7 +12,7 @@
             <div class="col d-xl-flex d-flex align-items-center">
                 <h3 class="text-dark d-xl-flex">Teams</h3>
             </div>
-            <div class="col col-auto d-flex align-items-center"><a class="btn btn-primary" href="create.html">Create New Team</a></div>
+            <div class="col col-auto d-flex align-items-center"><a class="btn btn-primary" href="/Team/Create">Create New Team</a></div>
         </div>
         <div class="card shadow">
             <div class="card-body shadow">
@@ -74,8 +74,16 @@
                                             @team.Name
                                         </td>
                                         <td class="mb-0">@team.Leader?.FirstName @team.Leader?.LastName</td>
-                                        <td class="mb-0">@(team.Members.Count + 1) members</td>
-                                        <td class="text-end"><a data-bs-target="/Team/@team.Id" href="/Team/Detail/@team.Id"><button class="btn btn-primary" type="button">Detail</button></a></td>
+                                            @if (team.Members.Count == 0)
+                                            {
+                                                <td class="mb-0">1 member</td>
+                                            }
+                                            else
+                                            {
+                                                <td class="mb-0">@(team.Members.Count + 1) members</td>
+                                            }
+                                                
+                                        <td class="text-end"><a data-bs-target="/Team/@team.Id" href="/Team/Detail/@team.Id" class="btn btn-primary">Detail</a></td>
                                     </tr>
                                 }
                                 </tbody>
@@ -144,7 +152,8 @@
     }).GroupBy(x => x.Index / _showCount)
         .Select(x => x.Select(v => v.Value).ToList())
         .ToList();
-    
+
+     
     protected override async Task OnInitializedAsync()
     {
         _teams = await Http.GetFromJsonAsync<List<TeamModel>>("api/Team") ?? new List<TeamModel>();
