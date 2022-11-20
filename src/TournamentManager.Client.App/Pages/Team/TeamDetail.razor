@@ -35,6 +35,12 @@
                     <div class="col d-xxl-flex align-items-xxl-center col-auto"><a class="btn btn-primary" role="button" @onclick="JoinTeamAsync">Join Team</a></div>
                 }
             }
+            @if(_currentUser is not null && _leader is not null)
+                @if (_currentUser.Id == _leader.Id || _currentUser.IsAdministrator)
+                {
+                    <div class="col d-xxl-flex align-items-xxl-center col-auto"><a class="btn btn-primary" role="button" @onclick="EditTeam">Edit Team</a></div>
+                }
+            }
         </div>  
         <div class="row">
             <div class="col">
@@ -166,21 +172,21 @@
 
             }
 
-             _currentUser = await Http.GetFromJsonAsync<UserModel>($"api/User/current");
+            _currentUser = await Http.GetFromJsonAsync<UserModel>($"api/User/current");
         }
         catch (AccessTokenNotAvailableException exception)
         {
             exception.Redirect();
         }
-        
-       
+
+
     }
-    
+
     private bool HasPendingJoinRequest()
     {
         if (_team is null || _currentUser is null)
             return false;
-        
+
         return _team.Members.Any(x => x.UserId == _currentUser.Id && !x.IsApproved);
     }
 
@@ -197,10 +203,10 @@
 
         var response = await Http.PutAsJsonAsync($"/api/UserIsInTeam", new UserIsInTeamModel(_currentUser.Id, _team.Id));
         // TODO handle response
-        
+
         _team = await Http.GetFromJsonAsync<TeamModel>($"/api/Team/{Id}");
     }
-    
+
     private async Task CancelJoinRequestAsync()
     {
         if (_team is null || _currentUser is null)
@@ -208,7 +214,14 @@
 
         var response = await Http.DeleteAsync($"/api/UserIsInTeam/{_team.Members.First(x => x.UserId == _currentUser.Id).Id}");
         // TODO handle response
-        
+
         _team = await Http.GetFromJsonAsync<TeamModel>($"/api/Team/{Id}");
+    }
+
+    private void EditTeam()
+    {
+        if (_team is null || _currentUser is null)
+            return;
+        NavigationManager.NavigateTo($"/Team/Manage/{_team.Id}");
     }
 }

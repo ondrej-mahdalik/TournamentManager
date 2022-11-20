@@ -49,22 +49,26 @@
 
 @code {
     private TeamModel _team = TeamModel.Empty;
-    private string _teamName = null;
-    private string _logoUrl;
+    private string? _teamName = null;
+    private string? _logoUrl;
     private UserModel? _currentUser;
 
 
     private void OnLogoUrlChanged(ChangeEventArgs e)
     {
         string[] allowedFormats = { "jpg", "jpeg", "gif", "png", "apng", "svg", "bmp" };
-        string format =  e.Value.ToString().Split('.').Last();
-        if (allowedFormats.Contains(format))
+        if (e is not null && e.Value is not null)
         {
-            _logoUrl = (string)e.Value;
-        }
-        else
-        {
-            _logoUrl = null;
+            string value = (string)e.Value;
+            string format = value.Split('.').Last();
+            if (allowedFormats.Contains(format))
+            {
+                _logoUrl = (string)e.Value;
+            }
+            else
+            {
+                _logoUrl = null;
+            }
         }
     }
 
@@ -83,6 +87,12 @@
         catch (AccessTokenNotAvailableException exception)
         {
             exception.Redirect();
+        }
+
+        if(_currentUser is null)
+        {
+            NavigationManager.NavigateToLogin("/authentication/login");
+            return;
         }
 
         _team.Name = _teamName;
