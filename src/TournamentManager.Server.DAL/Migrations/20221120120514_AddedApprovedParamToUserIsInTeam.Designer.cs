@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TournamentManager.Server.DAL;
 
@@ -10,9 +11,11 @@ using TournamentManager.Server.DAL;
 namespace TournamentManager.Server.DAL.Migrations
 {
     [DbContext(typeof(TournamentManagerDbContext))]
-    partial class TournamentManagerDbContextModelSnapshot : ModelSnapshot
+    [Migration("20221120120514_AddedApprovedParamToUserIsInTeam")]
+    partial class AddedApprovedParamToUserIsInTeam
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "7.0.0");

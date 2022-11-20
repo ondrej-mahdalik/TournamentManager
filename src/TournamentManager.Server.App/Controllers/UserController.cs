@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using TournamentManager.Server.BL.Facades;
 using TournamentManager.Common.Models;
 using TournamentManager.Server.Auth.Models;
@@ -76,19 +77,5 @@ public class UserController : AuthorizedControllerBase
 
         await _userFacade.DeleteAsync(user);
         return Ok();
-    }
-
-    private async Task<UserModel> GetUserProperties(UserModel user)
-    {
-        var applicationUserId = await _userFacade.GetApplicationUserId(user.Id);
-        if (applicationUserId is null)
-            return user;
-        
-        var applicationUser = await _userManager.FindByIdAsync(applicationUserId);
-        user.Email = applicationUser?.Email;
-        user.FirstName = applicationUser?.FirstName;
-        user.LastName = applicationUser?.LastName;
-
-        return user;
     }
 }

@@ -47,7 +47,7 @@ public class UserIsInTeamController : AuthorizedControllerBase
             return BadRequest();
 
         var user = await GetLoggedUser();
-        if (!(user.IsAdministrator || user.Id == teamLeaderId))
+        if (newUserInTeam.IsApproved && !(user.IsAdministrator || user.Id == teamLeaderId))
             return Forbid();
 
         return Ok(await _userIsInTeamFacade.SaveAsync(newUserInTeam));
@@ -62,7 +62,7 @@ public class UserIsInTeamController : AuthorizedControllerBase
 
         var user = await GetLoggedUser();
         var teamLeaderId = (await _teamFacade.GetAsync(userFromTeamToDelete.TeamId))?.LeaderId;
-        if (!(user.IsAdministrator || user.Id == teamLeaderId))
+        if (!(user.IsAdministrator || user.Id == teamLeaderId || user.Id == userFromTeamToDelete.UserId))
             return Forbid();
         
         await _userIsInTeamFacade.DeleteAsync(id);
