@@ -15,6 +15,12 @@ using TournamentManager.Server.Common.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Configuration
+    .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+    .AddJsonFile("appsettings.Development.json", optional: true, reloadOnChange: true)
+    .AddJsonFile("appsettings.Secrets.json", optional: true, reloadOnChange: true)
+    .AddEnvironmentVariables();
+
 var authConnectionString = builder.Configuration.GetConnectionString("AuthConnection") ?? throw new InvalidOperationException("Connection string 'AuthConnection' not found.");
 var mainConnectionString = builder.Configuration.GetConnectionString("MainConnection") ?? throw new InvalidOperationException("Connection string 'MainConnection' not found.");
 var skipMigrationAndSeedDemoData = builder.Configuration.GetSection("DALOptions").GetValue<bool>("SkipMigrationAndSeedDemoData");
@@ -54,23 +60,23 @@ void ConfigureAuthentication(IServiceCollection serviceCollection)
         })
         .AddFacebook(options =>
         {
-            options.ClientId = builder.Configuration["Authentication:Facebook:ClientId"] ??
-                               throw new InvalidOperationException();
-            options.ClientSecret = builder.Configuration["Authentication:Facebook:ClientSecret"] ??
-                                   throw new InvalidOperationException();
-        })
-        .AddTwitter(options =>
-        {
-            options.ConsumerKey = builder.Configuration["Authentication:Twitter:ConsumerKey"] ??
-                                  throw new InvalidOperationException();
-            options.ConsumerSecret = builder.Configuration["Authentication:Twitter:ConsumerSecret"] ??
-                                     throw new InvalidOperationException();
+            options.AppId = builder.Configuration["Authentication:Facebook:AppId"] ??
+                            throw new InvalidOperationException();
+            options.AppSecret = builder.Configuration["Authentication:Facebook:AppSecret"] ??
+                                throw new InvalidOperationException();
         });
-
-    // serviceCollection.Configure<IdentityOptions>(options =>
+    // .AddTwitter(options =>
     // {
-    //     options.ClaimsIdentity.UserIdClaimType = ClaimTypes.NameIdentifier;
-    // })
+    //     options.ConsumerKey = builder.Configuration["Authentication:Twitter:ConsumerKey"] ??
+    //                           throw new InvalidOperationException();
+    //     options.ConsumerSecret = builder.Configuration["Authentication:Twitter:ConsumerSecret"] ??
+    //                              throw new InvalidOperationException();
+    // });
+
+    serviceCollection.Configure<IdentityOptions>(options =>
+    {
+        options.ClaimsIdentity.UserIdClaimType = ClaimTypes.NameIdentifier;
+    });
 }
 
 void ConfigureDependencies(IServiceCollection serviceCollection)

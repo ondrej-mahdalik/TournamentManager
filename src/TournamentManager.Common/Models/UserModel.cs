@@ -15,6 +15,8 @@ public record UserModel(
     public string? ProfilePictureUrl { get; set; } = ProfilePictureUrl;
     public bool IsAdministrator { get; set; } = IsAdministrator;
     
+    public string? ApplicationUserId { get; set; }
+    
     public IList<TournamentModel> Tournaments { get; set; } = new List<TournamentModel>();
     public IList<TeamModel> TeamsAsLeader { get; set; } = new List<TeamModel>();
     public IList<UserIsInTeamModel> TeamsAsMember { get; set; } = new List<UserIsInTeamModel>();
