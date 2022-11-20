@@ -52,11 +52,11 @@ public class TournamentManagerDbContext : DbContext
         {
             entity.HasMany(i => i.Matches)
                 .WithOne(i => i.Tournament)
-                .OnDelete(DeleteBehavior.ClientCascade); // TODO
+                .OnDelete(DeleteBehavior.ClientCascade);
 
             entity.HasMany(i => i.Participatings)
                 .WithOne(i => i.Tournament)
-                .OnDelete(DeleteBehavior.ClientCascade); // TODO
+                .OnDelete(DeleteBehavior.ClientCascade);
         });
 
         modelBuilder.Entity<UserEntity>(entity =>

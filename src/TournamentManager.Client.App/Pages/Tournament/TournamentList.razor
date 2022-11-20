@@ -1,6 +1,5 @@
 ﻿@page "/Tournament/List"
 @using TournamentManager.Common.Models
-@using System.Net
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
 @using Microsoft.AspNetCore.Authorization
 @attribute [Authorize]
@@ -8,101 +7,123 @@
 
 <PageTitle>Tournaments List</PageTitle>
 
-<div class="d-flex flex-column" id="content-wrapper">
-    <div id="content">
-        <div class="container-fluid">
-            <div class="row mb-3">
-                <div class="col d-xl-flex d-flex align-items-center">
-                    <h3 class="text-dark d-xl-flex">Tournaments</h3>
-                </div>
-                <div class="col col-auto d-flex align-items-center"><a href="Tournament/Create"><button class="btn btn-primary" type="button">Create New</button></a></div>
-            </div>
-            <div class="card shadow">
-                <div class="card-body">
-                    @if (_tournaments is null)
-                    {
-                        <p><em>Loading...</em></p>
-                    }
-                    else
-                    {
-                        <div class="row">
-                            <div class="col-md-6 text-nowrap">
-                                <div id="dataTable_length" class="dataTables_length" aria-controls="dataTable">
-                                    <label class="form-label">Show&nbsp;
-                                        <select class="d-inline-block form-select form-select-sm">
-                                            <option value="10" selected="">10</option>
-                                            <option value="25">25</option>
-                                            <option value="50">50</option>
-                                            <option value="100">100</option>
-                                        </select>&nbsp;</label></div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="text-md-end dataTables_filter" id="dataTable_filter"><label class="form-label"><input type="search" class="form-control form-control-sm" aria-controls="dataTable" placeholder="Search"></label></div>
-                            </div>
-                        </div>
-                        <div class="table-responsive table mt-2" id="dataTable" role="grid" aria-describedby="dataTable_info">
-                            <table class="table my-0" id="dataTable">
-                                <thead>
-                                <tr>
-                                    <th>Sport<i class="fas fa-baseball-ball" style="padding-right: 0px;padding-bottom: 0px;margin-left: 2%;"></i></th>
-                                    <th>Name</th>
-                                    <th>Date</th>
-                                    <th>Visibility</th>
-                                    <th>Occupation</th>
-                                    <th>Winner</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                @foreach (var tournament in _tournaments)
-                                {
-                                    
-                                        <tr>
-                                            <td>@tournament.Sport.Name</td>
-                                            <a href="/Tournament/Detail/@tournament.Id"><td>@tournament.Name</td></a>
-                                            <td>@tournament.Date.ToString("dd. MM. yyyy")</td>
-                                            <td>@(tournament.IsPublic ? "Public" : "Private")</td>
-                                            <td>20 / @tournament.MaxAttendees</td>
-                                        </tr>
-                                }
-                                </tbody>
-                            </table>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6 align-self-center">
-                                <p id="dataTable_info" class="dataTables_info" role="status" aria-live="polite">Showing 1 to 10 of 27</p>
-                            </div>
-                            <div class="col-md-6">
-                                <nav class="d-lg-flex justify-content-lg-end dataTables_paginate paging_simple_numbers">
-                                    <ul class="pagination">
-                                        <li class="page-item disabled"><a class="page-link" aria-label="Previous" href="#"><span aria-hidden="true">«</span></a></li>
-                                        <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                                        <li class="page-item"><a class="page-link" href="#">2</a></li>
-                                        <li class="page-item"><a class="page-link" href="#">3</a></li>
-                                        <li class="page-item"><a class="page-link" aria-label="Next" href="#"><span aria-hidden="true">»</span></a></li>
-                                    </ul>
-                                </nav>
-                            </div>
-                        </div>
-                    }
-                </div>
-            </div>
-        </div>
+
+<div class="row mb-3">
+    <div class="col d-xl-flex d-flex align-items-center">
+        <h3 class="text-dark d-xl-flex">Tournaments</h3>
     </div>
-</div><a class="border rounded d-inline scroll-to-top" href="#page-top"><i class="fas fa-angle-up"></i></a>
+    <div class="col col-auto d-flex align-items-center"><a href="Tournament/Create"><button class="btn btn-primary" type="button">Create New</button></a></div>
+</div>
+<div class="card shadow">
+    <div class="card-body">
+        @if (_tournaments is null)
+        {
+            <p class="text-center fw-bold">Loading...</p>
+        }
+        else
+        {
+            <div class="row">
+                <div class="col-md-6 text-nowrap">
+                    <div id="dataTable_length" class="dataTables_length" aria-controls="dataTable">
+                        <label class="form-label">Show
+                            <select class="d-inline-block form-select form-select-sm">
+                                <option value="10" selected="">10</option>
+                                <option value="25">25</option>
+                                <option value="50">50</option>
+                                <option value="100">100</option>
+                            </select>
+                        </label>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="text-md-end dataTables_filter" id="dataTable_filter">
+                        <label class="form-label">
+                            <input type="text" @bind="@_search" @bind:event="oninput" class="form-control form-control-sm" placeholder="Search"/>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="table-responsive table mt-2" role="grid">
+                @if (TournamentsFiltered.Count == 0)
+                {
+                    <p class="text-center fw-bold">No tournaments found</p>
+                }
+                else
+                {
+                    <table class="table my-0" id="dataTable">
+                        <thead>
+                        <tr>
+                            <th>Sport<i class="fas fa-baseball-ball pe-0 ms-2"></i></th>
+                            <th>Name</th>
+                            <th>Date</th>
+                            <th>Visibility</th>
+                            <th>Occupation</th>
+                            <th>Winner</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        @foreach (var tournament in TournamentsFiltered)
+                        {
+
+                            <tr>
+                                <td>@tournament.Sport?.Name</td>
+                                <a href="/Tournament/Detail/@tournament.Id"><td>@tournament.Name</td></a>
+                                <td>@tournament.Date.ToString("dd. MM. yyyy")</td>
+                                <td>@(tournament.IsPublic ? "Public" : "Private")</td>
+                                <td>@tournament.Participatings.Count / @tournament.MaxAttendees</td>
+                            </tr>
+                        }
+                        </tbody>
+                    </table>
+                }
+            </div>
+            <div class="row">
+                <div class="col-md-6 align-self-center">
+                    <p id="dataTable_info" class="dataTables_info" role="status" aria-live="polite">Showing 1 to 10 of 27</p>
+                </div>
+                <div class="col-md-6">
+                    <nav class="d-lg-flex justify-content-lg-end dataTables_paginate paging_simple_numbers">
+                        <ul class="pagination">
+                            <li class="page-item disabled"><a class="page-link" aria-label="Previous" href="#"><span aria-hidden="true">«</span></a></li>
+                            <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                            <li class="page-item"><a class="page-link" href="#">2</a></li>
+                            <li class="page-item"><a class="page-link" href="#">3</a></li>
+                            <li class="page-item"><a class="page-link" aria-label="Next" href="#"><span aria-hidden="true">»</span></a></li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        }
+    </div>
+</div>
 
 @code
 {
+    private string _search = "";
     private List<TournamentModel>? _tournaments;
-
+    private List<TournamentModel> TournamentsFiltered => _tournaments?
+        .Where(x =>
+        {
+            var name = x.Name.ToLower().Contains(_search.ToLower());
+            var sport = x.Sport?.Name.ToLower().Contains(_search.ToLower()) ?? false;
+            var date = x.Date.ToString("dd. MM. yyyy").Contains(_search);
+            var creatorFirstName = x.Creator?.FirstName?.ToLower().Contains(_search.ToLower()) ?? false;
+            var creatorLastName = x.Creator?.LastName?.ToLower().Contains(_search.ToLower()) ?? false;
+            
+            return name || sport || date || creatorFirstName || creatorLastName;
+        }).ToList()
+        ?? new();
+    
     protected override async Task OnInitializedAsync()
     {
         try
         {
-            _tournaments = await Http.GetFromJsonAsync<List<TournamentModel>>("api/Tournament");
+            _tournaments = await Http.GetFromJsonAsync<List<TournamentModel>>("api/Tournament") ?? new List<TournamentModel>();
         }
         catch (AccessTokenNotAvailableException exception)
         {
             exception.Redirect();
         }
+        
     }
 }

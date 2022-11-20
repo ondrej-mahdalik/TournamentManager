@@ -17,7 +17,9 @@ public class ApplicationProfileService : ProfileService<ApplicationUser>
         
     }
 
+#pragma warning disable CS1998
     protected override async Task GetProfileDataAsync(ProfileDataRequestContext context, ApplicationUser user)
+#pragma warning restore CS1998
     {
         // Name
         var nameClaim = context.Subject.FindAll(JwtClaimTypes.Name);

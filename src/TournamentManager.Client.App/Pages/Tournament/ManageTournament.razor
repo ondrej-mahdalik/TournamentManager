@@ -324,12 +324,14 @@
 
     private TournamentModel? _tournament;
     private UserModel? _loggedUser;
-    
+    private List<MatchModel>? _matches;
+
     protected override async Task OnInitializedAsync()
     {
         try
         {
             _tournament = await Http.GetFromJsonAsync<TournamentModel>($"/api/Tournament/{Id}");
+            _matches = _tournament?.Matches.ToList() ?? new List<MatchModel>();
             _loggedUser = await Http.GetFromJsonAsync<UserModel>("/api/User/current");
         }
         catch (AccessTokenNotAvailableException exception)

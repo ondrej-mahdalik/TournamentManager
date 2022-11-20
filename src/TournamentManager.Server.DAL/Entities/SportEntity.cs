@@ -3,5 +3,5 @@
 public record SportEntity(
     string Name) : EntityBase
 {
-    public IList<TournamentEntity> Tournaments { get; set; } = new List<TournamentEntity>();
+    public IList<TournamentEntity> Tournaments { get; init; } = new List<TournamentEntity>();
 }
