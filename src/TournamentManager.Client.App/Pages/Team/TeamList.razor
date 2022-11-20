@@ -29,7 +29,6 @@
                                 <label class="form-label">
                                     Show
                                     <select @onchange="OnItemsOnPageChanged" class="d-inline-block form-select form-select-sm">
-                                        <option value="1">1</option> <!-- TODO : Delete this debug value -->
                                         <option value="10" selected>10</option>
                                         <option value="25">25</option>
                                         <option value="50">50</option>
@@ -74,7 +73,7 @@
                                             @team.Name
                                         </td>
                                         <td class="mb-0">@team.Leader?.FirstName @team.Leader?.LastName</td>
-                                        <td class="mb-0">@(team.Members.Count + 1) members</td>
+                                        <td class="mb-0">@(team.Members.Count + 1) @(team.Members.Count + 1 == 1 ? "member" : "members")</td>
                                         <td class="text-end"><a data-bs-target="/Team/@team.Id" href="/Team/Detail/@team.Id"><button class="btn btn-primary" type="button">Detail</button></a></td>
                                     </tr>
                                 }
@@ -101,7 +100,15 @@
                                                 num = i - 1; // So user cant go to a page that is too high
 
                                             if (num > TeamsFilteredPages.Count - 1)
+                                            {
                                                 break; // If there are fewer than 3 pages total
+                                            }
+                                            else if (_selectedPageIndex == 1 && TeamsFilteredPages.Count == 2 && i == 0)
+                                            {
+                                                // If only 2 pages are available, clicking the second one would make page 0 appear
+                                                // which is obviously not possible
+                                                continue;
+                                            }
 
                                             <li class="page-item @(_selectedPageIndex == num ? "active" : "")">
                                                 <a class="page-link" @onclick="() => _selectedPageIndex = num" role="button">@(num + 1)</a>
