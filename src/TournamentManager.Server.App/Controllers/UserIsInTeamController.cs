@@ -30,7 +30,7 @@ public class UserIsInTeamController : AuthorizedControllerBase
         return Ok(await _userIsInTeamFacade.GetAsync());
     }
 
-    [HttpGet("Team/{id:guid}")]
+    [HttpGet("UserIsInTeam/{id:guid}")]
     public async Task<ActionResult<List<UserIsInTeamModel>>> GetById(Guid id)
     {
         return Ok(await _userIsInTeamFacade.GetAsync(id));
