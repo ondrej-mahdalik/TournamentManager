@@ -402,4 +402,4 @@ FodyWeavers.xsd
 .vscode/
 
 # Secrets
-appsettings.Secrets.json
+**/appsettings.Secrets.json
