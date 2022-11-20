@@ -21,15 +21,19 @@
             <div class="card-body">
                 <div class="row">
                     <div class="col">
+                        @if (!_sendOk)
+                        {
+                            <p class="text-danger"><i class="fas fa-exclamation-circle pe-0 me-1"></i>Unable to create a new tournament.</p>
+                        }
                         <EditForm Model="@_model" OnValidSubmit="@HandleValidSubmit">
                             <DataAnnotationsValidator/>
                             <ValidationSummary/>
                             <div class="mb-2"><label class="form-label" for="name">Name</label><InputText id="name" name="name" class="form-control" type="text" @bind-Value="_model.Name"/></div>
-                            <div class="mb-2"><label class="form-label" for="description" >Description (optional)</label><InputTextArea id="description" name="description" @bind-Value="_model.Description" class="form-control"/></div>
-                            <div class="mb-2"><label class="form-label" for="date" >Date of beginning</label><InputDate TValue="DateTime" id="date" name="date" class="form-control" @bind-Value="_model.Date" Type="InputDateType.Date"></InputDate></div>
+                            <div class="mb-2"><label class="form-label" for="description">Description (optional)</label><InputTextArea id="description" name="description" @bind-Value="_model.Description" class="form-control"/></div>
+                            <div class="mb-2"><label class="form-label" for="date">Date of beginning</label><InputDate TValue="DateTime" id="date" name="date" class="form-control" @bind-Value="_model.Date" Type="InputDateType.Date"></InputDate></div>
                             <div class="mb-2"><label class="form-label" for="sport">Sport</label>
                                 <InputSelect TValue="Guid?" id="sport" name="sport" class="form-select" @bind-Value="_model.SportId">
-                                    @foreach(var sport in _sports)
+                                    @foreach (var sport in _sports)
                                     {
                                         <option value="@sport.Id">@sport.Name</option>
                                     }
@@ -59,14 +63,21 @@
 {
     private List<SportModel> _sports = new();
     private TournamentModel _model = TournamentModel.Empty;
+    private bool _sendOk = true;
 
     private async Task HandleValidSubmit()
     {
         _model.CreatorId = (await Http.GetFromJsonAsync<UserModel>("api/User/current"))?.Id;
         var result = await Http.PutAsJsonAsync("api/Tournament", _model);
-        // TODO Handle unsuccessful result
-        
-        Navigation.NavigateTo("/Tournament/List");
+        if (!result.IsSuccessStatusCode)
+        {
+            _sendOk = false;
+        }
+        else
+        {
+            _sendOk = true;
+            Navigation.NavigateTo("/Tournament/List");   
+        }
     }
 
     protected override async Task OnInitializedAsync()
