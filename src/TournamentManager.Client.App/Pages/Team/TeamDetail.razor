@@ -11,13 +11,16 @@
 <div class="container-fluid">
     @if(_team is null)
     {
-        <p><em>Loading ...</em></p>
+        <p class="text-center fw-bold">Loading ...</p>
     }
     else
     {
         <div class="row mb-3">
             <div class="col d-xl-flex d-flex align-items-center">
-                <img class="me-2" height="100" src="@_team.LogoUrl" alt="Team logo"/>
+                @if (_team.LogoUrl is not null)
+                {
+                    <img class="me-2" height="100" src="@_team.LogoUrl" alt="Team logo"/>
+                }
                 <h3 class="text-dark mb-0">@_team?.Name</h3>
             </div>
             <div class="col d-xxl-flex align-items-xxl-center col-auto"><a class="btn btn-light" href="/Team/List">Back to All Teams</a></div>
@@ -37,6 +40,46 @@
             <div class="col">
                 <div class="card shadow">
                     <div class="card-header">
+                        <h4 class="mb-0">Leader</h4>
+                    </div>
+                    <div class="card-body">
+                        <div id="dataTable-1" class="table-responsive table mt-2" role="grid" aria-describedby="dataTable_info">
+                            <table id="dataTable" class="table my-0">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Email</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @if (_leader is null)
+                                    {
+                                        <tr>
+                                            <td><em>Loading ...</em></td>
+                                        </tr>
+                                    }
+                                    else
+                                    {
+                                        <tr>
+                                            <td>
+                                                @if (_leader.ProfilePictureUrl is not null)
+                                                {
+                                                    <img class="rounded-circle me-2" width="30" height="30" src="@_leader.ProfilePictureUrl" alt="Profile picture" />
+                                                }
+                                                @_leader.FirstName @_leader.LastName
+                                            </td>
+                                            <td>@_leader.Email</td>
+                                            <td class="text-end"><a href="/Profile/Detail/@_leader.Id" class="btn btn-primary">Detail</a></td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="card shadow">
+                    <div class="card-header">
                         <h4 class="mb-0">Members</h4>
                     </div>
                     <div class="card-body">
@@ -50,7 +93,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @if(_team?.Members is null)
+                                    @if(_members is null)
                                     {
                                         <tr>
                                             <td><em>Loading ...</em></td>
@@ -58,22 +101,33 @@
                                     }
                                     else
                                     {
-                                        @foreach (var membership in _team.Members)
+                                        @foreach (var member in _members)
                                         {
-                                            var member = membership.User;
-                                            if (member is null)
-                                                continue;
-                                            
                                             <tr>
-                                                <td><img class="rounded-circle me-2" width="30" height="30" src="@member.ProfilePictureUrl" alt="Profile picture"/>@member.FirstName @member.LastName</td>
+                                                <td>
+                                                    @if (member.ProfilePictureUrl is not null)
+                                                    {
+                                                        <img class="rounded-circle me-2" width="30" height="30" src="@member.ProfilePictureUrl" alt="Profile picture" />
+                                                    }
+                                                    @member.FirstName @member.LastName
+                                                </td>
                                                 <td>@member.Email</td>
-                                                <td class="text-end"><a href="/Profile/Detail/@member.Id"><button class="btn btn-primary" type="button">Detail</button></a></td>
+                                                <td class="text-end"><a href="/Profile/Detail/@member.Id" class="btn btn-primary">Detail</a></td>
+                                            </tr>
+                                        }
+                                        @if(_members.Count == 0)
+                                        {
+                                            <tr>
+                                                <td colspan="3" class="text-center fw-bold">No members</td>
                                             </tr>
                                         }
                                     }
                                 </tbody>
                             </table>
                         </div>
+                    </div>
+                    <div class="card shadow">
+                        <em> TODO : Tournaments </em> <!-- až bude finalizovaná Honzova část -->
                     </div>
                 </div>
             </div>
@@ -87,21 +141,41 @@
     public string? Id { get; set; }
 
     private TeamModel? _team;
+    private UserModel? _leader;
+    private List<UserModel>? _members; 
     private UserModel? _currentUser;
 
     protected override async Task OnInitializedAsync()
     {
+        _members = new List<UserModel>();
         try
         {
             _team = await Http.GetFromJsonAsync<TeamModel>($"/api/Team/{Id}");
-            _currentUser = await Http.GetFromJsonAsync<UserModel>($"api/User/current");
+            if (_team is not null)
+            {
+                _leader = await Http.GetFromJsonAsync<UserModel>($"/api/User/{_team.LeaderId}");
+
+                foreach (UserIsInTeamModel userIsInTeam in _team.Members)
+                {
+                    UserModel? member = await Http.GetFromJsonAsync<UserModel>($"/api/User/{userIsInTeam.UserId}");
+                    if(member is not null)
+                    {
+                        _members.Add(member);
+                    }
+                }
+
+            }
+
+             _currentUser = await Http.GetFromJsonAsync<UserModel>($"api/User/current");
         }
         catch (AccessTokenNotAvailableException exception)
         {
             exception.Redirect();
         }
+        
+       
     }
-
+    
     private bool HasPendingJoinRequest()
     {
         if (_team is null || _currentUser is null)
