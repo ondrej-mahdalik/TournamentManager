@@ -44,22 +44,33 @@ void ConfigureAuthentication(IServiceCollection serviceCollection)
         .AddApiAuthorization<ApplicationUser, AuthorizationDbContext>();
 
     serviceCollection.AddAuthentication()
-        .AddIdentityServerJwt();
+        .AddIdentityServerJwt()
+        .AddGoogle(options =>
+        {
+            options.ClientId = builder.Configuration["Authentication:Google:ClientId"] ??
+                               throw new InvalidOperationException();
+            options.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"] ??
+                                   throw new InvalidOperationException();
+        })
+        .AddFacebook(options =>
+        {
+            options.ClientId = builder.Configuration["Authentication:Facebook:ClientId"] ??
+                               throw new InvalidOperationException();
+            options.ClientSecret = builder.Configuration["Authentication:Facebook:ClientSecret"] ??
+                                   throw new InvalidOperationException();
+        })
+        .AddTwitter(options =>
+        {
+            options.ConsumerKey = builder.Configuration["Authentication:Twitter:ConsumerKey"] ??
+                                  throw new InvalidOperationException();
+            options.ConsumerSecret = builder.Configuration["Authentication:Twitter:ConsumerSecret"] ??
+                                     throw new InvalidOperationException();
+        });
 
-    serviceCollection.Configure<IdentityOptions>(options =>
-    {
-        options.ClaimsIdentity.UserIdClaimType = ClaimTypes.NameIdentifier;
-    });
-    // .AddGoogle(options =>
+    // serviceCollection.Configure<IdentityOptions>(options =>
     // {
-    //     options.ClientId = builder.Configuration["Authentication:Google:ClientId"] ?? throw new AuthenticationException();
-    //     options.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"] ?? throw new AuthenticationException(); 
+    //     options.ClaimsIdentity.UserIdClaimType = ClaimTypes.NameIdentifier;
     // })
-    // .AddMicrosoftAccount(options =>
-    // {
-    //     options.ClientId = builder.Configuration["Authentication:Microsoft:ClientId"] ?? throw new AuthenticationException();
-    //     options.ClientSecret = builder.Configuration["Authentication:Microsoft:ClientSecret"] ?? throw new AuthenticationException();
-    // });
 }
 
 void ConfigureDependencies(IServiceCollection serviceCollection)
