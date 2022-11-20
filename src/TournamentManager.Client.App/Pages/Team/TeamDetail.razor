@@ -1,10 +1,10 @@
 ﻿@page "/Team/Detail/{Id}"
 @using TournamentManager.Common.Models
-@using System.Net
-@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
 @using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
 @attribute [Authorize]
 @inject HttpClient Http
+@inject NavigationManager NavigationManager;
 
 <PageTitle>Team Detail</PageTitle>
 
@@ -17,12 +17,22 @@
     {
         <div class="row mb-3">
             <div class="col d-xl-flex d-flex align-items-center">
-                <img class="me-2" height="100" style="max-width:500" src="@_team.LogoUrl" />
+                <img class="me-2" height="100" src="@_team.LogoUrl" alt="Team logo"/>
                 <h3 class="text-dark mb-0">@_team?.Name</h3>
             </div>
-            <div class="col d-xxl-flex align-items-xxl-center col-auto"><a href="/Team/List"><button class="btn btn-light" type="button">Back to All Teams</button></a></div>
-            <div class="col d-xxl-flex align-items-xxl-center col-auto"><a href="#"><button class="btn btn-primary" type="button">Join Team</button></a></div>
-        </div>
+            <div class="col d-xxl-flex align-items-xxl-center col-auto"><a class="btn btn-light" href="/Team/List">Back to All Teams</a></div>
+            @if (_currentUser?.Id != _team!.LeaderId || _team.Members.Any(x => x.UserId == _currentUser?.Id))
+            {
+                @if (HasPendingJoinRequest())
+                {
+                    <div class="col d-xxl-flex align-items-xxl-center col-auto"><a class="btn btn-danger" role="button" @onclick="CancelJoinRequestAsync">Cancel Join Request</a></div>
+                }
+                else
+                {
+                    <div class="col d-xxl-flex align-items-xxl-center col-auto"><a class="btn btn-primary" role="button" @onclick="JoinTeamAsync">Join Team</a></div>
+                }
+            }
+        </div>  
         <div class="row">
             <div class="col">
                 <div class="card shadow">
@@ -35,12 +45,12 @@
                                 <thead>
                                     <tr>
                                         <th>Name</th>
-                                        <th>email</th>
+                                        <th>Email</th>
                                         <th></th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @if(_team.Members is null)
+                                    @if(_team?.Members is null)
                                     {
                                         <tr>
                                             <td><em>Loading ...</em></td>
@@ -48,21 +58,20 @@
                                     }
                                     else
                                     {
-                                        @foreach (UserIsInTeamModel membership in _team?.Members)
+                                        @foreach (var membership in _team.Members)
                                         {
-                                            if (membership is null) continue;
                                             var member = membership.User;
+                                            if (member is null)
+                                                continue;
+                                            
                                             <tr>
-                                            <td><img class="rounded-circle me-2" width="30" height="30" src="@member?.ProfilePictureUrl" />@member.FirstName @member.LastName</td>
-                                            <td>@member.Email</td>
-                                            <td class="text-end"><a href="/Profile/Detail/@member.Id"><button class="btn btn-primary" type="button">Detail</button></a></td>
-                                        </tr>
+                                                <td><img class="rounded-circle me-2" width="30" height="30" src="@member.ProfilePictureUrl" alt="Profile picture"/>@member.FirstName @member.LastName</td>
+                                                <td>@member.Email</td>
+                                                <td class="text-end"><a href="/Profile/Detail/@member.Id"><button class="btn btn-primary" type="button">Detail</button></a></td>
+                                            </tr>
                                         }
                                     }
                                 </tbody>
-                                <tfoot>
-                                    <tr></tr>
-                                </tfoot>
                             </table>
                         </div>
                     </div>
@@ -77,17 +86,55 @@
     [Parameter]
     public string? Id { get; set; }
 
-    private TeamModel _team;
-    // TODO : Get user and show Edit button if he is the team creator
+    private TeamModel? _team;
+    private UserModel? _currentUser;
 
     protected override async Task OnInitializedAsync()
     {
-
-
-        _team = await Http.GetFromJsonAsync<TeamModel>($"/api/Team/{Id}");
-        var _members = _team.Members;
-
-        
+        try
+        {
+            _team = await Http.GetFromJsonAsync<TeamModel>($"/api/Team/{Id}");
+            _currentUser = await Http.GetFromJsonAsync<UserModel>($"api/User/current");
+        }
+        catch (AccessTokenNotAvailableException exception)
+        {
+            exception.Redirect();
+        }
     }
 
+    private bool HasPendingJoinRequest()
+    {
+        if (_team is null || _currentUser is null)
+            return false;
+        
+        return _team.Members.Any(x => x.UserId == _currentUser.Id && !x.IsApproved);
+    }
+
+    private async Task JoinTeamAsync()
+    {
+        if (_team is null || HasPendingJoinRequest())
+            return;
+
+        if (_currentUser is null)
+        {
+            NavigationManager.NavigateToLogin("/authentication/login");
+            return;
+        }
+
+        var response = await Http.PutAsJsonAsync($"/api/UserIsInTeam", new UserIsInTeamModel(_currentUser.Id, _team.Id));
+        // TODO handle response
+        
+        _team = await Http.GetFromJsonAsync<TeamModel>($"/api/Team/{Id}");
+    }
+    
+    private async Task CancelJoinRequestAsync()
+    {
+        if (_team is null || _currentUser is null)
+            return;
+
+        var response = await Http.DeleteAsync($"/api/UserIsInTeam/{_team.Members.First(x => x.UserId == _currentUser.Id).Id}");
+        // TODO handle response
+        
+        _team = await Http.GetFromJsonAsync<TeamModel>($"/api/Team/{Id}");
+    }
 }

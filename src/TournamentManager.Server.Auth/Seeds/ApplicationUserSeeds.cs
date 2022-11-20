@@ -14,6 +14,7 @@ public static class ApplicationUserSeeds
         UserName = "admin@localhost.com",
         Email = "admin@localhost.com",
         EmailConfirmed = true,
+        FirstName = "Administrator",
         PhoneNumber = "1234567890",
         PhoneNumberConfirmed = true,
         SecurityStamp = Guid.NewGuid().ToString("D")
@@ -23,6 +24,8 @@ public static class ApplicationUserSeeds
     {
         Id = Guid.Parse("A0941FA5-DEFF-45C3-ADE7-96475B77FC47").ToString(),
         UserName = "john.doe@gmail.com",
+        FirstName = "John",
+        LastName = "Doe",
         Email = "john.doe@gmail.com",
         EmailConfirmed = true,
         SecurityStamp = Guid.NewGuid().ToString("D")
@@ -34,19 +37,5 @@ public static class ApplicationUserSeeds
         
         await userManager.CreateAsync(Admin, "Pass123$");
         await userManager.CreateAsync(User1, "Pass123$");
-        
-        await userManager.AddClaimsAsync(Admin, new List<Claim>
-        {
-            new(JwtClaimTypes.Name, "Admin"),
-            new(JwtClaimTypes.GivenName, "Admin"),
-            new(JwtClaimTypes.FamilyName, "Admin")
-        });
-
-        await userManager.AddClaimsAsync(User1, new List<Claim>
-        {
-            new(JwtClaimTypes.Name, "John Doe"),
-            new(JwtClaimTypes.GivenName, "John"),
-            new(JwtClaimTypes.FamilyName, "Doe")
-        });
     }
 }

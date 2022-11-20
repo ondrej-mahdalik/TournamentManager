@@ -1,11 +1,9 @@
 using System.Security.Claims;
-using Duende.IdentityServer.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using TournamentManager.Server.App.Data;
-using TournamentManager.Server.App.Services;
 using TournamentManager.Server.Auth.Models;
 using TournamentManager.Server.Auth.Seeds;
 using TournamentManager.Server.BL.Installers;
@@ -41,9 +39,7 @@ void ConfigureAuthentication(IServiceCollection serviceCollection)
     serviceCollection.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
         .AddRoles<IdentityRole>()
         .AddEntityFrameworkStores<AuthorizationDbContext>();
-
-    serviceCollection.AddTransient<IProfileService, ApplicationProfileService>();
-
+    
     serviceCollection.AddIdentityServer()
         .AddApiAuthorization<ApplicationUser, AuthorizationDbContext>();
 
