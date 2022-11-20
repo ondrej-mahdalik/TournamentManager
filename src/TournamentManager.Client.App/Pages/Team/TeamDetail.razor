@@ -1,0 +1,93 @@
+﻿@page "/Team/Detail/{Id}"
+@using TournamentManager.Common.Models
+@using System.Net
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize]
+@inject HttpClient Http
+
+<PageTitle>Team Detail</PageTitle>
+
+<div class="container-fluid">
+    @if(_team is null)
+    {
+        <p><em>Loading ...</em></p>
+    }
+    else
+    {
+        <div class="row mb-3">
+            <div class="col d-xl-flex d-flex align-items-center">
+                <img class="me-2" height="100" style="max-width:500" src="@_team.LogoUrl" />
+                <h3 class="text-dark mb-0">@_team?.Name</h3>
+            </div>
+            <div class="col d-xxl-flex align-items-xxl-center col-auto"><a href="/Team/List"><button class="btn btn-light" type="button">Back to All Teams</button></a></div>
+            <div class="col d-xxl-flex align-items-xxl-center col-auto"><a href="#"><button class="btn btn-primary" type="button">Join Team</button></a></div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <div class="card shadow">
+                    <div class="card-header">
+                        <h4 class="mb-0">Members</h4>
+                    </div>
+                    <div class="card-body">
+                        <div id="dataTable-1" class="table-responsive table mt-2" role="grid" aria-describedby="dataTable_info">
+                            <table id="dataTable" class="table my-0">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>email</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @if(_team.Members is null)
+                                    {
+                                        <tr>
+                                            <td><em>Loading ...</em></td>
+                                        </tr>
+                                    }
+                                    else
+                                    {
+                                        @foreach (UserIsInTeamModel membership in _team?.Members)
+                                        {
+                                            if (membership is null) continue;
+                                            var member = membership.User;
+                                            <tr>
+                                            <td><img class="rounded-circle me-2" width="30" height="30" src="@member?.ProfilePictureUrl" />@member.FirstName @member.LastName</td>
+                                            <td>@member.Email</td>
+                                            <td class="text-end"><a href="/Profile/Detail/@member.Id"><button class="btn btn-primary" type="button">Detail</button></a></td>
+                                        </tr>
+                                        }
+                                    }
+                                </tbody>
+                                <tfoot>
+                                    <tr></tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+
+@code {
+    [Parameter]
+    public string? Id { get; set; }
+
+    private TeamModel _team;
+    // TODO : Get user and show Edit button if he is the team creator
+
+    protected override async Task OnInitializedAsync()
+    {
+
+
+        _team = await Http.GetFromJsonAsync<TeamModel>($"/api/Team/{Id}");
+        var _members = _team.Members;
+
+        
+    }
+
+}
