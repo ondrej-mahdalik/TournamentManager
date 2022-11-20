@@ -30,21 +30,6 @@ public class MatchController : AuthorizedControllerBase
         return Ok(await _matchFacade.GetAsync());
     }
 
-    // [HttpGet("ByTournament/{id:guid}")]
-    // public async Task<ActionResult<List<MatchModel>>> Get(Guid tournamentId)
-    // {
-    //     var tournament = await DbContext.Tournaments.Include(x => x.Participatings)
-    //         .FirstOrDefaultAsync(x => x.Id == tournamentId);
-    //     
-    //     if (tournament is null)
-    //         return BadRequest();
-    //     
-    //     if (await CanViewTournament(tournament))
-    //         return Ok(await DbContext.Matches.Where(x => x.TournamentId == tournamentId).ToListAsync());
-    //
-    //     return Forbid();
-    // }
-
     [HttpGet("{id:guid}")]
     public async Task<ActionResult<MatchModel>> GetById(Guid id)
     {
