@@ -4,6 +4,12 @@
     ViewData["Title"] = "Confirm email";
     Layout = "_Layout";
 }
+<div class="row d-xl-flex justify-content-xl-center">
+    <div class="col-lg-7">
+        <div class="p-5">
+            <partial name="_StatusMessage" model="Model.StatusMessage" />
+            <a class="btn btn-primary" asp-page="./Login">Back to login</a>
+        </div>
+    </div>
+</div>
 
-<h1>@ViewData["Title"]</h1>
-<partial name="_StatusMessage" model="Model.StatusMessage" />
