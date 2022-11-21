@@ -5,18 +5,23 @@
     Layout = "_Layout";
 }
 
-<header>
-    <h1>@ViewData["Title"]</h1>
-    @{
-        if (User.Identity is not null && User.Identity.IsAuthenticated)
-        {
-            <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Page("/", new { area = "" })" method="post">
-                <button type="submit" class="nav-link btn btn-link text-dark">Click here to Logout</button>
-            </form>
-        }
-        else
-        {
-            <p>You have successfully logged out of the application.</p>
-        }
-    }
-</header>
+
+<div class="row d-xl-flex justify-content-xl-center">
+    <div class="col-lg-7">
+        <div class="p-5">
+            <div class="text-center">
+                <h4 class="text-dark mb-2">Log Out</h4>
+            </div>
+            @if (User.Identity is not null && User.Identity.IsAuthenticated)
+            {
+                <form class="user" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Page("/", new { area = "" })" method="post">
+                    <button type="submit" class="btn btn-primary d-block btn-user w-100">Click here to Logout</button>
+                </form>
+            }
+            else
+            {
+                <p>You have successfully logged out of the application.</p>
+            }
+        </div>
+    </div>
+</div>
