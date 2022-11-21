@@ -8,18 +8,17 @@ steps:
   inputs:
     packageType: 'sdk'
     version: '7.0.x'
-    includePreviewVersions: true
 - task: DotNetCoreCLI@2
   inputs:
     command: 'build'
     projects: |
-      **/TournamentManager.Server.csproj
+      **/TournamentManager.Server.App.csproj
 - task: DotNetCoreCLI@2
   inputs:
     command: 'publish'
     publishWebProjects: false
     projects: |
-      **/TournamentManager.Server.csproj
+      **/TournamentManager.Server.App.csproj
     arguments: '--configuration Release --framework net7.0 --self-contained --arch x86 --output $(Build.ArtifactStagingDirectory)'
 - task: PublishBuildArtifacts@1
   inputs:
