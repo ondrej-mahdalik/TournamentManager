@@ -1,16 +1,18 @@
 ﻿@using Microsoft.AspNetCore.Components.Authorization
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@using TournamentManager.Common.Models
 @inject NavigationManager Navigation
+@inject HttpClient Http
 
 <nav class="navbar navbar-light navbar-expand bg-white shadow mb-4 topbar static-top">
     <ul class="navbar-nav flex-nowrap ms-auto">
         <AuthorizeView>
             <Authorized>
                 <li class="nav-item px-3 d-flex align-items-center">
-                    <a href="authentication/profile">Hello, @context.User.Identity?.Name!</a>
+                    <a class="nav-link text-body font-weight-bold px-0" href="authentication/profile">Hello, @(_userName ?? "User")!</a>
                 </li>
                 <li class="nav-item px-3 d-flex align-items-center">
-                    <button class="nav-link btn btn-link mb-0" @onclick="BeginLogOut">Log out</button>
+                    <a role="button" class="nav-link text-body font-weight-bold px-0" @onclick="BeginLogOut">Log out</a>
                 </li>
             </Authorized>
             <NotAuthorized>
@@ -26,6 +28,19 @@
 </nav>
     
 @code{
+
+    private string? _userName;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var user = await Http.GetFromJsonAsync<UserModel>("api/User/current");
+            _userName = user is not null ? $"{user?.FirstName} {user?.LastName}" : null;
+        }
+        catch (AccessTokenNotAvailableException) { }
+    }
+    
     private void BeginLogOut()
     {
         Navigation.NavigateToLogout("authentication/logout");

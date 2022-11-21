@@ -123,8 +123,11 @@ namespace TournamentManager.Server.App.Areas.Identity.Pages.Account
                     _logger.LogInformation("User created a new account with password");
 
                     var userId = await _userManager.GetUserIdAsync(authUser);
-                    var mainUser = new UserModel(Input.Email);
-                    await _userFacade.CreateAsync(mainUser, userId);
+                    var mainUser = new UserModel(Input.Email)
+                    {
+                        ApplicationUserId = userId
+                    };
+                    await _userFacade.SaveAsync(mainUser);
                     
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(authUser);
                     code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));

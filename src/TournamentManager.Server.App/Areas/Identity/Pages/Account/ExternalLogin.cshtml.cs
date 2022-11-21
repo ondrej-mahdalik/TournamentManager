@@ -2,6 +2,7 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 #nullable disable
 
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
 using System.Text;
@@ -12,7 +13,9 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
+using TournamentManager.Common.Models;
 using TournamentManager.Server.Auth.Models;
+using TournamentManager.Server.BL.Facades;
 
 namespace TournamentManager.Server.App.Areas.Identity.Pages.Account
 {
@@ -25,13 +28,15 @@ namespace TournamentManager.Server.App.Areas.Identity.Pages.Account
         private readonly IUserEmailStore<ApplicationUser> _emailStore;
         private readonly IEmailSender _emailSender;
         private readonly ILogger<ExternalLoginModel> _logger;
+        private readonly UserFacade _userFacade;
 
         public ExternalLoginModel(
             SignInManager<ApplicationUser> signInManager,
             UserManager<ApplicationUser> userManager,
             IUserStore<ApplicationUser> userStore,
             ILogger<ExternalLoginModel> logger,
-            IEmailSender emailSender)
+            IEmailSender emailSender,
+            UserFacade userFacade)
         {
             _signInManager = signInManager;
             _userManager = userManager;
@@ -39,6 +44,7 @@ namespace TournamentManager.Server.App.Areas.Identity.Pages.Account
             _emailStore = GetEmailStore();
             _logger = logger;
             _emailSender = emailSender;
+            _userFacade = userFacade;
         }
 
         /// <summary>
@@ -80,6 +86,18 @@ namespace TournamentManager.Server.App.Areas.Identity.Pages.Account
             [Required]
             [EmailAddress]
             public string Email { get; set; }
+            
+            [Required]
+            [MinLength(2)]
+            [MaxLength(50)]
+            [DisplayName("First Name")]
+            public string FirstName { get; set; }
+            
+            [Required]
+            [MinLength(2)]
+            [MaxLength(50)]
+            [DisplayName("Last Name")]
+            public string LastName { get; set; }
         }
         
         public IActionResult OnGet() => RedirectToPage("./Login");
@@ -147,21 +165,29 @@ namespace TournamentManager.Server.App.Areas.Identity.Pages.Account
 
             if (ModelState.IsValid)
             {
-                var user = CreateUser();
+                var authUser = CreateUser();
+                authUser.FirstName = Input.FirstName;
+                authUser.LastName = Input.LastName;
 
-                await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
-                await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
+                await _userStore.SetUserNameAsync(authUser, Input.Email, CancellationToken.None);
+                await _emailStore.SetEmailAsync(authUser, Input.Email, CancellationToken.None);
 
-                var result = await _userManager.CreateAsync(user);
+                var result = await _userManager.CreateAsync(authUser);
                 if (result.Succeeded)
                 {
-                    result = await _userManager.AddLoginAsync(user, info);
+                    result = await _userManager.AddLoginAsync(authUser, info);
                     if (result.Succeeded)
                     {
                         _logger.LogInformation("User created an account using {Name} provider.", info.LoginProvider);
 
-                        var userId = await _userManager.GetUserIdAsync(user);
-                        var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                        var userId = await _userManager.GetUserIdAsync(authUser);
+                        var mainUser = new UserModel(Input.Email)
+                        {
+                            ApplicationUserId = userId
+                        };
+                        await _userFacade.SaveAsync(mainUser);
+                        
+                        var code = await _userManager.GenerateEmailConfirmationTokenAsync(authUser);
                         code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
                         var callbackUrl = Url.Page(
                             "/Account/ConfirmEmail",
@@ -178,7 +204,7 @@ namespace TournamentManager.Server.App.Areas.Identity.Pages.Account
                             return RedirectToPage("./RegisterConfirmation", new { Email = Input.Email });
                         }
 
-                        await _signInManager.SignInAsync(user, isPersistent: false, info.LoginProvider);
+                        await _signInManager.SignInAsync(authUser, isPersistent: false, info.LoginProvider);
                         return LocalRedirect(returnUrl);
                     }
                 }
