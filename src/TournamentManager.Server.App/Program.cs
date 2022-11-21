@@ -1,9 +1,13 @@
 using System.Security.Claims;
+using Microsoft.AspNetCore.ApiAuthorization.IdentityServer;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using TournamentManager.Server.App.Data;
+using TournamentManager.Server.App.Services;
 using TournamentManager.Server.Auth.Models;
 using TournamentManager.Server.Auth.Seeds;
 using TournamentManager.Server.BL.Installers;
@@ -64,18 +68,23 @@ void ConfigureAuthentication(IServiceCollection serviceCollection)
                             throw new InvalidOperationException();
             options.AppSecret = builder.Configuration["Authentication:Facebook:AppSecret"] ??
                                 throw new InvalidOperationException();
+        })
+        .AddTwitter(options =>
+        {
+            options.ConsumerKey = builder.Configuration["Authentication:Twitter:ConsumerKey"] ??
+                                  throw new InvalidOperationException();
+            options.ConsumerSecret = builder.Configuration["Authentication:Twitter:ConsumerSecret"] ??
+                                     throw new InvalidOperationException();
         });
-    // .AddTwitter(options =>
-    // {
-    //     options.ConsumerKey = builder.Configuration["Authentication:Twitter:ConsumerKey"] ??
-    //                           throw new InvalidOperationException();
-    //     options.ConsumerSecret = builder.Configuration["Authentication:Twitter:ConsumerSecret"] ??
-    //                              throw new InvalidOperationException();
-    // });
 
     serviceCollection.Configure<IdentityOptions>(options =>
     {
         options.ClaimsIdentity.UserIdClaimType = ClaimTypes.NameIdentifier;
+    });
+    
+    serviceCollection.Configure<JwtBearerOptions>(IdentityServerJwtConstants.IdentityServerJwtBearerScheme, options =>
+    {
+        options.Authority = builder.Configuration["BaseUrl"];
     });
 }
 
@@ -97,6 +106,10 @@ void ConfigureDependencies(IServiceCollection serviceCollection)
     }
     
     serviceCollection.AddInstaller<BLInstaller>();
+
+    serviceCollection.AddTransient<IEmailSender, EmailSender>();
+    serviceCollection.Configure<AuthMessageSenderOptions>(
+        builder.Configuration.GetSection(AuthMessageSenderOptions.SendGrid));
 
 #if DEBUG
     serviceCollection.AddDatabaseDeveloperPageExceptionFilter();
@@ -199,8 +212,8 @@ async Task SetupDatabase(WebApplication application)
     }
     else
     {
-        mainDbContext.Database.Migrate();
-        authDbContext.Database.Migrate();
+        await mainDbContext.Database.EnsureCreatedAsync();
+        await authDbContext.Database.EnsureCreatedAsync();
     }
 }
 

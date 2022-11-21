@@ -87,17 +87,18 @@ namespace TournamentManager.Server.App.Areas.Identity.Pages.Account
             [EmailAddress]
             public string Email { get; set; }
             
-            [Required]
             [MinLength(2)]
             [MaxLength(50)]
             [DisplayName("First Name")]
             public string FirstName { get; set; }
             
-            [Required]
             [MinLength(2)]
             [MaxLength(50)]
             [DisplayName("Last Name")]
             public string LastName { get; set; }
+            
+            [Url]
+            public string ProfilePictureUrl { get; set; }
         }
         
         public IActionResult OnGet() => RedirectToPage("./Login");

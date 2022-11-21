@@ -69,6 +69,16 @@ namespace TournamentManager.Server.App.Areas.Identity.Pages.Account
         /// </summary>
         public class InputModel
         {
+            [MinLength(2)]
+            [MaxLength(50)]
+            [Display(Name = "First name")]
+            public string FirstName { get; set; }
+            
+            [MinLength(2)]
+            [MaxLength(50)]
+            [Display(Name = "Last name")]
+            public string LastName { get; set; }
+            
             /// <summary>
             ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
             ///     directly from your code. This API may change or be removed in future releases.
@@ -112,6 +122,8 @@ namespace TournamentManager.Server.App.Areas.Identity.Pages.Account
             if (ModelState.IsValid)
             {
                 var authUser = CreateUser();
+                authUser.FirstName = Input.FirstName;
+                authUser.LastName = Input.LastName;
                 
                 await _userStore.SetUserNameAsync(authUser, Input.Email, CancellationToken.None);
                 await _emailStore.SetEmailAsync(authUser, Input.Email, CancellationToken.None);
