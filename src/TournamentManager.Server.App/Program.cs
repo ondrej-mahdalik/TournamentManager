@@ -1,5 +1,7 @@
 using System.Security.Claims;
+using Microsoft.AspNetCore.ApiAuthorization.IdentityServer;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
@@ -76,6 +78,11 @@ void ConfigureAuthentication(IServiceCollection serviceCollection)
     serviceCollection.Configure<IdentityOptions>(options =>
     {
         options.ClaimsIdentity.UserIdClaimType = ClaimTypes.NameIdentifier;
+    });
+    
+    serviceCollection.Configure<JwtBearerOptions>(IdentityServerJwtConstants.IdentityServerJwtBearerScheme, options =>
+    {
+        options.Authority = builder.Configuration["BaseUrl"];
     });
 }
 
@@ -199,8 +206,8 @@ async Task SetupDatabase(WebApplication application)
     }
     else
     {
-        mainDbContext.Database.Migrate();
-        authDbContext.Database.Migrate();
+        await mainDbContext.Database.EnsureCreatedAsync();
+        await authDbContext.Database.EnsureCreatedAsync();
     }
 }
 
