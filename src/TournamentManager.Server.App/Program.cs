@@ -3,9 +3,11 @@ using Microsoft.AspNetCore.ApiAuthorization.IdentityServer;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using TournamentManager.Server.App.Data;
+using TournamentManager.Server.App.Services;
 using TournamentManager.Server.Auth.Models;
 using TournamentManager.Server.Auth.Seeds;
 using TournamentManager.Server.BL.Installers;
@@ -104,6 +106,10 @@ void ConfigureDependencies(IServiceCollection serviceCollection)
     }
     
     serviceCollection.AddInstaller<BLInstaller>();
+
+    serviceCollection.AddTransient<IEmailSender, EmailSender>();
+    serviceCollection.Configure<AuthMessageSenderOptions>(
+        builder.Configuration.GetSection(AuthMessageSenderOptions.SendGrid));
 
 #if DEBUG
     serviceCollection.AddDatabaseDeveloperPageExceptionFilter();
