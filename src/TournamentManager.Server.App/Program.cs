@@ -68,14 +68,14 @@ void ConfigureAuthentication(IServiceCollection serviceCollection)
                             throw new InvalidOperationException();
             options.AppSecret = builder.Configuration["Authentication:Facebook:AppSecret"] ??
                                 throw new InvalidOperationException();
+        })
+        .AddTwitter(options =>
+        {
+            options.ConsumerKey = builder.Configuration["Authentication:Twitter:ConsumerKey"] ??
+                                  throw new InvalidOperationException();
+            options.ConsumerSecret = builder.Configuration["Authentication:Twitter:ConsumerSecret"] ??
+                                     throw new InvalidOperationException();
         });
-    // .AddTwitter(options =>
-    // {
-    //     options.ConsumerKey = builder.Configuration["Authentication:Twitter:ConsumerKey"] ??
-    //                           throw new InvalidOperationException();
-    //     options.ConsumerSecret = builder.Configuration["Authentication:Twitter:ConsumerSecret"] ??
-    //                              throw new InvalidOperationException();
-    // });
 
     serviceCollection.Configure<IdentityOptions>(options =>
     {
