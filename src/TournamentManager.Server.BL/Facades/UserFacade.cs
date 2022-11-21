@@ -27,14 +27,6 @@ public class UserFacade : CRUDFacade<UserEntity, UserModel>
         return await GetAsync(userEntity.Id);
     }
 
-    public async Task CreateAsync(UserModel user, string applicationUserId)
-    {
-        await using var uow = UnitOfWorkFactory.Create();
-        var entity = await uow.GetRepository<UserEntity>().InsertOrUpdateAsync(user, Mapper);
-        await uow.GetRepository<UserEntity>().InsertOrUpdateAsync(entity with {ApplicationUserId = applicationUserId}, Mapper);
-        await uow.CommitAsync();
-    }
-
     public async Task<string?> GetApplicationUserId(Guid id)
     {
         await using var uow = UnitOfWorkFactory.Create();
