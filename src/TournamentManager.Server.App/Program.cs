@@ -90,17 +90,20 @@ void ConfigureAuthentication(IServiceCollection serviceCollection)
 
 void ConfigureDependencies(IServiceCollection serviceCollection)
 {
-    serviceCollection.AddDbContext<AuthorizationDbContext>(options =>
-        options.UseSqlServer(authConnectionString));
+    
 
     switch (dalType)
     {
         case "SQLServer":
+            serviceCollection.AddDbContext<AuthorizationDbContext>(options =>
+                options.UseSqlServer(authConnectionString));
             serviceCollection.AddInstaller<DALSQLServerInstaller>(mainConnectionString);
             break;
         
         default:
         case "SQLite":
+            serviceCollection.AddDbContext<AuthorizationDbContext>(options =>
+                options.UseSqlite(authConnectionString));
             serviceCollection.AddInstaller<DALSQLiteInstaller>(mainConnectionString);
             break;
     }
