@@ -7,7 +7,6 @@
 }
 
 <partial name="_StatusMessage" for="StatusMessage" />
-<h3>@ViewData["Title"]</h3>
 <div>
     <p>To use an authenticator app go through the following steps:</p>
     <ol class="list">
@@ -32,14 +31,13 @@
                 with a unique code. Enter the code in the confirmation box below.
             </p>
             <div class="row">
-                <div class="col-md-6">
-                    <form id="send-code" method="post">
-                        <div class="form-floating mb-3">
-                            <input asp-for="Input.Code" class="form-control" autocomplete="off" placeholder="Please enter the code."/>
-                            <label asp-for="Input.Code" class="control-label form-label">Verification Code</label>
+                <div class="col">
+                    <form id="send-code" method="post" class="user">
+                        <div class="mb-3">
+                            <input asp-for="Input.Code" class="form-control form-control-user" autocomplete="off" placeholder="Verification Code"/>
                             <span asp-validation-for="Input.Code" class="text-danger"></span>
                         </div>
-                        <button type="submit" class="w-100 btn btn-lg btn-primary">Verify</button>
+                        <button type="submit" class="btn btn-primary d-block btn-user">Verify</button>
                         <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
                     </form>
                 </div>
