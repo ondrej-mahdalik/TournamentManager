@@ -29,7 +29,19 @@ public static class TeamSeeds
     public static readonly TeamEntity Team3 = new(
         "Team3", null)
     {
-        Id = Guid.Parse("5526A9A5-2A53-47F1-8BB9-87846AD2C366"),
+        Id = Guid.Parse("5526B9A5-2A53-47F1-8BB9-87846AD2C366"),
+        LeaderId = UserSeeds.Admin.Id
+    };
+    public static readonly TeamEntity Team4 = new(
+        "Team4", null)
+    {
+        Id = Guid.Parse("5526A9A5-2A53-47F1-8BD9-87846AD2C366"),
+        LeaderId = UserSeeds.Admin.Id
+    };
+    public static readonly TeamEntity Team5 = new(
+        "Team5", null)
+    {
+        Id = Guid.Parse("5526A9A5-2A53-47F1-8DD9-87846AD2C366"),
         LeaderId = UserSeeds.Admin.Id
     };
 
@@ -39,5 +51,7 @@ public static class TeamSeeds
         dbContext.Teams.Add(Team1);
         dbContext.Teams.Add(Team2);
         dbContext.Teams.Add(Team3);
+        dbContext.Teams.Add(Team4);
+        dbContext.Teams.Add(Team5);
     }
 }
