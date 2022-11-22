@@ -1,4 +1,4 @@
-(function() {
+setTimeout(function() {
   "use strict"; // Start of use strict
 
   var sidebar = document.querySelector('.sidebar');
@@ -73,4 +73,4 @@
     });
   }
 
-})(); // End of use strict
+}, 1000); // End of use strict
