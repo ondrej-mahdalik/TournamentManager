@@ -71,7 +71,7 @@
                                         <td>@tournament.Name</td>
                                         <td>@tournament.Date.ToString("dd. MM. yyyy")</td>
                                         <td>@(tournament.IsPublic ? "Public" : "Private")</td>
-                                        <td>@tournament.Participatings.Count / @tournament.MaxAttendees</td>
+                                        <td>@_numberOfParticipants[@tournament.Id] / @tournament.MaxAttendees</td>
                                         <td class="text-end"><a data-bs-target="/Tournament/@tournament.Id" href="/Tournament/Detail/@tournament.Id"><button class="btn btn-primary" type="button">Detail</button></a></td>
                                     </tr>
                                 }
@@ -132,6 +132,7 @@
     private string _search = "";
     private int _showCount = 10;
     private int _selectedPageIndex;
+    private Dictionary<Guid, int> _numberOfParticipants = new();
     private List<TournamentModel>? _tournaments;
     private List<TournamentModel> TournamentsFiltered => _tournaments?
         .Where(x =>
@@ -159,6 +160,11 @@
         try
         {
             _tournaments = await Http.GetFromJsonAsync<List<TournamentModel>>("api/Tournament") ?? new List<TournamentModel>();
+            var participants = await Http.GetFromJsonAsync<List<TeamIsParticipatingModel>>("/api/TeamIsParticipating") ?? new();
+            foreach (var tournament in _tournaments)
+            {
+                _numberOfParticipants.Add(tournament.Id, participants.Count(x => x.Approved && x.TournamentId == tournament.Id));
+            }
 
         }
         catch (AccessTokenNotAvailableException exception)
