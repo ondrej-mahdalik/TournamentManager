@@ -85,7 +85,13 @@
                     </div>
                     <div class="row border-bottom mb-2">
                         <div class="col">
-                            <p><img class="img-fluid me-2" width="60" height="60" src="../assets/img/avatars/avatar3.jpeg">@match?.Team1?.Name</p>
+                            <p>
+                                @if (match?.Team1?.LogoUrl is not null || match?.Team1?.LogoUrl != "")
+                                {
+                                    <img alt="team1-image" class="img-fluid" width="60" height="60" src="@match?.Team1?.LogoUrl">
+                                }                                                                                           
+                                @match?.Team1?.Name
+                            </p>
                         </div>
                         <div class="col align-self-center">
                             <p class="lead text-center">@match?.Score1</p>
@@ -93,7 +99,13 @@
                     </div>
                     <div class="row">
                         <div class="col">
-                            <p><img class="img-fluid me-2" width="60" height="60" src="../assets/img/avatars/avatar3.jpeg">@match?.Team2?.Name</p>
+                            <p>
+                                @if (match?.Team2?.LogoUrl is not null || match?.Team2?.LogoUrl != "")
+                                {
+                                    <img alt="team2-image" class="img-fluid" width="60" height="60" src="@match?.Team2?.LogoUrl">
+                                }                                                                                           
+                                @match?.Team2?.Name
+                            </p>
                         </div>
                         <div class="col align-self-center">
                             <p class="lead text-center">@match?.Score2</p>
@@ -104,66 +116,6 @@
         </div>
         }
     }
-    <div class="col">
-        <div class="card shadow mb-4">
-            <div class="card-body">
-                <div class="row">
-                    <div class="col">
-                        <h6 class="text-primary">Round 1</h6>
-                    </div>
-                    <div class="col">
-                        <p>25. 5. 2020<br></p>
-                    </div>
-                </div>
-                <div class="row border-bottom mb-2">
-                    <div class="col">
-                        <p><img class="img-fluid me-2" width="60" height="60" src="../assets/img/avatars/avatar3.jpeg">Team1</p>
-                    </div>
-                    <div class="col align-self-center">
-                        <p class="lead text-center">0</p>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col">
-                        <p><img class="img-fluid me-2" width="60" height="60" src="../assets/img/avatars/avatar3.jpeg">Team2</p>
-                    </div>
-                    <div class="col align-self-center">
-                        <p class="lead text-center">3</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="col">
-        <div class="card shadow mb-4">
-            <div class="card-body">
-                <div class="row">
-                    <div class="col">
-                        <h6 class="text-primary">Round 1</h6>
-                    </div>
-                    <div class="col">
-                        <p>25. 5. 2020<br></p>
-                    </div>
-                </div>
-                <div class="row border-bottom mb-2">
-                    <div class="col">
-                        <p><img class="img-fluid me-2" width="60" height="60" src="../assets/img/avatars/avatar3.jpeg">Team1</p>
-                    </div>
-                    <div class="col align-self-center">
-                        <p class="lead text-center">0</p>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col">
-                        <p><img class="img-fluid me-2" width="60" height="60" src="../assets/img/avatars/avatar3.jpeg">Team2</p>
-                    </div>
-                    <div class="col align-self-center">
-                        <p class="lead text-center">3</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
 </div>
 </div>
 </div>
