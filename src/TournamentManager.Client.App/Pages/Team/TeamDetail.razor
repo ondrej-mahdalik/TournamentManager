@@ -87,49 +87,130 @@
                     <div class="card-header">
                         <h4 class="mb-0">Members</h4>
                     </div>
-                    <div class="card-body">
-                        <div id="dataTable-1" class="table-responsive table mt-2" role="grid" aria-describedby="dataTable_info">
-                            <table id="dataTable" class="table my-0">
-                                <thead>
-                                    <tr>
-                                        <th>Name</th>
-                                        <th>Email</th>
-                                        <th></th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @if(_members is null)
-                                    {
-                                        <tr>
-                                            <td><em>Loading ...</em></td>
-                                        </tr>
-                                    }
-                                    else
-                                    {
-                                        @foreach (var member in _members)
-                                        {
+                    <div class="card-body" id="membersList">
+                        @if (_members is null)
+                        {
+                            <p class="text-center fw-bold">Loading ...</p>
+                        }
+                        else if (_members.Count == 0)
+                        {
+                            <p class="text-center fw-bold">No members.</p>
+                        }
+                        else
+                        {
+                            <div class="row">
+
+                                <div class="col-md-6 text-nowrap">
+                                    <div id="dataTable_length" class="dataTables_length" aria-controls="dataTable">
+                                        <label class="form-label">
+                                            Show
+                                            <select @onchange="OnItemsOnMembersPageChanged" class="d-inline-block form-select form-select-sm">
+                                                <option value="10" selected>10</option>
+                                                <option value="25">25</option>
+                                                <option value="50">50</option>
+                                                <option value="100">100</option>
+                                            </select>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div id="dataTable_filter" class="text-md-end dataTables_filter">
+                                        <label class="form-label">
+                                            <input class="form-control form-control-sm" @oninput="OnMembersSearchQueryChanged" type="search" aria-controls="dataTable" placeholder="Search" />
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            @if (MembersFiltered.Count == 0)
+                            {
+                                <p class="text-center fw-bold">No members found.</p>
+                            }
+                            else
+                            {
+                                <div id="dataTable" class="table-responsive table mt-2" role="grid" aria-describedby="dataTable_info">
+                                    <table id="dataTable" class="table my-0">
+                                        <thead>
                                             <tr>
-                                                <td>
-                                                    @if (member.ProfilePictureUrl is not null)
+                                                <th>Name</th>
+                                                <th>Email</th>
+                                                <th></th>
+                                                <th class="text-start"></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach (var member in MembersFilteredPages[_membersSelectedPageIndex])
+                                            {
+                                                <tr>
+                                                    <td class="mb-0">
+                                                        @if (member.ProfilePictureUrl is not null)
+                                                        {
+                                                            <img alt="Profile picture" class="rounded-circle me-2" width="30" height="30" src="@member.ProfilePictureUrl" />
+                                                        }
+                                                        @member.FirstName @member.LastName
+                                                    </td>
+                                                    <td class="mb-0">@member.Email</td>
+                                                    <td class="text-end"><a href="/Profile/Detail/@member.Id" class="btn btn-primary">Detail</a></td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 align-self-center">
+                                        <p id="dataTable_info" class="dataTables_info" role="status" aria-live="polite">
+                                            Showing @(
+                                        1 + _membersSelectedPageIndex * _membersShowCount
+                                        ) to @(
+                                           (_membersShowCount + _membersSelectedPageIndex * _membersShowCount) < MembersFiltered.Count ?
+                                           (_membersShowCount + _membersSelectedPageIndex * _membersShowCount) : MembersFiltered.Count
+                                           ) of @(
+                                           MembersFiltered.Count
+                                           )
+                                        </p>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <nav class="d-lg-flex justify-content-lg-end dataTables_paginate paging_simple_numbers">
+                                            <ul class="pagination">
+                                                <li class="page-item @(_membersSelectedPageIndex <= 0 ? "disabled" : "")">
+                                                    <a role="button" class="page-link" aria-label="Previous" @onclick="() => _membersSelectedPageIndex--"><span class="user-select-none" aria-hidden="true">«</span></a>
+                                                </li>
+                                                @for (var i = _membersSelectedPageIndex - 1; i <= _membersSelectedPageIndex + 1; i++)
+                                                {
+                                                    var num = i;
+                                                    if (_membersSelectedPageIndex == 0)
+                                                        num = i + 1; // So user cant go to page -1
+                                                    else if (_membersSelectedPageIndex >= MembersFilteredPages.Count - 1)
+                                                        num = i - 1; // So user cant go to a page that is too high
+
+                                                    if (num > MembersFilteredPages.Count - 1)
                                                     {
-                                                        <img class="rounded-circle me-2" width="30" height="30" src="@member.ProfilePictureUrl" alt="Profile picture" />
+                                                        break; // If there are fewer than 3 pages total
                                                     }
-                                                    @member.FirstName @member.LastName
-                                                </td>
-                                                <td>@member.Email</td>
-                                                <td class="text-end"><a href="/Profile/Detail/@member.Id" class="btn btn-primary">Detail</a></td>
-                                            </tr>
-                                        }
-                                        @if(_members.Count == 0)
-                                        {
-                                            <tr>
-                                                <td colspan="3" class="text-center fw-bold">No members</td>
-                                            </tr>
-                                        }
-                                    }
-                                </tbody>
-                            </table>
-                        </div>
+                                                    else if (_membersSelectedPageIndex == 1 && MembersFilteredPages.Count == 2 && i == 0)
+                                                    {
+                                                        // If only 2 pages are available, clicking the second one would make page 0 appear
+                                                        // which is obviously not possible
+                                                        continue;
+                                                    }
+
+                                                    <li class="page-item @(_membersSelectedPageIndex == num ? "active" : "")">
+                                                        <a class="page-link" @onclick="() => _membersSelectedPageIndex = num" role="button">
+                                                            @(
+                                                                num + 1
+                                                                )
+                                                        </a>
+                                                    </li>
+                                                }
+                                                <li class="page-item @(_membersSelectedPageIndex >= @MembersFilteredPages.Count - 1 ? "disabled" : "")">
+                                                    <a class="page-link" aria-label="Next" @onclick="() => _membersSelectedPageIndex++" role="button"><span class="user-select-none" aria-hidden="true">»</span></a>
+                                                </li>
+                                            </ul>
+                                        </nav>
+                                    </div>
+                                </div>
+                            }
+                        }
                     </div>
                     <div class="card shadow">
                         <em> TODO : Tournaments </em> <!-- až bude finalizovaná Honzova část -->
@@ -223,4 +304,40 @@
             return;
         NavigationManager.NavigateTo($"/Team/Manage/{_team.Id}");
     }
+
+    // Memebrs list :
+
+    private int _membersShowCount = 10;
+    private int _membersSelectedPageIndex;
+    private string _membersSearch = "";
+
+    private void OnMembersSearchQueryChanged(ChangeEventArgs e)
+    {
+        _membersSearch = e.Value?.ToString() ?? "";
+        _membersSelectedPageIndex = 0;
+    }
+
+    private void OnItemsOnMembersPageChanged(ChangeEventArgs e)
+    {
+        _membersSelectedPageIndex = 0;
+        _membersShowCount = int.Parse(e.Value?.ToString() ?? "10");
+    }
+
+    private List<UserModel> MembersFiltered => _members?
+        .Where(x =>
+        {
+            var firstName = x.FirstName is not null && x.FirstName.ToLower().Contains(_membersSearch.ToLower());
+            var lastName = x.LastName is not null && x.LastName.ToLower().Contains(_membersSearch.ToLower());
+            var email = x.Email is not null && x.Email.ToLower().Contains(_membersSearch.ToLower());
+            return firstName || lastName || email;
+        }).ToList()
+        ?? new(); // Filtration based on _search
+
+    private List<List<UserModel>> MembersFilteredPages => MembersFiltered.Select((x, i) => new  // Splits the one big list into smaller lists of size _membersShowCount
+    {
+        Index = i,
+        Value = x
+    }).GroupBy(x => x.Index / _membersShowCount)
+        .Select(x => x.Select(v => v.Value).ToList())
+        .ToList();
 }
