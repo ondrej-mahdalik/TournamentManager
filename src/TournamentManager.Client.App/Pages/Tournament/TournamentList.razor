@@ -80,43 +80,47 @@
                         }
                     </div>
                     <div class="row">
-                        <div class="col-md-6 align-self-center">
-                            <p id="dataTable_info" class="dataTables_info" role="status" aria-live="polite">Showing @(1 + _selectedPageIndex * _showCount) to @((_showCount + _selectedPageIndex * _showCount) < TournamentsFiltered.Count ? (_showCount + _selectedPageIndex * _showCount) : TournamentsFiltered.Count) of @(TournamentsFiltered.Count)</p>
-                        </div>
-                        <div class="col-md-6">
-                            <nav class="d-lg-flex justify-content-lg-end dataTables_paginate paging_simple_numbers">
-                                <ul class="pagination">
-                                    <li class="page-item @(_selectedPageIndex <= 0 ? "disabled" : "")"><a role="button" class="page-link" aria-label="Previous" @onclick="() => _selectedPageIndex--" ><span class="user-select-none" aria-hidden="true">«</span></a></li>
-                                    @for (var i = _selectedPageIndex - 1; i <= _selectedPageIndex + 1; i++)
-                                    {
-                                        var num = i;
-                                        if (_selectedPageIndex == 0)
-                                            num = i + 1; // So user cant go to page -1
+                        @if (TournamentsFiltered.Count > 0)
+                        {
+                            <div class="col-md-6 align-self-center">
+                                <p id="dataTable_info" class="dataTables_info" role="status" aria-live="polite">Showing @(1 + _selectedPageIndex * _showCount) to @((_showCount + _selectedPageIndex * _showCount) < TournamentsFiltered.Count ? (_showCount + _selectedPageIndex * _showCount) : TournamentsFiltered.Count) of @(TournamentsFiltered.Count)</p>
+                            </div>
 
-                                        else if (_selectedPageIndex >= TournamentsFilteredPages.Count - 1)
-                                            num = i - 1; // So user cant go to a page that is too high
-
-                                        if (num > TournamentsFilteredPages.Count - 1)
+                            <div class="col-md-6">
+                                <nav class="d-lg-flex justify-content-lg-end dataTables_paginate paging_simple_numbers">
+                                    <ul class="pagination">
+                                        <li class="page-item @(_selectedPageIndex <= 0 ? "disabled" : "")"><a role="button" class="page-link" aria-label="Previous" @onclick="() => _selectedPageIndex--"><span class="user-select-none" aria-hidden="true">«</span></a></li>
+                                        @for (var i = _selectedPageIndex - 1; i <= _selectedPageIndex + 1; i++)
                                         {
-                                            break; // If there are fewer than 3 pages total
-                                        }
-                                        else if (_selectedPageIndex == 1 && TournamentsFilteredPages.Count == 2 && i == 0)
-                                        {
-                                            // If only 2 pages are available, clicking the second one would make page 0 appear
-                                            // which is obviously not possible
-                                            continue;
-                                        }
+                                            var num = i;
+                                            if (_selectedPageIndex == 0)
+                                                num = i + 1; // So user cant go to page -1
 
-                                        <li class="page-item @(_selectedPageIndex == num ? "active" : "")">
-                                            <a class="page-link" @onclick="() => _selectedPageIndex = num" role="button">@(num + 1)</a>
+                                            else if (_selectedPageIndex >= TournamentsFilteredPages.Count - 1)
+                                                num = i - 1; // So user cant go to a page that is too high
+
+                                            if (num > TournamentsFilteredPages.Count - 1)
+                                            {
+                                                break; // If there are fewer than 3 pages total
+                                            }
+                                            if (_selectedPageIndex == 1 && TournamentsFilteredPages.Count == 2 && i == 0)
+                                            {
+                                                // If only 2 pages are available, clicking the second one would make page 0 appear
+                                                // which is obviously not possible
+                                                continue;
+                                            }
+
+                                            <li class="page-item @(_selectedPageIndex == num ? "active" : "")">
+                                                <a class="page-link" @onclick="() => _selectedPageIndex = num" role="button">@(num + 1)</a>
+                                            </li>
+                                        }
+                                        <li class="page-item @(_selectedPageIndex >= @TournamentsFilteredPages.Count - 1 ? "disabled" : "")">
+                                            <a class="page-link" aria-label="Next" @onclick="() => _selectedPageIndex++" role="button"><span class="user-select-none" aria-hidden="true">»</span></a>
                                         </li>
-                                    }
-                                    <li class="page-item @(_selectedPageIndex >= @TournamentsFilteredPages.Count - 1 ? "disabled" : "")">
-                                        <a class="page-link" aria-label="Next" @onclick="() => _selectedPageIndex++" role="button"><span class="user-select-none" aria-hidden="true">»</span></a>
-                                    </li>
-                                </ul>
-                            </nav>
-                        </div>
+                                    </ul>
+                                </nav>
+                            </div>
+                        }
                     </div>
                 }
             </div>
@@ -155,6 +159,7 @@
         try
         {
             _tournaments = await Http.GetFromJsonAsync<List<TournamentModel>>("api/Tournament") ?? new List<TournamentModel>();
+
         }
         catch (AccessTokenNotAvailableException exception)
         {

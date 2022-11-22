@@ -21,8 +21,14 @@
     {
         <div class="col col-auto d-flex align-items-center"><button class="btn btn-danger" @onclick="DeleteTournament" type="button">Delete Tournament</button></div>
     }
+    
+    @if (_tournament is not null && _tournament.IsApproved && _loggedUser?.Id == _tournament?.CreatorId && 
+         !_tournament!.InProgress && _approvedParticipants?.Count > 0)
+    {
+        <div class="col col-auto d-flex align-items-center"><button class="btn btn-success" @onclick="StartTournament" type="button">Start Tournament</button></div>
+    }
 </div>
-<div class="row">
+<div class="row mb-4">
     @if (!_resultOk)
     {
         <p class="text-danger"><i class="fas fa-exclamation-circle pe-0 me-1"></i>@_errorMessage</p>
@@ -44,7 +50,6 @@
                             <div id="dataTable_length" class="dataTables_length" aria-controls="dataTable">
                                 <label class="form-label">Show&nbsp;
                                     <select @onchange="OnItemsOnPageChanged" class="d-inline-block form-select form-select-sm">
-                                        <option value="1">1</option>
                                         <option value="10" selected="selected">10</option>
                                         <option value="25">25</option>
                                         <option value="50">50</option>
@@ -74,7 +79,7 @@
                                 </tr>
                                 </thead>
                                 <tbody>
-                                @foreach (var participant in PendingParticipantsPages[_selectedPageIndex])
+                                @foreach (var participant in PendingParticipantsFilteredPages[_selectedPageIndex])
                                 {
                                     var leader = _teamLeaders?.Where(x => x.Id == participant.Team?.LeaderId).ToList()[0];
                                     <tr>
@@ -104,14 +109,14 @@
                                         if (_selectedPageIndex == 0)
                                             num = i + 1; // So user cant go to page -1
 
-                                        else if (_selectedPageIndex >= PendingParticipantsFiltered.Count - 1)
+                                        else if (_selectedPageIndex >= PendingParticipantsFilteredPages.Count - 1)
                                             num = i - 1; // So user cant go to a page that is too high
                                         
-                                        if (num > PendingParticipantsFiltered.Count - 1)
+                                        if (num > PendingParticipantsFilteredPages.Count - 1)
                                         {
                                             break; // If there are fewer than 3 pages total
                                         }
-                                        else if (_selectedPageIndex == 1 && PendingParticipantsFiltered.Count == 2 && i == 0)
+                                        if (_selectedPageIndex == 1 && PendingParticipantsFilteredPages.Count == 2 && i == 0)
                                         {
                                             // If only 2 pages are available, clicking the second one would make page 0 appear
                                             // which is obviously not possible
@@ -122,7 +127,7 @@
                                             <a class="page-link" @onclick="() => _selectedPageIndex = num" role="button">@(num + 1)</a>
                                         </li>
                                     }
-                                    <li class="page-item @(_selectedPageIndex >= @PendingParticipantsFiltered.Count - 1 ? "disabled" : "")">
+                                    <li class="page-item @(_selectedPageIndex >= @PendingParticipantsFilteredPages.Count - 1 ? "disabled" : "")">
                                         <a class="page-link" aria-label="Next" @onclick="() => _selectedPageIndex++" role="button"><span class="user-select-none" aria-hidden="true">»</span></a>
                                     </li>
                                     </ul>
@@ -134,7 +139,7 @@
         </div>
     </div>
     <div class="col">
-        <div class="card shadow">
+        <div class="card shadow mb-4">
             <div class="card-header">
                 <h6 class="text-primary mb-0">Participants</h6>
             </div>
@@ -147,21 +152,23 @@
                 {
                     <div class="row">
                         <div class="col-md-6 text-nowrap">
-                            <div id="dataTable_length-3" class="dataTables_length" aria-controls="dataTable">
+                            <div id="dataTable_length" class="dataTables_length" aria-controls="dataTable">
                                 <label class="form-label">Show&nbsp;
-                                    <select class="d-inline-block form-select form-select-sm">
+                                    <select @onchange="OnItemsOnPageChanged2" class="d-inline-block form-select form-select-sm">
                                         <option value="10" selected="selected">10</option>
                                         <option value="25">25</option>
                                         <option value="50">50</option>
                                         <option value="100">100</option>
-                                    </select>&nbsp;</label></div>
+                                    </select>&nbsp;
+                                </label>
+                            </div>
                         </div>
                         <div class="col-md-6">
-                            <div class="text-md-end dataTables_filter" id="dataTable_filter-3"><label class="form-label"><input type="search" class="form-control form-control-sm" aria-controls="dataTable" placeholder="Search"></label></div>
+                            <div class="text-md-end dataTables_filter" id="dataTable_filter"><label class="form-label"><input type="search" @oninput="OnSearchQueryChanged2" class="form-control form-control-sm" aria-controls="dataTable" placeholder="Search"></label></div>
                         </div>
                     </div>
-                    <div class="table-responsive table mt-2" id="dataTable-4" role="grid" aria-describedby="dataTable_info">
-                        @if (_approvedParticipants.Count == 0)
+                    <div class="table-responsive table mt-2" id="dataTable-1" role="grid" aria-describedby="dataTable_info">
+                        @if (ApprovedParticipantsFiltered.Count == 0)
                         {
                             <p class="text-center fw-bold">No participants found</p>
                         }
@@ -177,14 +184,14 @@
                                 </tr>
                                 </thead>
                                 <tbody>
-                                @foreach (var participant in _approvedParticipants)
+                                @foreach (var participant in ApprovedParticipantsFilteredPages[_selectedPageIndex2])
                                 {
                                     var leader = _teamLeaders?.Where(x => x.Id == participant.Team?.LeaderId).ToList()[0];
                                     <tr>
                                         <td>@participant.Team?.Name</td>
                                         <td>@leader?.FirstName @leader?.LastName</td>
                                         <td>Datum registrace?</td>
-                                        <td class="text-center"><i @onclick="() => DeleteParticipant(participant)" class="fas fa-user-times" data-bs-toggle="tooltip" data-bss-tooltip="" data-bs-placement="right" title="Remove participant"></i></td>
+                                        <td class="text-center"><i @onclick="() => DeleteParticipant(participant)" class="fas fa-user-times" data-bs-toggle="tooltip" data-bss-tooltip="" data-bs-placement="right" title="Reject participant"></i></td>
                                     </tr>
                                 }
                                 </tbody>
@@ -196,17 +203,39 @@
                     </div>
                     <div class="row">
                         <div class="col-md-6 align-self-center">
-                            <p id="dataTable_info-3" class="dataTables_info" role="status" aria-live="polite">Showing 1 to 10 of 27</p>
-                        </div>
+                            <p id="dataTable_info" class="dataTables_info" role="status" aria-live="polite">Showing @(1 + _selectedPageIndex2 * _showCount2) to @((_showCount2 + _selectedPageIndex2 * _showCount2) < ApprovedParticipantsFiltered.Count ? (_showCount2 + _selectedPageIndex2 * _showCount2) : ApprovedParticipantsFiltered.Count) of @(ApprovedParticipantsFiltered.Count)</p></div>
                         <div class="col-md-6">
                             <nav class="d-lg-flex justify-content-lg-end dataTables_paginate paging_simple_numbers">
                                 <ul class="pagination">
-                                    <li class="page-item disabled"><a class="page-link" aria-label="Previous" href="#"><span aria-hidden="true">«</span></a></li>
-                                    <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                                    <li class="page-item"><a class="page-link" href="#">2</a></li>
-                                    <li class="page-item"><a class="page-link" href="#">3</a></li>
-                                    <li class="page-item"><a class="page-link" aria-label="Next" href="#"><span aria-hidden="true">»</span></a></li>
-                                </ul>
+                                    <li class="page-item @(_selectedPageIndex2 <= 0 ? "disabled" : "")"><a role="button" class="page-link" aria-label="Previous" @onclick="() => _selectedPageIndex2--" ><span class="user-select-none" aria-hidden="true">«</span></a></li>
+                                    @for (var i = _selectedPageIndex2 - 1; i <= _selectedPageIndex2 + 1; i++)
+                                    {
+                                        var num = i;
+                                        if (_selectedPageIndex2 == 0)
+                                            num = i + 1; // So user cant go to page -1
+
+                                        else if (_selectedPageIndex2 >= ApprovedParticipantsFilteredPages.Count - 1)
+                                            num = i - 1; // So user cant go to a page that is too high
+                                        
+                                        if (num > ApprovedParticipantsFilteredPages.Count - 1)
+                                        {
+                                            break; // If there are fewer than 3 pages total
+                                        }
+                                        if (_selectedPageIndex2 == 1 && ApprovedParticipantsFilteredPages.Count == 2 && i == 0)
+                                        {
+                                            // If only 2 pages are available, clicking the second one would make page 0 appear
+                                            // which is obviously not possible
+                                            continue;
+                                        }
+
+                                        <li class="page-item @(_selectedPageIndex2 == num ? "active" : "")">
+                                            <a class="page-link" @onclick="() => _selectedPageIndex2 = num" role="button">@(num + 1)</a>
+                                        </li>
+                                    }
+                                    <li class="page-item @(_selectedPageIndex2 >= @ApprovedParticipantsFilteredPages.Count - 1 ? "disabled" : "")">
+                                        <a class="page-link" aria-label="Next" @onclick="() => _selectedPageIndex2++" role="button"><span class="user-select-none" aria-hidden="true">»</span></a>
+                                    </li>
+                                    </ul>
                             </nav>
                         </div>
                     </div>
@@ -221,144 +250,57 @@
     </div>
 </div>
 <div class="row">
-    <div class="col">
-        <div class="card mb-4 shadow">
-            <div class="card-body">
-                <div class="row">
-                    <div class="col">
-                        <h6 class="text-primary">Round 1</h6>
+    @if (_matches is null)
+    {
+        <p class="text-center fw-bold">Loading...</p>
+    }
+    else if (_matches.Count == 0)
+    {
+        <p class="text-center fw-bold">@_message</p>
+    }
+    else
+    {
+        foreach (var match in _matches)
+        {
+            <div class="col-4">
+                <div class="card mb-4 shadow">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col">
+                                <h6 class="text-primary">Round @match.Round</h6>
+                            </div>
+                            <div class="col">
+                                <p>Zatím @_tournament?.Date.ToString("dd. MM. yyyy")<br></p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <p><img class="img-fluid" width="60" height="60" src="../assets/img/avatars/avatar3.jpeg">@match?.Team1?.Name</p>
+                            </div>
+                            <div class="col align-self-center">
+                                <p class="lead text-center">@match?.Score1</p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <p><img class="img-fluid" width="60" height="60" src="../assets/img/avatars/avatar3.jpeg">@match?.Team2?.Name</p>
+                            </div>
+                            <div class="col align-self-center">
+                                <p class="lead text-center">@match?.Score2</p>
+                            </div>
+                        </div>
+                        <div class="row justify-content-end">
+                            <div class="col col-auto"><button class="btn btn-primary" type="button">Manage</button></div>
+                        </div>
                     </div>
-                    <div class="col">
-                        <p>25. 5. 2020<br></p>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col">
-                        <p><img class="img-fluid" width="60" height="60" src="../assets/img/avatars/avatar3.jpeg">Team1</p>
-                    </div>
-                    <div class="col align-self-center">
-                        <p class="lead text-center">0</p>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col">
-                        <p><img class="img-fluid" width="60" height="60" src="../assets/img/avatars/avatar3.jpeg">Team2</p>
-                    </div>
-                    <div class="col align-self-center">
-                        <p class="lead text-center">3</p>
-                    </div>
-                </div>
-                <div class="row justify-content-end">
-                    <div class="col col-auto"><button class="btn btn-primary" type="button">Manage</button></div>
                 </div>
             </div>
-        </div>
-    </div>
-    <div class="col">
-        <div class="card mb-4 shadow">
-            <div class="card-body">
-                <div class="row">
-                    <div class="col">
-                        <h6 class="text-primary">Round 1</h6>
-                    </div>
-                    <div class="col">
-                        <p>25. 5. 2020</p>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col">
-                        <p><img class="img-fluid" width="60" height="60" src="../assets/img/avatars/avatar3.jpeg">Team1</p>
-                    </div>
-                    <div class="col align-self-center">
-                        <p class="lead text-center">0</p>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col">
-                        <p><img class="img-fluid" width="60" height="60" src="../assets/img/avatars/avatar3.jpeg">Team2</p>
-                    </div>
-                    <div class="col align-self-center">
-                        <p class="lead text-center">3</p>
-                    </div>
-                </div>
-                <div class="row justify-content-end">
-                    <div class="col col-auto"><button class="btn btn-primary" type="button">Manage</button></div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-<div class="row">
-    <div class="col">
-        <div class="card mb-4 shadow">
-            <div class="card-body">
-                <div class="row">
-                    <div class="col">
-                        <h6 class="text-primary">Round 1</h6>
-                    </div>
-                    <div class="col">
-                        <p>25. 5. 2020<br></p>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col">
-                        <p><img class="img-fluid" width="60" height="60" src="../assets/img/avatars/avatar3.jpeg">Team1</p>
-                    </div>
-                    <div class="col align-self-center">
-                        <p class="lead text-center">0</p>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col">
-                        <p><img class="img-fluid" width="60" height="60" src="../assets/img/avatars/avatar3.jpeg">Team2</p>
-                    </div>
-                    <div class="col align-self-center">
-                        <p class="lead text-center">3</p>
-                    </div>
-                </div>
-                <div class="row justify-content-end">
-                    <div class="col col-auto"><button class="btn btn-primary" type="button">Manage</button></div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="col">
-        <div class="card mb-4 shadow">
-            <div class="card-body">
-                <div class="row">
-                    <div class="col">
-                        <h6 class="text-primary">Round 1</h6>
-                    </div>
-                    <div class="col">
-                        <p>25. 5. 2020<br></p>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col">
-                        <p><img class="img-fluid" width="60" height="60" src="../assets/img/avatars/avatar3.jpeg">Team1</p>
-                    </div>
-                    <div class="col align-self-center">
-                        <p class="lead text-center">0</p>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col">
-                        <p><img class="img-fluid" width="60" height="60" src="../assets/img/avatars/avatar3.jpeg">Team2</p>
-                    </div>
-                    <div class="col align-self-center">
-                        <p class="lead text-center">3</p>
-                    </div>
-                </div>
-                <div class="row justify-content-end">
-                    <div class="col col-auto"><button class="btn btn-primary" type="button">Manage</button></div>
-                </div>
-            </div>
-        </div>
-    </div>
+        }
+    }
 </div>
 </div>
 </div>
-</div><a class="border rounded d-inline scroll-to-top" href="#page-top"><i class="fas fa-angle-up"></i></a>
+</div>
 </div>
 
 @code {
@@ -373,9 +315,13 @@
     private List<TeamIsParticipatingModel>? _pendingParticipants;
     private List<UserModel>? _teamLeaders;
     private int _showCount = 10;
+    private int _showCount2 = 10;
     private int _selectedPageIndex;
+    private int _selectedPageIndex2;
+    private string _message = "Tournament has no matches";
     private string _searchPending = "";
-
+    private string _searchApproved = "";
+    
     private bool _resultOk = true;
     private string _errorMessage = String.Empty;
 
@@ -387,7 +333,22 @@
         }).ToList() ??
     new ();
     
-    private List<List<TeamIsParticipatingModel>> PendingParticipantsPages => PendingParticipantsFiltered.Select((x, i) => new  // Splits the one big list into smaller lists of size _showCount
+    private List<TeamIsParticipatingModel> ApprovedParticipantsFiltered => _approvedParticipants?
+        .Where(x =>
+        {
+            var name = x.Team != null && x.Team.Name.ToLower().Contains(_searchApproved.ToLower());
+            return name;
+        }).ToList() ?? new ();
+    
+    private List<List<TeamIsParticipatingModel>> ApprovedParticipantsFilteredPages => ApprovedParticipantsFiltered.Select((x, i) => new  // Splits the one big list into smaller lists of size _showCount
+    {
+        Index = i,
+        Value = x
+    }).GroupBy(x => x.Index / _showCount)
+        .Select(x => x.Select(v => v.Value).ToList())
+        .ToList();
+    
+    private List<List<TeamIsParticipatingModel>> PendingParticipantsFilteredPages => PendingParticipantsFiltered.Select((x, i) => new  // Splits the one big list into smaller lists of size _showCount
     {
         Index = i,
         Value = x
@@ -401,7 +362,7 @@
         try
         {
             _tournament = await Http.GetFromJsonAsync<TournamentModel>($"/api/Tournament/{Id}");
-            _matches = _tournament?.Matches.ToList() ?? new List<MatchModel>();
+            _matches = _tournament?.Matches.OrderBy(x => x.Round).ToList() ?? new();
             var allParticipants = await Http.GetFromJsonAsync<List<TeamIsParticipatingModel>>("/api/TeamIsParticipating") ?? new();
             _approvedParticipants = allParticipants.Where(x => x.TournamentId == _tournament?.Id && x.Approved).ToList();
             _pendingParticipants = allParticipants.Where(x => x.TournamentId == _tournament?.Id && !x.Approved).ToList();
@@ -433,7 +394,7 @@
     {
         try
         {
-            if (_tournament is not null)
+            if (_tournament is not null && !_tournament.InProgress)
             {
                 var result = await Http.DeleteAsync($"/api/Tournament/{_tournament.Id}");
                 if (result.IsSuccessStatusCode)
@@ -456,7 +417,7 @@
 
     private async Task ApproveParticipant(TeamIsParticipatingModel? participant)
     {
-        if (participant is not null)
+        if (participant is not null && _tournament is not null && !_tournament.InProgress)
         {
             participant.Approved = true;
             var result = await Http.PutAsJsonAsync("/api/TeamIsParticipating", participant);
@@ -478,7 +439,7 @@
 
     private async Task DeleteParticipant(TeamIsParticipatingModel? participant)
     {
-        if (participant is not null)
+        if (participant is not null && _tournament is not null && !_tournament.InProgress)
         {
             try
             {
@@ -503,18 +464,108 @@
             }
         }
     }
+
+    private async Task StartTournament()
+    {
+        if (_tournament is not null)
+        {
+            _tournament.InProgress= true;
+            var result = await Http.PutAsJsonAsync("/api/Tournament", _tournament);
+            if (!result.IsSuccessStatusCode)
+            {
+                _tournament.InProgress = false;
+                _resultOk = false;
+                _errorMessage = "Unable to start the tournament";
+            }
+            else
+            {
+                _resultOk = true;
+                _errorMessage = "";
+                CreateMatches();
+            }
+        }
+    }
+
+    private async void CreateMatches()
+    {
+        _message = "Generating matches...";
+        var matchesToGenerate = new List<MatchModel>();
+        if (_approvedParticipants is null || _tournament is null) return;
+        
+        List<TeamIsParticipatingModel> randomOrderParticipants = _approvedParticipants.GetRange(0, _approvedParticipants.Count)
+            .OrderBy(i => Guid.NewGuid()).ToList(); // Randomize the order of the participants
+
+        var matchesInFirstRound = randomOrderParticipants.Count - Math.Pow(2, Math.Floor(Math.Log2(randomOrderParticipants.Count)));
+        var order = 1;
+        if (matchesInFirstRound == 0)
+        {
+            for (var i = 0; i < randomOrderParticipants.Count; i += 2)
+            {
+                MatchModel match = new MatchModel(_tournament.Id, 0, 0, 1, order++)
+                {
+                    Team1Id = randomOrderParticipants[i].TeamId,
+                    Team2Id = randomOrderParticipants[i+1].TeamId
+                };
+                matchesToGenerate.Add(match);
+            }
+        }
+        else
+        {
+            var i = 0;
+            for (; i < matchesInFirstRound * 2; i += 2)
+            {
+                MatchModel match = new MatchModel(_tournament.Id, 0, 0, 1, order++)
+                {
+                    Team1Id = randomOrderParticipants[i].TeamId,
+                    Team2Id = randomOrderParticipants[i + 1].TeamId
+                };
+                var result = await Http.PutAsJsonAsync("/api/Match", match);
+                if (!result.IsSuccessStatusCode)
+                {
+                    return;
+                }
+            }
+            order = 1;
+            for (; i < randomOrderParticipants.Count; i += 2)
+            {
+                MatchModel match = new MatchModel(_tournament.Id, 0, 0, 2, order++)
+                {
+                    Team1Id = randomOrderParticipants[i].TeamId,
+                    Team2Id = i + 1 < randomOrderParticipants.Count ? randomOrderParticipants[i+1].TeamId : null
+                };
+                matchesToGenerate.Add(match);
+            }
+        }
+        // Make the request here
+        
+        _matches = (await Http.GetFromJsonAsync<TournamentModel>($"/api/Tournament/{_tournament.Id}"))?.Matches.OrderBy(x => x.Round).ToList() ?? new();
+        StateHasChanged();
+    }
+     
     private void OnItemsOnPageChanged(ChangeEventArgs e)
     {
         _selectedPageIndex = 0;
         _showCount = int.Parse(e.Value?.ToString() ?? "10");
     }
     
+    private void OnItemsOnPageChanged2(ChangeEventArgs e)
+    {
+        _selectedPageIndex2 = 0;
+        _showCount2 = int.Parse(e.Value?.ToString() ?? "10");
+    }
+
     private void OnSearchQueryChanged(ChangeEventArgs e)
     {
         _searchPending = e.Value?.ToString() ?? "";
         _selectedPageIndex = 0;
     }
     
-    
+    private void OnSearchQueryChanged2(ChangeEventArgs e)
+    {
+        _searchApproved = e.Value?.ToString() ?? "";
+        _selectedPageIndex2 = 0;
+    }
+
+
 
 }

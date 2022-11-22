@@ -19,6 +19,8 @@ public record TournamentModel(
     
     bool IsApproved,
     
+    bool InProgress,
+    
     [Required]
     [Range(1, 1000, ErrorMessage = "The number of attendees has to be between 1 and 1000")]
     [Display(Name = "Maximum number of attendees")]
@@ -31,6 +33,8 @@ public record TournamentModel(
     public DateTime Date { get; set; } = Date;
     public bool IsPublic { get; set; } = IsPublic;
     public bool IsApproved { get; set; } = IsApproved;
+
+    public bool InProgress { get; set; } = InProgress;
     public int MaxAttendees { get; set; } = MaxAttendees;
     public string? Description { get; set; } = Description;
 
@@ -46,5 +50,5 @@ public record TournamentModel(
     public IList<TeamIsParticipatingModel> Participatings { get; set; } = new List<TeamIsParticipatingModel>();
     public IList<MatchModel> Matches { get; set; } = new List<MatchModel>();
     
-    public static TournamentModel Empty => new(string.Empty, DateTime.Now, false, false, 1);
+    public static TournamentModel Empty => new(string.Empty, DateTime.Now, false, false, false, 1);
 }

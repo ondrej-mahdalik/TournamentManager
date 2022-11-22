@@ -11,6 +11,7 @@ public static class TournamentSeeds
         "This is a tournament",
         true,
         true,
+        false,
         20)
     {
         Id = Guid.Parse("83D0C8E4-E38B-43B2-8E64-3EBA5EC773FD"),
