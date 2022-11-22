@@ -542,7 +542,12 @@
                 matchesToGenerate.Add(match);
             }
         }
-        // Make the request here
+
+        var response = await Http.PutAsJsonAsync("/api/Match/multiple", matchesToGenerate);
+        if (!response.IsSuccessStatusCode)
+        {
+            // TODO Handle failed generation
+        }
         
         _matches = (await Http.GetFromJsonAsync<TournamentModel>($"/api/Tournament/{_tournament.Id}"))?.Matches.OrderBy(x => x.Round).ToList() ?? new();
         StateHasChanged();

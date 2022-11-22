@@ -14,7 +14,7 @@ public class MatchController : AuthorizedControllerBase
 {
     private readonly MatchFacade _matchFacade;
     private readonly TournamentFacade _tournamentFacade;
-    
+
     public MatchController(MatchFacade matchFacade,
         TournamentFacade tournamentFacade,
         UserFacade userFacade,
@@ -46,6 +46,22 @@ public class MatchController : AuthorizedControllerBase
             return Ok(match);
 
         return Forbid();
+    }
+
+    [HttpPut("multiple")]
+    public async Task<ActionResult> InsertMultiple([FromBody] List<MatchModel>? matches)
+    {
+        if (matches is null || matches.Count == 0)
+            return BadRequest();
+
+        var user = await GetLoggedUser();
+        if (!user.IsAdministrator && matches.Any(x => user.Tournaments.All(y => y.Id != x.TournamentId)))
+            return Forbid();
+
+        if (!await _matchFacade.InsertManyAsync(matches))
+            return UnprocessableEntity();
+
+        return Ok();
     }
 
     [HttpPut]

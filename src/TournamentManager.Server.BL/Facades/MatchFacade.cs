@@ -24,7 +24,7 @@ public class MatchFacade : CRUDFacade<MatchEntity, MatchModel>
 
         return await Mapper.ProjectTo<MatchModel>(query).ToArrayAsync().ConfigureAwait(false);
     }
-    
+
     public override async Task<MatchModel?> GetAsync(Guid id)
     {
         await using var uow = UnitOfWorkFactory.Create();
@@ -36,5 +36,29 @@ public class MatchFacade : CRUDFacade<MatchEntity, MatchModel>
             .Include(x => x.Tournament).FirstOrDefaultAsync(x => x.Id == id);
 
         return Mapper.Map<MatchModel?>(entity);
+    }
+
+    public async Task<bool> InsertManyAsync(List<MatchModel> matches)
+    {
+        await using var uow = UnitOfWorkFactory.Create();
+        var repository = uow
+            .GetRepository<MatchEntity>();
+
+        try
+        {
+            foreach (var match in matches)
+            {
+                await repository.InsertOrUpdateAsync(match, Mapper).ConfigureAwait(false);
+            }
+
+            await uow.CommitAsync();
+            return true;
+        }
+        catch
+        {
+            repository.DeleteRange(matches.Select(x => x.Id));
+            await uow.CommitAsync();
+            return false;
+        }
     }
 }
