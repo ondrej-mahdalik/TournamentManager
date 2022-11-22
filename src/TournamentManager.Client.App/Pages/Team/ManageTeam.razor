@@ -496,7 +496,7 @@ else
         _requestsShowCount = int.Parse(e.Value?.ToString() ?? "10");
     }
 
-    private List<UserModel> requestsFiltered => _requestedMembers?       // TODO filter out only not approved
+    private List<UserModel> requestsFiltered => _requestedMembers?
         .Where(x =>
         {
             var firstName = x.FirstName is not null && x.FirstName.ToLower().Contains(_membersSearch.ToLower());
