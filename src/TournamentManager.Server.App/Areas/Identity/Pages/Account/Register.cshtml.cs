@@ -69,11 +69,13 @@ namespace TournamentManager.Server.App.Areas.Identity.Pages.Account
         /// </summary>
         public class InputModel
         {
+            [Required]
             [MinLength(2)]
             [MaxLength(50)]
             [Display(Name = "First name")]
             public string FirstName { get; set; }
             
+            [Required]
             [MinLength(2)]
             [MaxLength(50)]
             [Display(Name = "Last name")]
