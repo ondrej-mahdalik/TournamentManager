@@ -90,8 +90,6 @@ void ConfigureAuthentication(IServiceCollection serviceCollection)
 
 void ConfigureDependencies(IServiceCollection serviceCollection)
 {
-    
-
     switch (dalType)
     {
         case "SQLServer":
