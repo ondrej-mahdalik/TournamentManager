@@ -20,10 +20,13 @@ public class AuthorizedControllerBase : ControllerBase
         _userManager = userManager;
     }
 
-    public async Task<UserModel> GetLoggedUser()
+    public async Task<UserModel?> GetLoggedUser()
     {
-        var applicationUser = await _userManager.GetUserAsync(User) ?? throw new("Failed to obtain logged user");
-        return await _userFacade.GetByApplicationUserIdAsync(applicationUser.Id) ?? throw new("User not found");
+        var applicationUser = await _userManager.GetUserAsync(User);
+        if (applicationUser is null)
+            return null;
+
+        return await _userFacade.GetByApplicationUserIdAsync(applicationUser.Id);
     }
     
     public async Task<UserModel> GetUserProperties(UserModel user)

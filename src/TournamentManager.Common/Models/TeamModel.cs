@@ -14,4 +14,6 @@ public record TeamModel(string Name,
     public IList<UserIsInTeamModel> Members { get; set; } = new List<UserIsInTeamModel>();
     public IList<MatchModel> Matches { get; set; } = new List<MatchModel>();
     public IList<TeamIsParticipatingModel> Participatings { get; set; } = new List<TeamIsParticipatingModel>();
+    public static TeamModel Empty => new(string.Empty, null);
+
 }

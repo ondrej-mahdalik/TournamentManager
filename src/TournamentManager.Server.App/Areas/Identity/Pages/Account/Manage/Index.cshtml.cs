@@ -49,6 +49,18 @@ namespace TournamentManager.Server.App.Areas.Identity.Pages.Account.Manage
         /// </summary>
         public class InputModel
         {
+            [Required]
+            [MinLength(2)]
+            [MaxLength(50)]
+            [Display(Name = "First name")]
+            public string FirstName { get; set; }
+            
+            [Required]
+            [MinLength(2)]
+            [MaxLength(50)]
+            [Display(Name = "Last name")]
+            public string LastName { get; set; }
+            
             /// <summary>
             ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
             ///     directly from your code. This API may change or be removed in future releases.
@@ -67,7 +79,9 @@ namespace TournamentManager.Server.App.Areas.Identity.Pages.Account.Manage
 
             Input = new InputModel
             {
-                PhoneNumber = phoneNumber
+                PhoneNumber = phoneNumber,
+                FirstName = user.FirstName,
+                LastName = user.LastName
             };
         }
 
@@ -90,6 +104,10 @@ namespace TournamentManager.Server.App.Areas.Identity.Pages.Account.Manage
             {
                 return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
             }
+
+            user.FirstName = Input.FirstName;
+            user.LastName = Input.LastName;
+            await _userManager.UpdateAsync(user);
 
             if (!ModelState.IsValid)
             {

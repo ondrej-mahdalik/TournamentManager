@@ -55,7 +55,7 @@ public class MatchController : AuthorizedControllerBase
             return BadRequest();
 
         var user = await GetLoggedUser();
-        if (!user.IsAdministrator && matches.Any(x => user.Tournaments.All(y => y.Id != x.TournamentId)))
+        if (user is null || (!user.IsAdministrator && matches.Any(x => user.Tournaments.All(y => y.Id != x.TournamentId))))
             return Forbid();
 
         if (!await _matchFacade.InsertManyAsync(matches))
@@ -72,7 +72,7 @@ public class MatchController : AuthorizedControllerBase
         var tournament = await _tournamentFacade.GetAsync(match.TournamentId);
 
         var user = await GetLoggedUser();
-        if (!(user.IsAdministrator || user.Id == tournament?.CreatorId))
+        if (user is null || !(user.IsAdministrator || user.Id == tournament?.CreatorId))
             return Forbid();
 
         await _matchFacade.SaveAsync(match);
