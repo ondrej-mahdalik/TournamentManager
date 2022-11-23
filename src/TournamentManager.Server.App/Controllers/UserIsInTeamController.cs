@@ -7,7 +7,6 @@ using TournamentManager.Server.Auth.Models;
 
 namespace TournamentManager.Server.App.Controllers;
 
-[Authorize]
 [ApiController]
 [Route("api/[controller]")]
 public class UserIsInTeamController : AuthorizedControllerBase
@@ -30,12 +29,13 @@ public class UserIsInTeamController : AuthorizedControllerBase
         return Ok(await _userIsInTeamFacade.GetAsync());
     }
 
-    [HttpGet("Team/{id:guid}")]
+    [HttpGet("UserIsInTeam/{id:guid}")]
     public async Task<ActionResult<List<UserIsInTeamModel>>> GetById(Guid id)
     {
         return Ok(await _userIsInTeamFacade.GetAsync(id));
     }
 
+    [Authorize]
     [HttpPut]
     public async Task<ActionResult> InsertOrUpdate([FromBody] UserIsInTeamModel? newUserInTeam)
     {
@@ -47,12 +47,13 @@ public class UserIsInTeamController : AuthorizedControllerBase
             return BadRequest();
 
         var user = await GetLoggedUser();
-        if (newUserInTeam.IsApproved && !(user.IsAdministrator || user.Id == teamLeaderId))
+        if (user is null || newUserInTeam.IsApproved && !(user.IsAdministrator || user.Id == teamLeaderId))
             return Forbid();
 
         return Ok(await _userIsInTeamFacade.SaveAsync(newUserInTeam));
     }
 
+    [Authorize]
     [HttpDelete("{id:guid}")]
     public async Task<ActionResult> Delete(Guid id)
     {
@@ -62,7 +63,7 @@ public class UserIsInTeamController : AuthorizedControllerBase
 
         var user = await GetLoggedUser();
         var teamLeaderId = (await _teamFacade.GetAsync(userFromTeamToDelete.TeamId))?.LeaderId;
-        if (!(user.IsAdministrator || user.Id == teamLeaderId || user.Id == userFromTeamToDelete.UserId))
+        if (user is null || !(user.IsAdministrator || user.Id == teamLeaderId || user.Id == userFromTeamToDelete.UserId))
             return Forbid();
         
         await _userIsInTeamFacade.DeleteAsync(id);

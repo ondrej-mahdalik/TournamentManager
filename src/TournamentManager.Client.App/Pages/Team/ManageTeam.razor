@@ -1,107 +1,75 @@
-﻿@page "/Team/Detail/{Id}"
+﻿@page "/Team/Manage/{Id}"
 @using TournamentManager.Common.Models
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
 @attribute [Authorize]
 @inject HttpClient Http
 @inject NavigationManager NavigationManager;
+@inject IJSRuntime JsRuntime;
 
-<PageTitle>Team Detail</PageTitle>
 
-<div class="container-fluid">
-    @if(_team is null)
-    {
-        <p class="text-center fw-bold">Loading ...</p>
-    }
-    else
-    {
+
+@if(_team is null || _currentUser is null)
+{
+    <p class="text-center fw-bold">Loading ...</p>
+}
+else if(_currentUser.Id != _team.LeaderId && !_currentUser.IsAdministrator)
+{
+    <p class="text-center fw-bold">401 Unauthorized</p>
+}
+else
+{
+    <div class="container-fluid">
         <div class="row mb-3">
-            <div class="col d-xl-flex d-flex align-items-center">
+            <div class="col d-flex align-items-center">
                 @if (_team.LogoUrl is not null)
                 {
-                    <img class="me-2" height="100" src="@_team.LogoUrl" alt="Team logo"/>
+                    <img class="me-2" src="@_team.LogoUrl" height="100" />
                 }
-                <h3 class="text-dark mb-0">@_team?.Name</h3>
+                <h3 class="text-dark mb-0">@_team.Name</h3>
             </div>
-            <div class="col d-xxl-flex align-items-xxl-center col-auto"><a class="btn btn-light" href="/Team/List">Back to All Teams</a></div>
-            @if (_currentUser?.Id != _team!.LeaderId || _team.Members.Any(x => x.UserId == _currentUser?.Id))
-            {
-                @if (HasPendingJoinRequest())
-                {
-                    <div class="col d-xxl-flex align-items-xxl-center col-auto"><a class="btn btn-danger" role="button" @onclick="CancelJoinRequestAsync">Cancel Join Request</a></div>
-                }
-                else
-                {
-                    <div class="col d-xxl-flex align-items-xxl-center col-auto"><a class="btn btn-primary" role="button" @onclick="JoinTeamAsync">Join Team</a></div>
-                }
-            }
-            @if(_currentUser is not null && _leader is not null)
-                @if (_currentUser.Id == _leader.Id || _currentUser.IsAdministrator)
-                {
-                    <div class="col d-xxl-flex align-items-xxl-center col-auto"><a class="btn btn-primary" role="button" @onclick="EditTeam">Edit Team</a></div>
-                }
-        </div>  
-        
-        <div class="col">
-            <div class="row mb-4">
+            <div class="col d-xxl-flex align-items-xxl-center col-auto"><a href="/Team/Detail/@_team.Id" class="btn btn-light">Back to team detail</a></div>
+            <div class="col d-xxl-flex align-items-xxl-center col-auto"><a @onclick="DeleteTeam" class="btn btn-danger">Delete Team</a></div>
+        </div>
+        <div class="row mb-4">
+            <div class="col">
                 <div class="card shadow">
                     <div class="card-header">
-                        <h4 class="mb-0">Leader</h4>
+                        <h4 class="mb-0">Edit Team</h4>
                     </div>
                     <div class="card-body">
-                        <div id="dataTable-1" class="table-responsive table mt-2" role="grid" aria-describedby="dataTable_info">
-                            <table id="dataTable" class="table my-0">
-                                <thead>
-                                    <tr>
-                                        <th>Name</th>
-                                        <th>Email</th>
-                                        <th></th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @if (_leader is null)
-                                    {
-                                        <tr>
-                                            <td><em>Loading ...</em></td>
-                                        </tr>
-                                    }
-                                    else
-                                    {
-                                        <tr>
-                                            <td>
-                                                @if (_leader.ProfilePictureUrl is not null)
-                                                {
-                                                    <img class="rounded-circle me-2" width="30" height="30" src="@_leader.ProfilePictureUrl" alt="Profile picture" />
-                                                }
-                                                @_leader.FirstName @_leader.LastName
-                                            </td>
-                                            <td>@_leader.Email</td>
-                                            <td class="text-end"><a href="/Profile/Detail/@_leader.Id" class="btn btn-primary">Detail</a></td>
-                                        </tr>
-                                    }
-                                </tbody>
-                            </table>
-                        </div>
+                        <form>
+                            <div class="row">
+                                <div class="col">
+                                    <div><label class="form-label w-100">Team Name<input class="form-control" type="text" @bind="_newName" /></label></div>
+                                    <div><label class="form-label w-100">Team Logo<input class="form-control" type="url" value="@(_newLogoUrl is not null ? _newLogoUrl : string.Empty)" @onchange="OnLogoUrlChanged" /></label></div>
+                                    <div class="text-end"><button class="btn btn-primary" type="button" style="margin-left: 10px;" @onclick="SaveChanges">Save Changes</button></div>
+                                </div>
+                            </div>
+                        </form>
                     </div>
                 </div>
             </div>
-            <div class="row mb-4">
+        </div>
+        <div class="row mb-4">
+            <div class="col">
                 <div class="card shadow">
                     <div class="card-header">
                         <h4 class="mb-0">Members</h4>
                     </div>
                     <div class="card-body" id="membersList">
-                        @if (_members is null)
+                        @if(_members is null)
                         {
                             <p class="text-center fw-bold">Loading ...</p>
-                        }
+                        } 
                         else if (_members.Count == 0)
                         {
                             <p class="text-center fw-bold">No members.</p>
                         }
                         else
                         {
-                            <div class="row mb-4">
+                            <div class="row">
+
                                 <div class="col-md-6 text-nowrap">
                                     <div id="dataTable_length" class="dataTables_length" aria-controls="dataTable">
                                         <label class="form-label">
@@ -136,6 +104,7 @@
                                                 <th>Name</th>
                                                 <th>Email</th>
                                                 <th></th>
+                                                <th></th>
                                                 <th class="text-start"></th>
                                             </tr>
                                         </thead>
@@ -152,18 +121,19 @@
                                                     </td>
                                                     <td class="mb-0">@member.Email</td>
                                                     <td class="text-end"><a href="/Profile/Detail/@member.Id" class="btn btn-primary">Detail</a></td>
+                                                    <td class="text-end"><a class="btn btn-danger" @onclick="() => RemoveMember(member.Id)">Remove</a></td>
                                                 </tr>
                                             }
                                         </tbody>
                                     </table>
 
                                 </div>
-                                <div class="row mb-4">
+                                <div class="row">
                                     <div class="col-md-6 align-self-center">
                                         <p id="dataTable_info" class="dataTables_info" role="status" aria-live="polite">
                                             Showing @(
-                                        1 + _membersSelectedPageIndex * _membersShowCount
-                                        ) to @(
+                                1 + _membersSelectedPageIndex * _membersShowCount
+                                ) to @(
                                            (_membersShowCount + _membersSelectedPageIndex * _membersShowCount) < MembersFiltered.Count ?
                                            (_membersShowCount + _membersSelectedPageIndex * _membersShowCount) : MembersFiltered.Count
                                            ) of @(
@@ -197,11 +167,9 @@
                                                     }
 
                                                     <li class="page-item @(_membersSelectedPageIndex == num ? "active" : "")">
-                                                        <a class="page-link" @onclick="() => _membersSelectedPageIndex = num" role="button">
-                                                            @(
-                                                                num + 1
-                                                                )
-                                                        </a>
+                                                        <a class="page-link" @onclick="() => _membersSelectedPageIndex = num" role="button">@(
+                                            num + 1
+                                            )</a>
                                                     </li>
                                                 }
                                                 <li class="page-item @(_membersSelectedPageIndex >= @MembersFilteredPages.Count - 1 ? "disabled" : "")">
@@ -216,30 +184,30 @@
                     </div>
                 </div>
             </div>
-            <div class="row mb-4">
-                <!-- Tournament list -->
+            <div class="col">
                 <div class="card shadow">
                     <div class="card-header">
-                        <h4 class="mb-0">Tournaments</h4>
+                        <h4 class="mb-0">Join requests</h4>
                     </div>
-                    <div class="card-body">
-                        @if (_tournaments is null)
+                    <div class="card-body" id="requestsList">
+                        @if (_requestedMembers is null)
                         {
-                            <p class="text-center fw-bold">Loading...</p>
+                            <p class="text-center fw-bold">Loading ...</p>
                         }
-                        else if(_tournaments.Count == 0)
+                        else if (_requestedMembers.Count == 0)
                         {
-                            <p class="text-center fw-bold">Team did not yet participate in any tournaments.</p>
+                            <p class="text-center fw-bold">No join requests.</p>
                         }
                         else
                         {
                             <div class="row">
+
                                 <div class="col-md-6 text-nowrap">
                                     <div id="dataTable_length" class="dataTables_length" aria-controls="dataTable">
                                         <label class="form-label">
                                             Show
-                                            <select @onchange="OnTournamentsOnPageChanged" class="d-inline-block form-select form-select-sm">
-                                                <option value="10" selected="selected">10</option>
+                                            <select @onchange="OnItemsOnRequestsPageChanged" class="d-inline-block form-select form-select-sm">
+                                                <option value="10" selected>10</option>
                                                 <option value="25">25</option>
                                                 <option value="50">50</option>
                                                 <option value="100">100</option>
@@ -248,190 +216,205 @@
                                     </div>
                                 </div>
                                 <div class="col-md-6">
-                                    <div class="text-md-end dataTables_filter" id="dataTable_filter">
+                                    <div id="dataTable_filter" class="text-md-end dataTables_filter">
                                         <label class="form-label">
-                                            <input type="text" @bind="@_tournamentsSearch" @bind:event="oninput" class="form-control form-control-sm" placeholder="Search" />
+                                            <input class="form-control form-control-sm" @oninput="OnRequestsSearchQueryChanged" type="search" aria-controls="dataTable" placeholder="Search" />
                                         </label>
                                     </div>
                                 </div>
                             </div>
-                            <div class="table-responsive table mt-2" role="grid">
-                                @if (TournamentsFiltered.Count == 0)
-                                {
-                                    <p class="text-center fw-bold">No tournaments found.</p>
-                                }
-                                else
-                                {
-                                    <table class="table my-0" id="dataTable">
+                            @if (requestsFiltered.Count == 0)
+                            {
+                                <p class="text-center fw-bold">No join requests found.</p>
+                            }
+                            else
+                            {
+                                <div id="dataTable" class="table-responsive table mt-2" role="grid" aria-describedby="dataTable_info">
+                                    <table id="dataTable" class="table my-0">
                                         <thead>
                                             <tr>
-                                                <th>Sport<i class="fas fa-baseball-ball pe-0 ms-2"></i></th>
                                                 <th>Name</th>
-                                                <th>Date</th>
-                                                <th>Visibility</th>
-                                                <th>Occupation</th>
-                                                <th>Winner</th>
+                                                <th>Email</th>
+                                                <th></th>
+                                                <th></th>
+                                                <th></th>
+                                                <th class="text-start"></th>
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            @foreach (var tournament in TournamentsFilteredPages[_tournamentsSelectedPageIndex])
+                                            @foreach (var requestMember in requestsFilteredPages[_requestsSelectedPageIndex])
                                             {
-
                                                 <tr>
-                                                    <td>@tournament.Sport?.Name</td>
-                                                    <td>@tournament.Name</td>
-                                                    <td>@tournament.Date.ToString("dd. MM. yyyy")</td>
-                                                    <td>@(tournament.IsPublic ? "Public" : "Private")</td>
-                                                    <td>@_numberOfParticipants[@tournament.Id] / @tournament.MaxAttendees</td>
-                                                    <td class="text-end"><a data-bs-target="/Tournament/@tournament.Id" href="/Tournament/Detail/@tournament.Id" class="btn btn-primary">Detail</a></td>
+                                                    <td class="mb-0">
+                                                        @if (requestMember.ProfilePictureUrl is not null)
+                                                        {
+                                                            <img alt="Profile picture" class="rounded-circle me-2" width="30" height="30" src="@requestMember.ProfilePictureUrl" />
+                                                        }
+                                                        @requestMember.FirstName @requestMember.LastName
+                                                    </td>
+                                                    <td class="mb-0">@requestMember.Email</td>
+                                                    <td class="text-end"><a href="/Profile/Detail/@requestMember.Id" class="btn btn-primary">Detail</a></td>
+                                                    <td class="text-end"><a class="btn btn-success" @onclick="() => AcceptRequest(requestMember)">Accept</a></td>
+                                                    <td class="text-end"><a class="btn btn-danger" @onclick="() => RemoveRequest(requestMember)">Remove</a></td>
                                                 </tr>
                                             }
                                         </tbody>
                                     </table>
-                                }
-                            </div>
-                            <div class="row">
-                                @if (TournamentsFiltered.Count > 0)
-                                {
+
+                                </div>
+                                <div class="row">
                                     <div class="col-md-6 align-self-center">
                                         <p id="dataTable_info" class="dataTables_info" role="status" aria-live="polite">
-                                            Showing @(1 + _tournamentsSelectedPageIndex * _tournamentsShowCount) to @((_tournamentsShowCount + _tournamentsSelectedPageIndex * _tournamentsShowCount) < TournamentsFiltered.Count ?
-                                            (_tournamentsShowCount + _tournamentsSelectedPageIndex * _tournamentsShowCount) : TournamentsFiltered.Count) of @(TournamentsFiltered.Count)
+                                            Showing @(
+                                        1 + _requestsSelectedPageIndex * _requestsShowCount
+                                        ) to @(
+                                           (_requestsShowCount + _requestsSelectedPageIndex * _requestsShowCount) < requestsFiltered.Count ?
+                                           (_requestsShowCount + _requestsSelectedPageIndex * _requestsShowCount) : requestsFiltered.Count
+                                           ) of @(
+                                           requestsFiltered.Count
+                                           )
                                         </p>
                                     </div>
-
                                     <div class="col-md-6">
                                         <nav class="d-lg-flex justify-content-lg-end dataTables_paginate paging_simple_numbers">
                                             <ul class="pagination">
-                                                <li class="page-item @(_tournamentsSelectedPageIndex <= 0 ? "disabled" : "")"><a role="button" class="page-link" aria-label="Previous" @onclick="() => _tournamentsSelectedPageIndex--"><span class="user-select-none" aria-hidden="true">«</span></a></li>
-                                                @for (var i = _tournamentsSelectedPageIndex - 1; i <= _tournamentsSelectedPageIndex + 1; i++)
+                                                <li class="page-item @(_requestsSelectedPageIndex <= 0 ? "disabled" : "")">
+                                                    <a role="button" class="page-link" aria-label="Previous" @onclick="() => _requestsSelectedPageIndex--"><span class="user-select-none" aria-hidden="true">«</span></a>
+                                                </li>
+                                                @for (var i = _requestsSelectedPageIndex - 1; i <= _requestsSelectedPageIndex + 1; i++)
                                                 {
                                                     var num = i;
-                                                    if (_tournamentsSelectedPageIndex == 0)
+                                                    if (_requestsSelectedPageIndex == 0)
                                                         num = i + 1; // So user cant go to page -1
-
-                                                    else if (_tournamentsSelectedPageIndex >= TournamentsFilteredPages.Count - 1)
+                                                    else if (_requestsSelectedPageIndex >= requestsFilteredPages.Count - 1)
                                                         num = i - 1; // So user cant go to a page that is too high
 
-                                                    if (num > TournamentsFilteredPages.Count - 1)
+                                                    if (num > requestsFilteredPages.Count - 1)
                                                     {
                                                         break; // If there are fewer than 3 pages total
                                                     }
-                                                    if (_tournamentsSelectedPageIndex == 1 && TournamentsFilteredPages.Count == 2 && i == 0)
+                                                    else if (_requestsSelectedPageIndex == 1 && requestsFilteredPages.Count == 2 && i == 0)
                                                     {
                                                         // If only 2 pages are available, clicking the second one would make page 0 appear
                                                         // which is obviously not possible
                                                         continue;
                                                     }
 
-                                                    <li class="page-item @(_tournamentsSelectedPageIndex == num ? "active" : "")">
-                                                        <a class="page-link" @onclick="() => _tournamentsSelectedPageIndex = num" role="button">@(num + 1)</a>
+                                                    <li class="page-item @(_requestsSelectedPageIndex == num ? "active" : "")">
+                                                        <a class="page-link" @onclick="() => _requestsSelectedPageIndex = num" role="button">
+                                                            @(
+                                                                num + 1
+                                                                )
+                                                        </a>
                                                     </li>
                                                 }
-                                                <li class="page-item @(_tournamentsSelectedPageIndex >= @TournamentsFilteredPages.Count - 1 ? "disabled" : "")">
-                                                    <a class="page-link" aria-label="Next" @onclick="() => _tournamentsSelectedPageIndex++" role="button"><span class="user-select-none" aria-hidden="true">»</span></a>
+                                                <li class="page-item @(_requestsSelectedPageIndex >= @requestsFilteredPages.Count - 1 ? "disabled" : "")">
+                                                    <a class="page-link" aria-label="Next" @onclick="() => _requestsSelectedPageIndex++" role="button"><span class="user-select-none" aria-hidden="true">»</span></a>
                                                 </li>
                                             </ul>
                                         </nav>
                                     </div>
-                                }
-                            </div>
+                                </div>
+                            }
                         }
                     </div>
                 </div>
             </div>
         </div>
-    }
-</div>
-
+    </div>
+}
 
 @code {
     [Parameter]
     public string? Id { get; set; }
-
-    private TeamModel? _team;
-    private UserModel? _leader;
-    private List<UserModel>? _members; 
+    TeamModel? _team;
+    private List<UserModel>? _members;
+    private List<UserModel>? _requestedMembers;
     private UserModel? _currentUser;
+    private string? _newName;
+    private string? _newLogoUrl;
+
 
     protected override async Task OnInitializedAsync()
     {
+
+        // TODO : Check if current user is Leader or admin
+
         _members = new List<UserModel>();
+        _requestedMembers = new List<UserModel>();
         try
         {
             _team = await Http.GetFromJsonAsync<TeamModel>($"/api/Team/{Id}");
             if (_team is not null)
             {
-                _leader = await Http.GetFromJsonAsync<UserModel>($"/api/User/{_team.LeaderId}");
-
                 foreach (UserIsInTeamModel userIsInTeam in _team.Members)
                 {
                     UserModel? member = await Http.GetFromJsonAsync<UserModel>($"/api/User/{userIsInTeam.UserId}");
                     if(member is not null)
                     {
-                        _members.Add(member);
+                        if (userIsInTeam.IsApproved == true)
+                        {
+                            _members.Add(member);
+                        }
+                        else
+                        {
+                            _requestedMembers.Add(member);
+                        }
+
                     }
                 }
 
+                _newName = _team.Name;
+                _newLogoUrl = _team.LogoUrl;
+
             }
-
-            _tournaments = await Http.GetFromJsonAsync<List<TournamentModel>>("api/Tournament") ?? new List<TournamentModel>();
-            _tournaments = _tournaments.Where(x => x.Participatings.Any(p => p.TeamId == _team?.Id)).ToList() ;
-
             _currentUser = await Http.GetFromJsonAsync<UserModel>($"api/User/current");
         }
         catch (AccessTokenNotAvailableException exception)
         {
             exception.Redirect();
         }
-
-
     }
 
-    private bool HasPendingJoinRequest()
+    private void OnLogoUrlChanged(ChangeEventArgs e)
     {
-        if (_team is null || _currentUser is null)
-            return false;
-
-        return _team.Members.Any(x => x.UserId == _currentUser.Id && !x.IsApproved);
-    }
-
-    private async Task JoinTeamAsync()
-    {
-        if (_team is null || HasPendingJoinRequest())
-            return;
-
-        if (_currentUser is null)
+        string[] allowedFormats = { "jpg", "jpeg", "gif", "png", "apng", "svg", "bmp" };
+        if (e is not null && e.Value is not null)
         {
-            NavigationManager.NavigateToLogin("/authentication/login");
-            return;
+            string value = (string)e.Value;
+            string format = value.Split('.').Last();
+            if (allowedFormats.Contains(format))
+            {
+                _newLogoUrl = (string)e.Value;
+            }
+            else
+            {
+                _newLogoUrl = null;
+            }
+        }
+    }
+
+    private async void SaveChanges()
+    {
+        if (_team is null)
+        {
+            await OnInitializedAsync();
+        }
+        else if (_newName is null || _newName == string.Empty)
+        {
+            await JsRuntime.InvokeVoidAsync("alert", "Name is required."); // Alert
+        }
+        else
+        {
+            _team.Name = _newName;
+            _team.LogoUrl = _newLogoUrl;
+            var response = await Http.PutAsJsonAsync<TeamModel>("/api/Team", _team);
+            //TODO : handle response
+            await OnInitializedAsync();
         }
 
-        var response = await Http.PutAsJsonAsync($"/api/UserIsInTeam", new UserIsInTeamModel(_currentUser.Id, _team.Id));
-        // TODO handle response
 
-        _team = await Http.GetFromJsonAsync<TeamModel>($"/api/Team/{Id}");
     }
-
-    private async Task CancelJoinRequestAsync()
-    {
-        if (_team is null || _currentUser is null)
-            return;
-
-        var response = await Http.DeleteAsync($"/api/UserIsInTeam/{_team.Members.First(x => x.UserId == _currentUser.Id).Id}");
-        // TODO handle response
-
-        _team = await Http.GetFromJsonAsync<TeamModel>($"/api/Team/{Id}");
-    }
-
-    private void EditTeam()
-    {
-        if (_team is null || _currentUser is null)
-            return;
-        NavigationManager.NavigateTo($"/Team/Manage/{_team.Id}");
-    }
-
-    // Memebrs list :
 
     private int _membersShowCount = 10;
     private int _membersSelectedPageIndex;
@@ -467,38 +450,104 @@
         .Select(x => x.Select(v => v.Value).ToList())
         .ToList();
 
-    // Tournaments 
 
-    private string _tournamentsSearch = "";
-    private int _tournamentsShowCount = 10;
-    private int _tournamentsSelectedPageIndex;
-    private Dictionary<Guid, int> _numberOfParticipants = new();
-    private List<TournamentModel>? _tournaments;
-    private List<TournamentModel> TournamentsFiltered => _tournaments?
+    private async void RemoveMember(Guid id)
+    {
+        UserModel? member = await Http.GetFromJsonAsync<UserModel>($"api/User/current");
+        if(member is null)
+        {
+            await JsRuntime.InvokeVoidAsync("alert", "Internal database error.\nUser does not exist.");
+            return; 
+        }
+
+        bool isConfirmed = await JsRuntime.InvokeAsync<bool>("confirm", $"Do you want remove {member.FirstName} {member.LastName} from this team?\nThis operation is permament!");
+        UserIsInTeamModel? membership = _team?.Members.Where(m => m.UserId == member.Id).FirstOrDefault();
+        if(membership is null)
+        {
+            await JsRuntime.InvokeVoidAsync("alert", "Internal database error.\nUser is not member of this team.");
+            return;
+        }
+        if (isConfirmed)
+        {
+            await Http.DeleteAsync($"api/UserIsInTeam/{membership.Id}");
+            if(_members is not null)
+            {
+                _members.RemoveAll(x => x.Id == member.Id);
+                StateHasChanged();
+            }
+        }
+    }
+
+    // Join requests pagination 
+
+    private int _requestsShowCount = 10;
+    private int _requestsSelectedPageIndex;
+    private string _requestsSearch = "";
+
+    private void OnRequestsSearchQueryChanged(ChangeEventArgs e)
+    {
+        _requestsSearch = e.Value?.ToString() ?? "";
+        _requestsSelectedPageIndex = 0;
+    }
+
+    private void OnItemsOnRequestsPageChanged(ChangeEventArgs e)
+    {
+        _requestsSelectedPageIndex = 0;
+        _requestsShowCount = int.Parse(e.Value?.ToString() ?? "10");
+    }
+
+    private List<UserModel> requestsFiltered => _requestedMembers?
         .Where(x =>
         {
-            
-            var name = x.Name.ToLower().Contains(_tournamentsSearch.ToLower());
-            var sport = x.Sport?.Name.ToLower().Contains(_tournamentsSearch.ToLower()) ?? false;
-            var date = x.Date.ToString("dd. MM. yyyy").Contains(_tournamentsSearch);
-            var creatorFirstName = x.Creator?.FirstName?.ToLower().Contains(_tournamentsSearch.ToLower()) ?? false;
-            var creatorLastName = x.Creator?.LastName?.ToLower().Contains(_tournamentsSearch.ToLower()) ?? false;
-
-            return name || sport || date || creatorFirstName || creatorLastName;
+            var firstName = x.FirstName is not null && x.FirstName.ToLower().Contains(_membersSearch.ToLower());
+            var lastName = x.LastName is not null && x.LastName.ToLower().Contains(_membersSearch.ToLower());
+            var email = x.Email is not null && x.Email.ToLower().Contains(_membersSearch.ToLower());
+            return firstName || lastName || email;
         }).ToList()
-        ?? new();
+        ?? new(); // Filtration
 
-    private List<List<TournamentModel>> TournamentsFilteredPages => TournamentsFiltered.Select((x, i) => new  // Splits the one big list into smaller lists of size _tournamentsShowCount
+    private List<List<UserModel>> requestsFilteredPages => requestsFiltered.Select((x, i) => new  // Splits the one big list into smaller lists
     {
         Index = i,
         Value = x
-    }).GroupBy(x => x.Index / _tournamentsShowCount)
+    }).GroupBy(x => x.Index / _requestsShowCount)
         .Select(x => x.Select(v => v.Value).ToList())
         .ToList();
 
-    private void OnTournamentsOnPageChanged(ChangeEventArgs e)
+    private async void AcceptRequest(UserModel requestedMember)
     {
-        _tournamentsSelectedPageIndex = 0;
-        _tournamentsShowCount = int.Parse(e.Value?.ToString() ?? "10");
+        UserIsInTeamModel? membership = _team?.Members.Where(m => m.UserId == requestedMember.Id).FirstOrDefault();
+        if (membership is null)
+        {
+            await JsRuntime.InvokeVoidAsync("alert", "Membership is null."); // Alert
+            return;
+        }
+        membership.IsApproved = true;
+        var response = await Http.PutAsJsonAsync<UserIsInTeamModel>($"/api/UserIsInTeam", membership);
+        _requestedMembers?.Remove(requestedMember);
+        _members?.Add(requestedMember);
+        StateHasChanged();
+    }
+
+    private async void RemoveRequest(UserModel requestedMember)
+    {
+        UserIsInTeamModel? membership = _team?.Members.Where(m => m.UserId == requestedMember.Id).FirstOrDefault();
+        if (membership is null) return;
+        await Http.DeleteAsync($"/api/UserIsInTeam/{membership.Id}");
+        _requestedMembers?.Remove(requestedMember);
+        StateHasChanged();
+    }
+
+    private async void DeleteTeam()
+    {
+        bool isConfirmed = await JsRuntime.InvokeAsync<bool>("confirm", $"Do you want to delete {_team?.Name}?\nThis operation is permament!");
+
+        if (isConfirmed)
+        {
+            var response = await Http.DeleteAsync($"/api/Team/{_team?.Id}");
+            // TODO : handle response
+            NavigationManager.NavigateTo("/Teams/List");
+        }
+
     }
 }

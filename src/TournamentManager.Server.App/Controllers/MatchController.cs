@@ -7,7 +7,6 @@ using TournamentManager.Server.Auth.Models;
 
 namespace TournamentManager.Server.App.Controllers;
 
-[Authorize]
 [ApiController]
 [Route("api/[controller]")]
 public class MatchController : AuthorizedControllerBase
@@ -24,9 +23,14 @@ public class MatchController : AuthorizedControllerBase
         _tournamentFacade = tournamentFacade;
     }
 
+    [Authorize]
     [HttpGet]
     public async Task<ActionResult<List<MatchModel>>> GetAll()
     {
+        var user = await GetLoggedUser();
+        if (user is null || !user.IsAdministrator)
+            return Forbid();
+
         return Ok(await _matchFacade.GetAsync());
     }
 
@@ -37,33 +41,20 @@ public class MatchController : AuthorizedControllerBase
         if (match is null)
             return NotFound();
 
-        var tournament = await _tournamentFacade.GetAsync(match.Id);
-        if (tournament is null)
-            return BadRequest();
+        if (match.Tournament is { IsPublic: true })
+            return Ok(match);
 
         var user = await GetLoggedUser();
-        if (await _tournamentFacade.CanUserViewTournament(user.Id, tournament.Id))
+        if (user is null)
+            return Forbid();
+
+        if (await _tournamentFacade.CanUserViewTournament(user.Id, match.TournamentId))
             return Ok(match);
 
         return Forbid();
     }
 
-    [HttpPut("multiple")]
-    public async Task<ActionResult> InsertMultiple([FromBody] List<MatchModel>? matches)
-    {
-        if (matches is null || matches.Count == 0)
-            return BadRequest();
-
-        var user = await GetLoggedUser();
-        if (!user.IsAdministrator && matches.Any(x => user.Tournaments.All(y => y.Id != x.TournamentId)))
-            return Forbid();
-
-        if (!await _matchFacade.InsertManyAsync(matches))
-            return UnprocessableEntity();
-
-        return Ok();
-    }
-
+    [Authorize]
     [HttpPut]
     public async Task<ActionResult> InsertOrUpdate([FromBody] MatchModel? match)
     {
@@ -72,13 +63,14 @@ public class MatchController : AuthorizedControllerBase
         var tournament = await _tournamentFacade.GetAsync(match.TournamentId);
 
         var user = await GetLoggedUser();
-        if (!(user.IsAdministrator || user.Id == tournament?.CreatorId))
+        if (user == null || !(user.IsAdministrator || user.Id == tournament?.CreatorId))
             return Forbid();
 
         await _matchFacade.SaveAsync(match);
         return Ok();
     }
 
+    [Authorize]
     [HttpDelete("{id:guid}")]
     public async Task<ActionResult> Delete(Guid id)
     {
@@ -89,7 +81,7 @@ public class MatchController : AuthorizedControllerBase
         var user = await GetLoggedUser();
 
         var tournament = await _tournamentFacade.GetAsync(match.Id);
-        if (!(user.IsAdministrator || user.Id == tournament?.CreatorId))
+        if (user is null || !(user.IsAdministrator || user.Id == tournament?.CreatorId))
             return Forbid();
 
         await _matchFacade.DeleteAsync(id);
