@@ -14,19 +14,20 @@
             <div class="mb-3">
                 <input asp-for="Username" class="form-control form-control-user" placeholder="Username" disabled />
             </div>
-            <div class="mb-3">
-                <input asp-for="Input.FirstName" class="form-control form-control-user" placeholder="First Name"/>
-                <span asp-validation-for="Input.FirstName" class="text-danger"></span>
-            </div>
             <div class="row mb-3">
                 <div class="col-sm-6 mb-3 mb-sm-0">
+                    <input asp-for="Input.FirstName" class="form-control form-control-user" placeholder="First Name"/>
+                    <span asp-validation-for="Input.FirstName" class="text-danger"></span>
+                    
+                </div>
+                <div class="col-sm-6">
                     <input asp-for="Input.LastName" class="form-control form-control-user" placeholder="Last Name"/>
                     <span asp-validation-for="Input.LastName" class="text-danger"></span>
                 </div>
-                <div class="col-sm-6">
-                    <input asp-for="Input.PhoneNumber" class="form-control form-control-user" placeholder="Phone Number"/>
-                    <span asp-validation-for="Input.PhoneNumber" class="text-danger"></span>
-                </div>
+            </div>
+            <div class="mb-3">
+                <input asp-for="Input.PhoneNumber" class="form-control form-control-user" placeholder="Phone Number"/>
+                <span asp-validation-for="Input.PhoneNumber" class="text-danger"></span>
             </div>
             <button id="update-profile-button" type="submit" class="btn btn-primary d-block btn-user">Save</button>
         </form>
