@@ -11,113 +11,122 @@
 <div id="wrapper">
 <div class="d-flex flex-column" id="content-wrapper">
 <div id="content">
-<div class="container-fluid">
-<div class="row mb-3">
-    <div class="col text-center d-xl-flex d-flex align-items-center">
-        <h3 class="text-dark d-xl-flex">@_tournament?.Name</h3>
-    </div>
-    <div class="col col-auto"><a href="/Tournament/list"><button class="btn btn-light" type="button">Back to All Tournaments</button></a></div>
-    @if (_tournament is not null && _tournament.Participatings.Count < _tournament.MaxAttendees)
-    {
-        <div class="col col-auto"><a href="#"><button class="btn btn-primary" type="button">Participate</button></a></div>
-    }
-    @if (_loggedUser is not null && _loggedUser.Id == _tournament?.CreatorId)
-    {
-        <div class="col col-auto"><a href="/Tournament/Manage/@_tournament.Id"><button class="btn btn-primary" type="button">Manage Tournament</button></a></div>
-    }
-</div>
-<div class="row mb-4">
-    <div class="col">
-        <div class="card shadow">
-            <div class="card-body">
-                @if (_isLoading || _tournament is null)
-                {
+    <div class="container-fluid">
+        @if (_tournament is null || _isLoading)
+        {
+            <div class="card shadow">
+                <div class="card-body">
                     <p class="text-center fw-bold">Loading...</p>
-                }
-                else
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="row mb-3">
+                <div class="col text-center d-xl-flex d-flex align-items-center">
+                    <h3 class="text-dark d-xl-flex">@_tournament?.Name</h3>
+                </div>
+                <div class="col col-auto"><a href="/Tournament/list"><button class="btn btn-light" type="button">Back to All Tournaments</button></a></div>
+                @if (_tournament is not null && _tournament.Participatings.Count < _tournament.MaxAttendees)
                 {
-                    <div class="row mb-3">
-                        <div class="col">
-                            <div>
-                                <h6 class="text-primary">Date</h6><span>@_tournament.Date.ToString("dd. MM. yyyy")</span>
-                            </div>
-                        </div>
-                        <div class="col">
-                            <div>
-                                <h6 class="text-primary">Players participating</h6><span>@_numberOfParticipants/@_tournament.MaxAttendees</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col">
-                            <div>
-                                <h6 class="text-primary">Description</h6>
-                                <p>@_tournament.Description<br></p>
-                            </div>
-                        </div>
-                    </div>
+                    <div class="col col-auto"><a href="#"><button class="btn btn-primary" type="button">Participate</button></a></div>
+                }
+                @if (_loggedUser is not null && _loggedUser.Id == _tournament?.CreatorId)
+                {
+                    <div class="col col-auto"><a href="/Tournament/Manage/@_tournament.Id"><button class="btn btn-primary" type="button">Manage Tournament</button></a></div>
                 }
             </div>
-        </div>
-    </div>
-</div>
-<div class="row">
-    <div class="col">
-        <h4 class="text-center text-primary">Tournament Matches</h4>
-    </div>
-</div>
+            <div class="row mb-4">
+                <div class="col">
+                    <div class="card shadow">
+                        <div class="card-body">
 
-<div class="row">
-    @if (_matches is not null)
-    {
-        foreach (var match in _matches)
-        {
-            <div class="col-4">
-            <div class="card shadow mb-4">
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col">
-                            <h6 class="text-primary">Round @match.Round</h6>
-                        </div>
-                        <div class="col">
-                            <p>25. 5. 2020<br></p>
-                        </div>
-                    </div>
-                    <div class="row border-bottom mb-2">
-                        <div class="col">
-                            <p>
-                                @if (match?.Team1?.LogoUrl is not null || match?.Team1?.LogoUrl != "")
-                                {
-                                    <img alt="team1-image" class="img-fluid" width="60" height="60" src="@match?.Team1?.LogoUrl">
-                                }                                                                                           
-                                @match?.Team1?.Name
-                            </p>
-                        </div>
-                        <div class="col align-self-center">
-                            <p class="lead text-center">@match?.Score1</p>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col">
-                            <p>
-                                @if (match?.Team2?.LogoUrl is not null || match?.Team2?.LogoUrl != "")
-                                {
-                                    <img alt="team2-image" class="img-fluid" width="60" height="60" src="@match?.Team2?.LogoUrl">
-                                }                                                                                           
-                                @match?.Team2?.Name
-                            </p>
-                        </div>
-                        <div class="col align-self-center">
-                            <p class="lead text-center">@match?.Score2</p>
+                            <div class="row mb-3">
+                                <div class="col">
+                                    <div>
+                                        <h6 class="text-primary">Date</h6><span>@_tournament.Date.ToString("dd. MM. yyyy")</span>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div>
+                                        <h6 class="text-primary">Players participating</h6><span>@_numberOfParticipants/@_tournament.MaxAttendees</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col">
+                                    <div>
+                                        <h6 class="text-primary">Description</h6>
+                                        <p>@_tournament.Description<br></p>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
+            <div class="row">
+                <div class="col">
+                    <h4 class="text-center text-primary">Tournament Matches</h4>
+                </div>
+            </div>
+
+            <div class="row">
+                @if (_matches is not null)
+                {
+                    @if (_matches.Count == 0)
+                    {
+                        <p class="text-center fw-bold">Tournament has no matches</p>
+                    }
+                    foreach (var match in _matches)
+                    {
+                        <div class="col-4">
+                            <div class="card shadow mb-4">
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col">
+                                            <h6 class="text-primary">Round @match.Round</h6>
+                                        </div>
+                                        <div class="col">
+                                            <p>25. 5. 2020<br></p>
+                                        </div>
+                                    </div>
+                                    <div class="row border-bottom mb-2">
+                                        <div class="col">
+                                            <p>
+                                                @if (match?.Team1?.LogoUrl is not null || match?.Team1?.LogoUrl != "")
+                                                {
+                                                    <img alt="team1-image" class="img-fluid" width="60" height="60" src="@match?.Team1?.LogoUrl">
+                                                }
+                                                @match?.Team1?.Name
+                                            </p>
+                                        </div>
+                                        <div class="col align-self-center">
+                                            <p class="lead text-center">@match?.Score1</p>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col">
+                                            <p>
+                                                @if (match?.Team2?.LogoUrl is not null || match?.Team2?.LogoUrl != "")
+                                                {
+                                                    <img alt="team2-image" class="img-fluid" width="60" height="60" src="@match?.Team2?.LogoUrl">
+                                                }
+                                                @match?.Team2?.Name
+                                            </p>
+                                        </div>
+                                        <div class="col align-self-center">
+                                            <p class="lead text-center">@match?.Score2</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
         }
-    }
-</div>
-</div>
+    </div>
 </div>
 </div>
 </div>
