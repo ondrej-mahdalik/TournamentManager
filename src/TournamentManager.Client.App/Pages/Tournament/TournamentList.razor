@@ -67,7 +67,7 @@
                                 {
 
                                     <tr>
-                                        <td>@tournament.Sport?.Name</td>
+                                        <td>@(tournament.Sport?.Name ?? "Other")</td>
                                         <td>@tournament.Name</td>
                                         <td>@tournament.Date.ToString("dd. MM. yyyy")</td>
                                         <td>@(tournament.IsPublic ? "Public" : "Private")</td>
