@@ -285,7 +285,7 @@
                              <div class="row">
                                  <div class="col">
                                      <p>
-                                         @if (match?.Team1?.LogoUrl is not null || match?.Team1?.LogoUrl != "")
+                                         @if (match.Team1 is not null && (match?.Team1?.LogoUrl is not null || match?.Team1?.LogoUrl != ""))
                                          {
                                              <img alt="team1-image" class="img-fluid" width="60" height="60" src="@match?.Team1?.LogoUrl">
                                          }
@@ -299,7 +299,7 @@
                              <div class="row">
                                  <div class="col">
                                      <p>
-                                         @if (match?.Team2?.LogoUrl is not null || match?.Team2?.LogoUrl != "")
+                                         @if (match?.Team2 is not null && (match?.Team2?.LogoUrl is not null || match?.Team2?.LogoUrl != ""))
                                          {
                                              <img alt="team2-image" class="img-fluid" width="60" height="60" src="@match?.Team2?.LogoUrl">
                                          }
@@ -386,7 +386,7 @@
         {
             _isLoading = true;
             _tournament = await Http.GetFromJsonAsync<TournamentModel>($"/api/Tournament/{Id}");
-            _matches = _tournament?.Matches.OrderBy(x => x.Round).ToList() ?? new();
+            _matches = _tournament?.Matches.OrderBy(x => x.Round).ThenBy(x => x.Order).ToList() ?? new();
             var allParticipants = await Http.GetFromJsonAsync<List<TeamIsParticipatingModel>>("/api/TeamIsParticipating") ?? new();
             _approvedParticipants = allParticipants.Where(x => x.TournamentId == _tournament?.Id && x.Approved).ToList();
             _pendingParticipants = allParticipants.Where(x => x.TournamentId == _tournament?.Id && !x.Approved).ToList();
@@ -579,7 +579,7 @@
             _errorMessage = "";
         }
 
-        _matches = (await Http.GetFromJsonAsync<TournamentModel>($"/api/Tournament/{_tournament.Id}"))?.Matches.OrderBy(x => x.Round).ToList() ?? new();
+        _matches = (await Http.GetFromJsonAsync<TournamentModel>($"/api/Tournament/{_tournament.Id}"))?.Matches.OrderBy(x => x.Round).ThenBy(x => x.Order).ToList() ?? new();
         StateHasChanged();
     }
 

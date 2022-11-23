@@ -94,7 +94,7 @@
                                     <div class="row border-bottom mb-2">
                                         <div class="col">
                                             <p>
-                                                @if (match?.Team1?.LogoUrl is not null || match?.Team1?.LogoUrl != "")
+                                                @if (match?.Team1 is not null && (match?.Team1?.LogoUrl is not null || match?.Team1?.LogoUrl != ""))
                                                 {
                                                     <img alt="team1-image" class="img-fluid" width="60" height="60" src="@match?.Team1?.LogoUrl">
                                                 }
@@ -108,7 +108,7 @@
                                     <div class="row">
                                         <div class="col">
                                             <p>
-                                                @if (match?.Team2?.LogoUrl is not null || match?.Team2?.LogoUrl != "")
+                                                @if (match?.Team2 is not null && (match?.Team2?.LogoUrl is not null || match?.Team2?.LogoUrl != ""))
                                                 {
                                                     <img alt="team2-image" class="img-fluid" width="60" height="60" src="@match?.Team2?.LogoUrl">
                                                 }
@@ -148,7 +148,7 @@
             _isLoading = true;
             _tournament = await Http.GetFromJsonAsync<TournamentModel>($"/api/Tournament/{Id}");
             _numberOfParticipants = _tournament?.Participatings.Count(x => x.Approved) ?? 0;
-            _matches = _tournament?.Matches.OrderBy(x => x.Round).ToList() ?? new List<MatchModel>();
+            _matches = _tournament?.Matches.OrderBy(x => x.Round).ThenBy(x => x.Order).ToList() ?? new List<MatchModel>();
             _loggedUser = await Http.GetFromJsonAsync<UserModel>("/api/User/current");
             _isLoading = false;
         }
