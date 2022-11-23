@@ -364,6 +364,9 @@ else
                     }
                 }
 
+                _members = _members.OrderBy(x => x.FirstName).ToList();
+                _requestedMembers = _requestedMembers.OrderBy(x => x.FirstName).ToList();
+
                 _newName = _team.Name;
                 _newLogoUrl = _team.LogoUrl;
 

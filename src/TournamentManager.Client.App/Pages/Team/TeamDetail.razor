@@ -378,8 +378,11 @@
 
             }
 
+            _members.OrderBy(x => x.FirstName).ToList();
+
             _tournaments = await Http.GetFromJsonAsync<List<TournamentModel>>("api/Tournament") ?? new List<TournamentModel>();
             _tournaments = _tournaments.Where(x => x.Participatings.Any(p => p.TeamId == _team?.Id)).ToList() ;
+            _tournaments = _tournaments.OrderBy(x => x.Date).ToList();
 
             _currentUser = await Http.GetFromJsonAsync<UserModel>($"api/User/current");
         }
