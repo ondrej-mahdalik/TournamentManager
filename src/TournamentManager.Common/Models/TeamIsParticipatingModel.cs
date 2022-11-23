@@ -3,6 +3,7 @@
 namespace TournamentManager.Common.Models;
 
 public record TeamIsParticipatingModel(bool Approved,
+    DateTime CreatedOn,
     Guid TeamId,
     Guid TournamentId): ModelBase
 {
