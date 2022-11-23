@@ -3,19 +3,26 @@ using Microsoft.EntityFrameworkCore;
 
 namespace TournamentManager.Common.Models;
 
-public record MatchModel(
-    Guid TournamentId,
-    int Score1,
-    int Score2,
-    int Round,
-    int Order) : ModelBase
+public class MatchModel : ModelBase
 {
-    public int Score1 { get; set; } = Score1;
-    public int Score2 { get; set; } = Score2;
-    public int Round { get; set; } = Round;
-    public int Order { get; set; } = Order;
+    public MatchModel(Guid tournamentId,
+        int score1,
+        int score2,
+        int round,
+        int order)
+    {
+        Score1 = score1;
+        Score2 = score2;
+        Round = round;
+        Order = order;
+        TournamentId = tournamentId;
+    }
+    public int Score1 { get; set; }
+    public int Score2 { get; set; }
+    public int Round { get; set; }
+    public int Order { get; set; }
     
-    public Guid TournamentId { get; set; } = TournamentId;
+    public Guid TournamentId { get; set; }
     public TournamentModel? Tournament { get; set; }
     
     public Guid? Team1Id { get; set; }
