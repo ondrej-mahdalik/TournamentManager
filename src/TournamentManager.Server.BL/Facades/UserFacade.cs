@@ -36,4 +36,19 @@ public class UserFacade : CRUDFacade<UserEntity, UserModel>
 
         return entity?.ApplicationUserId;
     }
+
+    public override async Task DeleteAsync(Guid id)
+    {
+        // Delete related entities
+        await using var uow = UnitOfWorkFactory.Create();
+        var teamsAsMember = await uow.GetRepository<UserIsInTeamEntity>()
+            .Get()
+            .Where(x => x.UserId == id)
+            .ToListAsync();
+        uow.GetRepository<UserIsInTeamEntity>()
+            .DeleteRange(teamsAsMember.Select(x => x.Id));
+
+        await uow.CommitAsync();
+        await base.DeleteAsync(id);
+    }
 }

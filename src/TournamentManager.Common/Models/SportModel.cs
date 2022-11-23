@@ -2,10 +2,13 @@
 
 namespace TournamentManager.Common.Models;
 
-public record SportModel(
-    string Name) : ModelBase
+public class SportModel : ModelBase
 {
-    public string Name { get; set; } = Name;
+    public SportModel(string name)
+    {
+        this.Name = name;
+    }
+    public string Name { get; set; }
     
     public IList<TournamentModel> Tournaments { get; set; } = new List<TournamentModel>();
 }
