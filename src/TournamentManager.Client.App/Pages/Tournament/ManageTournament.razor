@@ -91,7 +91,7 @@
                                      <tr>
                                          <td>@participant.Team?.Name</td>
                                          <td>@leader?.FirstName @leader?.LastName</td>
-                                         <td>Datum registrace?</td>
+                                         <td>@participant.CreatedOn.ToString("dd. MM. yyyy")</td>
                                          <td class="text-center"><i @onclick="() => ApproveParticipant(participant)" class="fas fa-user-check me-1" data-bs-toggle="tooltip" data-bss-tooltip="" data-bs-placement="right" title="Approve participant"></i><i @onclick="() => DeleteParticipant(participant)" class="fas fa-user-times" data-bs-toggle="tooltip" data-bss-tooltip="" data-bs-placement="right" title="Reject participant"></i></td>
                                      </tr>
                                  }
@@ -196,7 +196,7 @@
                                      <tr>
                                          <td>@participant.Team?.Name</td>
                                          <td>@leader?.FirstName @leader?.LastName</td>
-                                         <td>Datum registrace?</td>
+                                         <td>@participant.CreatedOn.ToString("dd. MM. yyyy")</td>
                                          <td class="text-center">
                                              @if (_tournament is not null && !_tournament.InProgress)
                                              {
@@ -389,7 +389,7 @@
             _matches = _tournament?.Matches.OrderBy(x => x.Round).ThenBy(x => x.Order).ToList() ?? new();
             var allParticipants = await Http.GetFromJsonAsync<List<TeamIsParticipatingModel>>("/api/TeamIsParticipating") ?? new();
             _approvedParticipants = allParticipants.Where(x => x.TournamentId == _tournament?.Id && x.Approved).ToList();
-            _pendingParticipants = allParticipants.Where(x => x.TournamentId == _tournament?.Id && !x.Approved).ToList();
+            _pendingParticipants = allParticipants.Where(x => x.TournamentId == _tournament?.Id && !x.Approved).OrderBy(x => x.CreatedOn).ToList();
             _teamLeaders = new();
             _isLoading = false;
             
@@ -458,6 +458,7 @@
                 _errorMessage = "";
                 _pendingParticipants?.Remove(participant);
                 _approvedParticipants?.Add(participant);
+                _approvedParticipants?.Sort((x, y) => String.CompareOrdinal(x.Team?.Name, y.Team?.Name));
             }
         }
     }
