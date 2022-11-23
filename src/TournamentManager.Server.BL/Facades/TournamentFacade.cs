@@ -15,7 +15,7 @@ public class TournamentFacade : CRUDFacade<TournamentEntity, TournamentModel>
 
     public override async Task DeleteAsync(Guid id)
     {
-        // Load related entities to support client cascade delete
+        // Deleted related entities
         await using var uow = UnitOfWorkFactory.Create();
         var matches = await uow.GetRepository<MatchEntity>()
             .Get()
