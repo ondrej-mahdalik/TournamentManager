@@ -15,17 +15,21 @@ public class TournamentFacade : CRUDFacade<TournamentEntity, TournamentModel>
 
     public override async Task DeleteAsync(Guid id)
     {
-        // Load related entities to support client cascade delete
-        await using var uow = UnitOfWorkFactory.Create(); 
-        _ = await uow.GetRepository<MatchEntity>()
+        // Deleted related entities
+        await using var uow = UnitOfWorkFactory.Create();
+        var matches = await uow.GetRepository<MatchEntity>()
             .Get()
             .Where(x => x.TournamentId == id)
             .ToListAsync();
-        _ = await uow.GetRepository<TeamIsParticipatingEntity>()
+        uow.GetRepository<MatchEntity>().DeleteRange(matches.Select(x => x.Id));
+
+        var participatings = await uow.GetRepository<TeamIsParticipatingEntity>()
             .Get()
             .Where(x => x.TournamentId == id)
             .ToListAsync();
-        
+        uow.GetRepository<TeamIsParticipatingEntity>().DeleteRange(participatings.Select(x => x.Id));
+
+        await uow.CommitAsync();
         await base.DeleteAsync(id);
     }
 
