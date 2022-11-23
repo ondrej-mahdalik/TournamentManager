@@ -8,7 +8,6 @@ using TournamentManager.Server.Auth.Models;
 
 namespace TournamentManager.Server.App.Controllers;
 
-[Authorize]
 [ApiController]
 [Route("api/[controller]")]
 public class TournamentController : AuthorizedControllerBase
@@ -45,6 +44,7 @@ public class TournamentController : AuthorizedControllerBase
         return Ok(tournament);
     }
 
+    [Authorize]
     [HttpPut]
     public async Task<ActionResult> InsertOrUpdate([FromBody] TournamentModel? tournament)
     {
@@ -56,6 +56,7 @@ public class TournamentController : AuthorizedControllerBase
         return Ok(await _tournamentFacade.SaveAsync(tournament));
     }
 
+    [Authorize]
     [HttpDelete("{id:guid}")]
     public async Task<ActionResult> Delete(Guid id)
     {
@@ -64,7 +65,7 @@ public class TournamentController : AuthorizedControllerBase
             return NoContent();
 
         var user = await GetLoggedUser();
-        if (tournament.CreatorId != user.Id && !user.IsAdministrator)
+        if (user is null || tournament.CreatorId != user.Id && !user.IsAdministrator)
             return Forbid();
 
         await _tournamentFacade.DeleteAsync(id);

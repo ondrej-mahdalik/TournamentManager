@@ -7,7 +7,6 @@ using TournamentManager.Server.Auth.Models;
 
 namespace TournamentManager.Server.App.Controllers;
 
-[Authorize]
 [ApiController]
 [Route("api/[controller]")]
 public class TeamIsParticipatingController : AuthorizedControllerBase
@@ -15,7 +14,7 @@ public class TeamIsParticipatingController : AuthorizedControllerBase
     private readonly TeamIsParticipatingFacade _teamIsParticipatingFacade;
     private readonly TournamentFacade _tournamentFacade;
     private readonly TeamFacade _teamFacade;
-    
+
     public TeamIsParticipatingController(TeamIsParticipatingFacade teamIsParticipatingFacade,
         TeamFacade teamFacade,
         TournamentFacade tournamentFacade,
@@ -26,11 +25,11 @@ public class TeamIsParticipatingController : AuthorizedControllerBase
         _teamFacade = teamFacade;
         _tournamentFacade = tournamentFacade;
     }
-    
+
     [HttpGet]
     public async Task<ActionResult<List<TeamIsParticipatingModel>>> GetAll()
     {
-          return Ok(await _teamIsParticipatingFacade.GetAsync());
+        return Ok(await _teamIsParticipatingFacade.GetAsync());
     }
 
     [HttpGet("{id:guid}")]
@@ -43,6 +42,7 @@ public class TeamIsParticipatingController : AuthorizedControllerBase
         return Ok(participation);
     }
 
+    [Authorize]
     [HttpPut]
     public async Task<ActionResult> InsertOrUpdate([FromBody] TeamIsParticipatingModel? participation)
     {
@@ -55,13 +55,14 @@ public class TeamIsParticipatingController : AuthorizedControllerBase
             return BadRequest();
         
         var user = await GetLoggedUser();
-        if (user.IsAdministrator || tournament.CreatorId == user.Id ||
-            (tournament.IsPublic && team.LeaderId == user.Id))
+        if (user is not null && (user.IsAdministrator || tournament.CreatorId == user.Id ||
+            tournament.IsPublic && team.LeaderId == user.Id))
             return Ok(await _teamIsParticipatingFacade.SaveAsync(participation));
 
         return Forbid();
     }
 
+    [Authorize]
     [HttpDelete("{id:guid}")]
     public async Task<ActionResult> Delete(Guid id)
     {
@@ -71,7 +72,7 @@ public class TeamIsParticipatingController : AuthorizedControllerBase
             return NoContent();
 
         var user = await GetLoggedUser();
-        if (!user.IsAdministrator && participation.Team?.LeaderId != user.Id &&
+        if (user is null || !user.IsAdministrator && participation.Team?.LeaderId != user.Id &&
             participation.Tournament?.CreatorId != user.Id)
             return Forbid();
 
