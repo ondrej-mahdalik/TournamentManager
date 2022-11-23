@@ -373,12 +373,6 @@
 
             _tournaments = await Http.GetFromJsonAsync<List<TournamentModel>>("api/Tournament") ?? new List<TournamentModel>();
             _tournaments = _tournaments.Where(x => x.Participatings.Any(p => p.TeamId == _team?.Id)).ToList() ;
-        
-            var participants = await Http.GetFromJsonAsync<List<TeamIsParticipatingModel>>("/api/TeamIsParticipating") ?? new();
-            foreach (var tournament in _tournaments)
-            {
-                _numberOfParticipants.Add(tournament.Id, participants.Count(x => x.Approved && x.TournamentId == tournament.Id));
-            }
 
             _currentUser = await Http.GetFromJsonAsync<UserModel>($"api/User/current");
         }
