@@ -1,25 +1,19 @@
-﻿@page "/Tournament/List"
-@using TournamentManager.Common.Models
+@page "/Profile/List"
+@using Microsoft.AspNetCore.Components
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
-@using Microsoft.AspNetCore.Authorization
-@using TournamentManager.Client.App.Extensions
+@using TournamentManager.Common.Models
 @inject HttpClient Http
-@inject PublicHttpClient PublicHttp
-@inject AuthenticationStateProvider AuthenticationStateProvider
-
-<PageTitle>Tournaments List</PageTitle>
 
 <div id="content">
     <div class="container-fluid">
         <div class="row mb-3">
             <div class="col d-xl-flex d-flex align-items-center">
-                <h3 class="text-dark d-xl-flex">Tournaments</h3>
+                <h3 class="text-dark d-xl-flex">Users</h3>
             </div>
-            <div class="col col-auto d-flex align-items-center"><a href="Tournament/Create"><button class="btn btn-primary" type="button">Create New</button></a></div>
         </div>
         <div class="card shadow">
             <div class="card-body">
-                @if (_tournaments is null)
+                @if (_users is null)
                 {
                     <p class="text-center fw-bold">Loading...</p>
                 }
@@ -47,34 +41,32 @@
                         </div>
                     </div>
                     <div class="table-responsive table mt-2" role="grid">
-                        @if (TournamentsFiltered.Count == 0)
+                        @if (UsersFiltered.Count == 0)
                         {
-                            <p class="text-center fw-bold">No tournaments found</p>
+                            <p class="text-center fw-bold">No users found</p>
                         }
                         else
                         {
                             <table class="table my-0" id="dataTable">
                                 <thead>
                                 <tr>
-                                    <th>Sport<i class="fas fa-baseball-ball pe-0 ms-2"></i></th>
                                     <th>Name</th>
-                                    <th>Date</th>
-                                    <th>Visibility</th>
-                                    <th>Occupation</th>
-                                    <th>Winner</th>
+                                    <th>Date Registered</th>
+                                    <th>Teams Leading</th>
+                                    <th>Tournaments Organizing</th>
+                                    <th></th>
                                 </tr>
                                 </thead>
                                 <tbody>
-                                @foreach (var tournament in TournamentsFilteredPages[_selectedPageIndex])
+                                @foreach (var user in UsersFilteredPages[_selectedPageIndex])
                                 {
 
                                     <tr>
-                                        <td>@tournament.Sport?.Name</td>
-                                        <td>@tournament.Name</td>
-                                        <td>@tournament.Date.ToString("dd. MM. yyyy")</td>
-                                        <td>@(tournament.IsPublic ? "Public" : "Private")</td>
-                                        <td>@_numberOfParticipants[@tournament.Id] / @tournament.MaxAttendees</td>
-                                        <td class="text-end"><a data-bs-target="/Tournament/@tournament.Id" href="/Tournament/Detail/@tournament.Id"><button class="btn btn-primary" type="button">Detail</button></a></td>
+                                        <td>@user.FirstName @user.LastName</td>
+                                        <td>@user.RegisteredAt.ToShortDateString()</td>
+                                        <td>@user.TeamsAsLeader.Count</td>
+                                        <td>@user.Tournaments.Count(x => x.CreatorId == user.Id)</td>
+                                        <td class="text-end"><a data-bs-target="/Profile/Detail/@user.Id" href="/Profile/Detail/@user.Id"><button class="btn btn-primary" type="button">Detail</button></a></td>
                                     </tr>
                                 }
                                 </tbody>
@@ -82,10 +74,10 @@
                         }
                     </div>
                     <div class="row">
-                        @if (TournamentsFiltered.Count > 0)
+                        @if (UsersFiltered.Count > 0)
                         {
                             <div class="col-md-6 align-self-center">
-                                <p id="dataTable_info" class="dataTables_info" role="status" aria-live="polite">Showing @(1 + _selectedPageIndex * _showCount) to @((_showCount + _selectedPageIndex * _showCount) < TournamentsFiltered.Count ? (_showCount + _selectedPageIndex * _showCount) : TournamentsFiltered.Count) of @(TournamentsFiltered.Count)</p>
+                                <p id="dataTable_info" class="dataTables_info" role="status" aria-live="polite">Showing @(1 + _selectedPageIndex * _showCount) to @((_showCount + _selectedPageIndex * _showCount) < UsersFiltered.Count ? (_showCount + _selectedPageIndex * _showCount) : UsersFiltered.Count) of @(UsersFiltered.Count)</p>
                             </div>
 
                             <div class="col-md-6">
@@ -98,14 +90,14 @@
                                             if (_selectedPageIndex == 0)
                                                 num = i + 1; // So user cant go to page -1
 
-                                            else if (_selectedPageIndex >= TournamentsFilteredPages.Count - 1)
+                                            else if (_selectedPageIndex >= UsersFilteredPages.Count - 1)
                                                 num = i - 1; // So user cant go to a page that is too high
 
-                                            if (num > TournamentsFilteredPages.Count - 1)
+                                            if (num > UsersFilteredPages.Count - 1)
                                             {
                                                 break; // If there are fewer than 3 pages total
                                             }
-                                            if (_selectedPageIndex == 1 && TournamentsFilteredPages.Count == 2 && i == 0)
+                                            if (_selectedPageIndex == 1 && UsersFilteredPages.Count == 2 && i == 0)
                                             {
                                                 // If only 2 pages are available, clicking the second one would make page 0 appear
                                                 // which is obviously not possible
@@ -116,7 +108,7 @@
                                                 <a class="page-link" @onclick="() => _selectedPageIndex = num" role="button">@(num + 1)</a>
                                             </li>
                                         }
-                                        <li class="page-item @(_selectedPageIndex >= @TournamentsFilteredPages.Count - 1 ? "disabled" : "")">
+                                        <li class="page-item @(_selectedPageIndex >= UsersFilteredPages.Count - 1 ? "disabled" : "")">
                                             <a class="page-link" aria-label="Next" @onclick="() => _selectedPageIndex++" role="button"><span class="user-select-none" aria-hidden="true">»</span></a>
                                         </li>
                                     </ul>
@@ -129,27 +121,26 @@
         </div>
     </div>
 </div>
+
 @code
 {
     private string _search = "";
     private int _showCount = 10;
     private int _selectedPageIndex;
-    private Dictionary<Guid, int> _numberOfParticipants = new();
-    private List<TournamentModel> _tournaments = new();
-    private List<TournamentModel> TournamentsFiltered => _tournaments?
+    private List<UserModel>? _users;
+    private List<UserModel> UsersFiltered => _users?
         .Where(x =>
         {
-            var name = x.Name.ToLower().Contains(_search.ToLower());
-            var sport = x.Sport?.Name.ToLower().Contains(_search.ToLower()) ?? false;
-            var date = x.Date.ToString("dd. MM. yyyy").Contains(_search);
-            var creatorFirstName = x.Creator?.FirstName?.ToLower().Contains(_search.ToLower()) ?? false;
-            var creatorLastName = x.Creator?.LastName?.ToLower().Contains(_search.ToLower()) ?? false;
-            
-            return name || sport || date || creatorFirstName || creatorLastName;
+            var firstName = x.FirstName?.ToLower().Contains(_search.ToLower()) ?? false;
+            var lastName = x.LastName?.ToLower().Contains(_search.ToLower()) ?? false;
+            var email = x.Email?.ToLower().Contains(_search.ToLower()) ?? false;
+            var phoneNumber = x.PhoneNumber?.ToLower().Contains(_search.ToLower()) ?? false;
+
+            return firstName || lastName || email || phoneNumber;
         }).ToList()
         ?? new();
     
-    private List<List<TournamentModel>> TournamentsFilteredPages => TournamentsFiltered.Select((x, i) => new  // Splits the one big list into smaller lists of size _showCount
+    private List<List<UserModel>> UsersFilteredPages => UsersFiltered.Select((x, i) => new  // Splits the one big list into smaller lists of size _showCount
     {
         Index = i,
         Value = x
@@ -159,30 +150,15 @@
     
     protected override async Task OnInitializedAsync()
     {
-        var state = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-        List<TeamIsParticipatingModel> participants = new();
-        if (state.User.Identity?.IsAuthenticated ?? false)
+        try
         {
-            try
-            {
-                _tournaments = await Http.GetFromJsonAsync<List<TournamentModel>>("api/Tournament") ?? new List<TournamentModel>();
-                participants = await Http.GetFromJsonAsync<List<TeamIsParticipatingModel>>("/api/TeamIsParticipating") ?? new();
-            }
-            catch (AccessTokenNotAvailableException exception)
-            {
-                exception.Redirect();
-            }
+            _users = await Http.GetFromJsonAsync<List<UserModel>>("api/User") ?? new List<UserModel>();
         }
-        else
+        catch (AccessTokenNotAvailableException exception)
         {
-            _tournaments = await PublicHttp.Client.GetFromJsonAsync<List<TournamentModel>>("api/Tournament") ?? new List<TournamentModel>();
-            participants = await PublicHttp.Client.GetFromJsonAsync<List<TeamIsParticipatingModel>>("/api/TeamIsParticipating") ?? new();
+            exception.Redirect();
         }
         
-        foreach (var tournament in _tournaments)
-        {
-            _numberOfParticipants.Add(tournament.Id, participants.Count(x => x.Approved && x.TournamentId == tournament.Id));
-        }        
     }
 
     private void OnItemsOnPageChanged(ChangeEventArgs e)

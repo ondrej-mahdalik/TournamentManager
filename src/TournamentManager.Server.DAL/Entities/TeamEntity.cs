@@ -3,7 +3,7 @@
 public record TeamEntity(string Name,
     string? LogoUrl) : EntityBase
 {
-    public Guid LeaderId { get; init; }
+    public Guid? LeaderId { get; init; }
     public UserEntity? Leader { get; init; }
     
     public IList<UserIsInTeamEntity> Members { get; init; } = new List<UserIsInTeamEntity>();
