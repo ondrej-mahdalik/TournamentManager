@@ -212,8 +212,127 @@
                             }
                         }
                     </div>
+                    <!-- Tournament list -->
                     <div class="card shadow">
-                        <em> TODO : Tournaments </em> <!-- až bude finalizovaná Honzova část -->
+                        <div class="card-header">
+                            <h4 class="mb-0">Tournaments</h4>
+                        </div>
+                        <div class="card-body">
+                            @if (_tournaments is null)
+                            {
+                                <p class="text-center fw-bold">Loading...</p>
+                            }
+                            else if(_tournaments.Count == 0)
+                            {
+                                <p class="text-center fw-bold">Team did not yet participate in any tournaments.</p>
+                            }
+                            else
+                            {
+                                <div class="row">
+                                    <div class="col-md-6 text-nowrap">
+                                        <div id="dataTable_length" class="dataTables_length" aria-controls="dataTable">
+                                            <label class="form-label">
+                                                Show
+                                                <select @onchange="OnTournamentsOnPageChanged" class="d-inline-block form-select form-select-sm">
+                                                    <option value="10" selected="selected">10</option>
+                                                    <option value="25">25</option>
+                                                    <option value="50">50</option>
+                                                    <option value="100">100</option>
+                                                </select>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="text-md-end dataTables_filter" id="dataTable_filter">
+                                            <label class="form-label">
+                                                <input type="text" @bind="@_tournamentsSearch" @bind:event="oninput" class="form-control form-control-sm" placeholder="Search" />
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="table-responsive table mt-2" role="grid">
+                                    @if (TournamentsFiltered.Count == 0)
+                                    {
+                                        <p class="text-center fw-bold">No tournaments found.</p>
+                                    }
+                                    else
+                                    {
+                                        <table class="table my-0" id="dataTable">
+                                            <thead>
+                                                <tr>
+                                                    <th>Sport<i class="fas fa-baseball-ball pe-0 ms-2"></i></th>
+                                                    <th>Name</th>
+                                                    <th>Date</th>
+                                                    <th>Visibility</th>
+                                                    <th>Occupation</th>
+                                                    <th>Winner</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach (var tournament in TournamentsFilteredPages[_tournamentsSelectedPageIndex])
+                                                {
+
+                                                    <tr>
+                                                        <td>@tournament.Sport?.Name</td>
+                                                        <td>@tournament.Name</td>
+                                                        <td>@tournament.Date.ToString("dd. MM. yyyy")</td>
+                                                        <td>@(tournament.IsPublic ? "Public" : "Private")</td>
+                                                        <td>@_numberOfParticipants[@tournament.Id] / @tournament.MaxAttendees</td>
+                                                        <td class="text-end"><a data-bs-target="/Tournament/@tournament.Id" href="/Tournament/Detail/@tournament.Id" class="btn btn-primary">Detail</a></td>
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                        </table>
+                                    }
+                                </div>
+                                <div class="row">
+                                    @if (TournamentsFiltered.Count > 0)
+                                    {
+                                        <div class="col-md-6 align-self-center">
+                                            <p id="dataTable_info" class="dataTables_info" role="status" aria-live="polite">
+                                                Showing @(1 + _tournamentsSelectedPageIndex * _tournamentsShowCount) to @((_tournamentsShowCount + _tournamentsSelectedPageIndex * _tournamentsShowCount) < TournamentsFiltered.Count ?
+                                                (_tournamentsShowCount + _tournamentsSelectedPageIndex * _tournamentsShowCount) : TournamentsFiltered.Count) of @(TournamentsFiltered.Count)
+                                            </p>
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <nav class="d-lg-flex justify-content-lg-end dataTables_paginate paging_simple_numbers">
+                                                <ul class="pagination">
+                                                    <li class="page-item @(_tournamentsSelectedPageIndex <= 0 ? "disabled" : "")"><a role="button" class="page-link" aria-label="Previous" @onclick="() => _tournamentsSelectedPageIndex--"><span class="user-select-none" aria-hidden="true">«</span></a></li>
+                                                    @for (var i = _tournamentsSelectedPageIndex - 1; i <= _tournamentsSelectedPageIndex + 1; i++)
+                                                    {
+                                                        var num = i;
+                                                        if (_tournamentsSelectedPageIndex == 0)
+                                                            num = i + 1; // So user cant go to page -1
+
+                                                        else if (_tournamentsSelectedPageIndex >= TournamentsFilteredPages.Count - 1)
+                                                            num = i - 1; // So user cant go to a page that is too high
+
+                                                        if (num > TournamentsFilteredPages.Count - 1)
+                                                        {
+                                                            break; // If there are fewer than 3 pages total
+                                                        }
+                                                        if (_tournamentsSelectedPageIndex == 1 && TournamentsFilteredPages.Count == 2 && i == 0)
+                                                        {
+                                                            // If only 2 pages are available, clicking the second one would make page 0 appear
+                                                            // which is obviously not possible
+                                                            continue;
+                                                        }
+
+                                                        <li class="page-item @(_tournamentsSelectedPageIndex == num ? "active" : "")">
+                                                            <a class="page-link" @onclick="() => _tournamentsSelectedPageIndex = num" role="button">@(num + 1)</a>
+                                                        </li>
+                                                    }
+                                                    <li class="page-item @(_tournamentsSelectedPageIndex >= @TournamentsFilteredPages.Count - 1 ? "disabled" : "")">
+                                                        <a class="page-link" aria-label="Next" @onclick="() => _tournamentsSelectedPageIndex++" role="button"><span class="user-select-none" aria-hidden="true">»</span></a>
+                                                    </li>
+                                                </ul>
+                                            </nav>
+                                        </div>
+                                    }
+                                </div>
+                            }
+                        </div>
                     </div>
                 </div>
             </div>
@@ -250,6 +369,15 @@
                     }
                 }
 
+            }
+
+            _tournaments = await Http.GetFromJsonAsync<List<TournamentModel>>("api/Tournament") ?? new List<TournamentModel>();
+            _tournaments = _tournaments.Where(x => x.Participatings.Any(p => p.TeamId == _team?.Id)).ToList() ;
+        
+            var participants = await Http.GetFromJsonAsync<List<TeamIsParticipatingModel>>("/api/TeamIsParticipating") ?? new();
+            foreach (var tournament in _tournaments)
+            {
+                _numberOfParticipants.Add(tournament.Id, participants.Count(x => x.Approved && x.TournamentId == tournament.Id));
             }
 
             _currentUser = await Http.GetFromJsonAsync<UserModel>($"api/User/current");
@@ -340,4 +468,39 @@
     }).GroupBy(x => x.Index / _membersShowCount)
         .Select(x => x.Select(v => v.Value).ToList())
         .ToList();
+
+    // Tournaments 
+
+    private string _tournamentsSearch = "";
+    private int _tournamentsShowCount = 10;
+    private int _tournamentsSelectedPageIndex;
+    private Dictionary<Guid, int> _numberOfParticipants = new();
+    private List<TournamentModel>? _tournaments;
+    private List<TournamentModel> TournamentsFiltered => _tournaments?
+        .Where(x =>
+        {
+            
+            var name = x.Name.ToLower().Contains(_tournamentsSearch.ToLower());
+            var sport = x.Sport?.Name.ToLower().Contains(_tournamentsSearch.ToLower()) ?? false;
+            var date = x.Date.ToString("dd. MM. yyyy").Contains(_tournamentsSearch);
+            var creatorFirstName = x.Creator?.FirstName?.ToLower().Contains(_tournamentsSearch.ToLower()) ?? false;
+            var creatorLastName = x.Creator?.LastName?.ToLower().Contains(_tournamentsSearch.ToLower()) ?? false;
+
+            return name || sport || date || creatorFirstName || creatorLastName;
+        }).ToList()
+        ?? new();
+
+    private List<List<TournamentModel>> TournamentsFilteredPages => TournamentsFiltered.Select((x, i) => new  // Splits the one big list into smaller lists of size _tournamentsShowCount
+    {
+        Index = i,
+        Value = x
+    }).GroupBy(x => x.Index / _tournamentsShowCount)
+        .Select(x => x.Select(v => v.Value).ToList())
+        .ToList();
+
+    private void OnTournamentsOnPageChanged(ChangeEventArgs e)
+    {
+        _tournamentsSelectedPageIndex = 0;
+        _tournamentsShowCount = int.Parse(e.Value?.ToString() ?? "10");
+    }
 }
