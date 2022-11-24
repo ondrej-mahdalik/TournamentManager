@@ -14,7 +14,64 @@
                 <div class="d-sm-flex justify-content-between align-items-center mb-4">
                     <h3 class="text-dark mb-0">Dashboard</h3>
                 </div>
-                <!-- TODO add active tournaments -->
+                <!-- Active tournaments -->
+                <div class="row">
+                    <div class="col">
+                        <div class="card shadow m-2">
+                            <div class="card-header">
+                                <div class="row d-lg-flex align-items-lg-center">
+                                    <div class="col">
+                                        <h4 class="mb-0">Your ongoing tournaments</h4>
+                                    </div>
+                                    <div class="col text-end"><a href="/Tournaments/List" class="btn btn-primary btn-sm">Show all</a></div>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                @if (_tournamentsActive is null)
+                                {
+                                    <p class="text-center fw-bold">Loading...</p>
+                                }
+                                else
+                                {
+                                    <div class="table-responsive table mt-2" role="grid">
+                                        @if (_tournamentsActive.Count == 0)
+                                        {
+                                            <p class="text-center fw-bold">No tournaments found.</p>
+                                        }
+                                        else
+                                        {
+                                            <table class="table my-0" id="dataTable">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Sport<i class="fas fa-baseball-ball pe-0 ms-2"></i></th>
+                                                        <th>Name</th>
+                                                        <th>Date</th>
+                                                        <th>Occupation</th>
+                                                        <th></th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @for (int i = 0; i < 5; i++)
+                                                    {
+                                                        var tournament = _tournamentsActive[i];
+                                                        <tr>
+                                                            <td>@tournament.Sport?.Name</td>
+                                                            <td>@tournament.Name</td>
+                                                            <td>@tournament.Date.ToString("dd. MM. yyyy")</td>
+                                                            <td>@_numberOfParticipantsActive[@tournament.Id] / @tournament.MaxAttendees</td>
+                                                            <td class="text-end"><a data-bs-target="/Tournament/@tournament.Id" href="/Tournament/Detail/@tournament.Id" class="btn btn-primary">Detail</a></td>
+                                                        </tr>
+                                                    }
+                                                </tbody>
+                                            </table>
+                                        }
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Upcoming tournamnets -->
                 <div class="row">
                     <div class="col">
                         <div class="card shadow m-2">
@@ -47,7 +104,7 @@
                                                         <th>Name</th>
                                                         <th>Date</th>
                                                         <th>Occupation</th>
-                                                        <th>Winner</th>
+                                                        <th></th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -162,7 +219,7 @@
                                                         <th>Name</th>
                                                         <th>Date</th>
                                                         <th>Occupation</th>
-                                                        <th>Winner</th>
+                                                        <th></th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -240,18 +297,48 @@
 
 @code {
     private UserModel? _currentUser;
+    private List<Guid>? _currentUserTeamIds;
     private List<TournamentModel>? _tournaments;
-    private Dictionary<Guid, int> _numberOfParticipantsPublic = new();
+    private List<TeamIsParticipatingModel>? _participants;
+
+    private List<TournamentModel>? _tournamentsOfUser;
+    private Dictionary<Guid, int> _numberOfParticipantsOfUser = new();
+
 
     private List<TournamentModel>? _tournamentsUpcoming;
     private Dictionary<Guid, int> _numberOfParticipantsUpcoming = new();
 
+    private List<TournamentModel>? _tournamentsActive;
+    private Dictionary<Guid, int> _numberOfParticipantsActive = new();
+
+    private List<TournamentModel>? _tournamentsFinished;
+    private Dictionary<Guid, int> _numberOfParticipantsFinished = new();
+
+
     protected override async Task OnInitializedAsync()
     {
+        try
+        {
+            _tournaments = await Http.GetFromJsonAsync<List<TournamentModel>>("api/Tournament") ?? new List<TournamentModel>();
+            // _tournamentsPublic = _tournamentsPublic.Where(x => x.IsPublic).ToList(); // Should not be needed, should be handled by controller
+            _participants = await Http.GetFromJsonAsync<List<TeamIsParticipatingModel>>("/api/TeamIsParticipating") ?? new();
+
+            _tournamentsUpcoming = _tournaments.Where(x => x.Date > DateTime.Now).ToList();
+            foreach (var tournament in _tournamentsUpcoming)
+            {
+                _numberOfParticipantsUpcoming.Add(tournament.Id, _participants.Count(x => x.TournamentId == tournament.Id && x.Approved));
+            }
+        }
+        catch (AccessTokenNotAvailableException exception)
+        {
+            exception.Redirect();
+        }
 
         try
         {
             _currentUser = await Http.GetFromJsonAsync<UserModel>($"api/User/current");
+            List<UserIsInTeamModel>? teamMemberships = await Http.GetFromJsonAsync<List<UserIsInTeamModel>>("/api/UserIsInTeam/");
+            _currentUserTeamIds = teamMemberships?.Where(m => m.UserId == _currentUser?.Id).Select(m => m.TeamId).ToList();
         }
         catch (AccessTokenNotAvailableException exception)
         {
@@ -260,28 +347,30 @@
 
         if (_currentUser is null) // Not logged in
         {
-            try
-            {
-                _tournaments = await Http.GetFromJsonAsync<List<TournamentModel>>("api/Tournament") ?? new List<TournamentModel>();
-                // _tournamentsPublic = _tournamentsPublic.Where(x => x.IsPublic).ToList(); // Should not be needed, should be handled by controller
-                 var participants = await Http.GetFromJsonAsync<List<TeamIsParticipatingModel>>("/api/TeamIsParticipating") ?? new();
-                
-                _tournamentsUpcoming = _tournaments.Where(x => x.Date > DateTime.Now).ToList();
-                foreach (var tournament in _tournamentsUpcoming)
-                {
-                    _numberOfParticipantsUpcoming.Add(tournament.Id, participants.Count(x => x.TournamentId == tournament.Id && x.Approved));
-                }
-                
 
-            }
-            catch (AccessTokenNotAvailableException exception)
-            {
-                exception.Redirect();
-            }
         }
         else // Logged user
         {
-            
+            if (_participants is null || _currentUserTeamIds is null) return;
+            _tournamentsOfUser = _tournaments?.Where(t => _participants.Any(p => p.TournamentId == t.Id && _currentUserTeamIds.Contains(p.TeamId))).ToList();
+
+            _tournamentsFinished = _tournamentsOfUser?.Where(x => x.Date < DateTime.Now && x.WinnerTeamOverride != null).ToList();
+            if (_tournamentsFinished is not null)
+            {
+                foreach (var tournament in _tournamentsFinished)
+                {
+                    _numberOfParticipantsFinished.Add(tournament.Id, _participants.Count(x => x.TournamentId == tournament.Id && x.Approved));
+                }
+            }
+
+            _tournamentsActive = _tournamentsOfUser?.Where(t => t.Date < DateTime.Now && t.WinnerTeamOverrideId is not null).ToList();
+            if (_tournamentsActive is not null)
+            {
+                foreach (var tournament in _tournamentsActive)
+                {
+                    _numberOfParticipantsFinished.Add(tournament.Id, _participants.Count(x => x.TournamentId == tournament.Id && x.Approved));
+                }
+            }
         }
 
     }
