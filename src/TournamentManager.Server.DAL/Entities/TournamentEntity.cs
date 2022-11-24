@@ -8,7 +8,7 @@ public record TournamentEntity(string Name,
     bool InProgress,
     int MaxAttendees) : EntityBase
 {
-    public Guid CreatorId { get; init; }
+    public Guid? CreatorId { get; init; }
     public UserEntity? Creator { get; init; }
     
     public Guid? WinnerTeamOverrideId { get; init; }

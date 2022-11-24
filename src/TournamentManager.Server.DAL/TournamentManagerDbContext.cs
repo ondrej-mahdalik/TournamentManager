@@ -26,7 +26,7 @@ public class TournamentManagerDbContext : DbContext
         modelBuilder.Entity<SportEntity>()
             .HasMany(i => i.Tournaments)
             .WithOne(i => i.Sport)
-            .OnDelete(DeleteBehavior.NoAction); // Cannot delete a sport with assigned tournaments
+            .OnDelete(DeleteBehavior.SetNull);
 
         modelBuilder.Entity<TeamEntity>(entity =>
         {
@@ -63,15 +63,15 @@ public class TournamentManagerDbContext : DbContext
         {
             entity.HasMany(i => i.Tournaments)
                 .WithOne(i => i.Creator)
-                .OnDelete(DeleteBehavior.Cascade);
+                .OnDelete(DeleteBehavior.SetNull);
 
             entity.HasMany(i => i.TeamsAsLeader)
                 .WithOne(i => i.Leader)
-                .OnDelete(DeleteBehavior.Cascade);
+                .OnDelete(DeleteBehavior.SetNull);
 
             entity.HasMany(i => i.TeamsAsMember)
                 .WithOne(i => i.User)
-                .OnDelete(DeleteBehavior.ClientCascade); // TODO
+                .OnDelete(DeleteBehavior.ClientCascade);
         });
     }
 }

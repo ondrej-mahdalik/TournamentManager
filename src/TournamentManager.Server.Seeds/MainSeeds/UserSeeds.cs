@@ -7,6 +7,7 @@ namespace TournamentManager.Server.Seeds.MainSeeds;
 public static class UserSeeds
 {
     public static readonly UserEntity Admin = new(
+        DateTime.Now,
         ApplicationUserSeeds.Admin.Id,
         true)
     {
@@ -14,6 +15,7 @@ public static class UserSeeds
     };
     
     public static readonly UserEntity JohnDoe = new(
+        DateTime.Now - TimeSpan.FromDays(1),
         ApplicationUserSeeds.User1.Id)
     {
         Id = Guid.Parse("817A00B4-6A3A-427E-B569-1C72342483A3")
