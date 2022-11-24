@@ -1,9 +1,167 @@
 ﻿@page "/"
+@using TournamentManager.Common.Models
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
 
-<PageTitle>Index</PageTitle>
+@inject HttpClient Http
 
-<h1>Hello, world!</h1>
+<PageTitle>Dashboard</PageTitle>
 
-Welcome to your new app.
+<AuthorizeView>
+    <Authorized>
+        <h3> Logged in user</h3>
+    </Authorized>
+    <NotAuthorized>
 
-<SurveyPrompt Title="How is Blazor working for you?" />
+        <div id="content">
+            <div class="container-fluid mb-5">
+                <div class="d-sm-flex justify-content-between align-items-center mb-4">
+                    <h3 class="text-dark mb-0">Dashboard</h3>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <div class="card shadow m-2">
+                            <div class="card-header">
+                                <div class="row d-lg-flex align-items-lg-center">
+                                    <div class="col">
+                                        <h6 class="text-primary mb-0">Upcoming tournaments</h6>
+                                    </div>
+                                    <div class="col text-end"><a href="/Tournaments/List" class="btn btn-primary btn-sm">Show all</a></div>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                @if (_tournamentsPublic is null)
+                                {
+                                    <p class="text-center fw-bold">Loading...</p>
+                                }
+                                else
+                                {
+                                    <div class="table-responsive table mt-2" role="grid">
+                                        @if (_tournamentsPublic.Count == 0)
+                                        {
+                                            <p class="text-center fw-bold">No tournaments found.</p>
+                                        }
+                                        else
+                                        {
+                                            <table class="table my-0" id="dataTable">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Sport<i class="fas fa-baseball-ball pe-0 ms-2"></i></th>
+                                                        <th>Name</th>
+                                                        <th>Date</th>
+                                                        <th>Occupation</th>
+                                                        <th>Winner</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @for (int i = 0; i < 5; i++)
+                                                    {
+                                                        var tournament = _tournamentsPublic[i];
+                                                        <tr>
+                                                            <td>@tournament.Sport?.Name</td>
+                                                            <td>@tournament.Name</td>
+                                                            <td>@tournament.Date.ToString("dd. MM. yyyy")</td>
+                                                          <!--  <td>@_numberOfParticipantsPublic[@tournament.Id] / @tournament.MaxAttendees</td> -->
+                                                            <td class="text-end"><a data-bs-target="/Tournament/@tournament.Id" href="/Tournament/Detail/@tournament.Id"><button class="btn btn-primary" type="button">Detail</button></a></td>
+                                                        </tr>
+                                                    }
+                                                </tbody>
+                                            </table>
+                                        }
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <div class="card shadow m-2">
+                            <div class="card-header">
+                                <div class="row d-lg-flex align-items-lg-center">
+                                    <div class="col">
+                                        <h6 class="text-primary mb-0">Best players</h6>
+                                    </div>
+                                    <div class="col text-end"><a href="../Tournament/list.html"><button class="btn btn-primary btn-sm" type="button">Show all</button></a></div>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col">
+                                        <div id="dataTable-2" class="table-responsive table mt-2" role="grid" aria-describedby="dataTable_info">
+                                            <table id="dataTable" class="table my-0">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Name</th>
+                                                        <th>email</th>
+                                                        <th></th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td><img class="rounded-circle me-2" width="30" height="30" src="avatars/avatar1.jpeg" />Airi Satou</td>
+                                                        <td>airi@example.com</td>
+                                                        <td class="text-end"><a href="../Profile/detail.html"><button class="btn btn-primary btn-sm" type="button">Detail</button></a></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td><img class="rounded-circle me-2" width="30" height="30" src="avatars/avatar2.jpeg" />Angelica Ramos</td>
+                                                        <td>ramosan@email.com</td>
+                                                        <td class="text-end"><a href="../Profile/detail.html"><button class="btn btn-primary btn-sm" type="button">Detail</button></a></td>
+                                                    </tr>
+                                                </tbody>
+                                                <tfoot>
+                                                    <tr></tr>
+                                                </tfoot>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </NotAuthorized>
+</AuthorizeView>
+
+
+@code {
+    private UserModel? _currentUser;
+    private List<TournamentModel>? _tournamentsPublic;
+    private Dictionary<Guid, int> _numberOfParticipantsPublic = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        try
+        {
+            _currentUser = await Http.GetFromJsonAsync<UserModel>($"api/User/current");
+        }
+        catch (AccessTokenNotAvailableException exception)
+        {
+            _currentUser = null;
+        }
+
+        if (_currentUser is null) // Not logged in
+        {
+            try
+            {
+                _tournamentsPublic = await Http.GetFromJsonAsync<List<TournamentModel>>("api/Tournament") ?? new List<TournamentModel>();
+                // _tournamentsPublic = _tournamentsPublic.Where(x => x.IsPublic).ToList(); // Should not be needed, should be handled by controller
+                /* var participants = await Http.GetFromJsonAsync<List<TeamIsParticipatingModel>>("/api/TeamIsParticipating") ?? new();
+                foreach (var tournament in _tournamentsPublic)
+                {
+                    _numberOfParticipantsPublic.Add(tournament.Id, participants.Count(x => x.TournamentId == tournament.Id && x.Approved ));
+                }*/
+
+            }
+            catch (AccessTokenNotAvailableException exception)
+            {
+                exception.Redirect();
+            }
+        }
+
+    }
+
+}
