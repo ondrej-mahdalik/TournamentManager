@@ -1,6 +1,7 @@
 ﻿namespace TournamentManager.Server.DAL.Entities;
 
 public record UserEntity(
+    DateTime RegisteredAt,
     string? ApplicationUserId = null,
     bool IsAdministrator = false) : EntityBase
 {

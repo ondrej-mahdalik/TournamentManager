@@ -45,6 +45,7 @@ public class AuthorizedControllerBase : ControllerBase
         user.FirstName = applicationUser?.FirstName;
         user.LastName = applicationUser?.LastName;
         user.ProfilePictureUrl = applicationUser?.ProfilePictureUrl;
+        user.PhoneNumber = applicationUser?.PhoneNumber;
 
         return user;
     }

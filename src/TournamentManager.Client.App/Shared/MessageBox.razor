@@ -1,0 +1,56 @@
+﻿@using TournamentManager.Common.Enums
+
+<div class="alert @_alertClass @(ShowCloseButton ? "alert-dismissible" : "") fade show" role="alert">
+    @if (Title is not null)
+    {
+        <h4 class="alert-heading fw-bold">@Title</h4>
+    }
+    @if (Message is not null)
+    {
+        <p class="mb-0">@Message</p>
+    }
+    @if (ShowCloseButton)
+    {
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    }
+</div>
+
+@code {
+    /// <summary>
+    ///     The alert type.
+    /// </summary>
+    [Parameter]
+    public MessageType MessageType { get; set; }
+    
+    /// <summary>
+    ///     The alert title.
+    /// </summary>
+    [Parameter]
+    public string? Title { get; set; }
+    
+    /// <summary>
+    ///     The alert message.
+    /// </summary>
+    [Parameter]
+    public string? Message { get; set; }
+    
+    /// <summary>
+    ///     Whether to show the close button.
+    /// </summary>
+    [Parameter]
+    public bool ShowCloseButton { get; set; }
+    
+    private string _alertClass = "alert-info";
+
+    protected override void OnInitialized()
+    {
+        _alertClass = MessageType switch
+        {
+            MessageType.Info => "alert-info",
+            MessageType.Success => "alert-success",
+            MessageType.Warning => "alert-warning",
+            MessageType.Error => "alert-danger",
+            _ => "alert-info"
+        };
+    }
+}

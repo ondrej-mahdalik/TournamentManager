@@ -27,7 +27,7 @@ public class TournamentController : AuthorizedControllerBase
         var tournaments = await _tournamentFacade.GetAsync();
         
         var user = await GetLoggedUser();
-        return Ok(user.IsAdministrator ? tournaments : tournaments.Where(x => x.IsPublic || x.CreatorId == user.Id));
+        return Ok(user?.IsAdministrator ?? false ? tournaments : tournaments.Where(x => x.IsPublic || x.CreatorId == user?.Id));
     }
 
     [HttpGet("{id:guid}")]
