@@ -21,7 +21,7 @@
                             <div class="card-header">
                                 <div class="row d-lg-flex align-items-lg-center">
                                     <div class="col">
-                                        <h6 class="text-primary mb-0">Upcoming tournaments</h6>
+                                        <h4 class="mb-0">Upcoming tournaments</h4>
                                     </div>
                                     <div class="col text-end"><a href="/Tournament/List" class="btn btn-primary btn-sm">Show all</a></div>
                                 </div>
@@ -72,7 +72,7 @@
                             <div class="card-header">
                                 <div class="row">
                                     <div class="col d-lg-flex align-items-lg-center">
-                                        <h6 class="text-primary mb-0">Your finished tournaments</h6>
+                                        <h4 class="mb-0">Your finished tournaments</h4>
                                     </div>
                                 </div>
                             </div>
@@ -169,7 +169,6 @@
                                                             <td>@tournament.Sport?.Name</td>
                                                             <td>@tournament.Name</td>
                                                             <td>@tournament.Date.ToString("dd. MM. yyyy")</td>
-                                                          <!--  <td>@_numberOfParticipantsPublic[@tournament.Id] / @tournament.MaxAttendees</td> -->
                                                             <td class="text-end"><a data-bs-target="/Tournament/@tournament.Id" href="/Tournament/Detail/@tournament.Id"><button class="btn btn-primary" type="button">Detail</button></a></td>
                                                         </tr>
                                                     }
