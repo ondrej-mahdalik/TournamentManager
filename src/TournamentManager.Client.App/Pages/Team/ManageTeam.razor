@@ -549,7 +549,7 @@ else
         {
             var response = await Http.DeleteAsync($"/api/Team/{_team?.Id}");
             // TODO : handle response
-            NavigationManager.NavigateTo("/Teams/List");
+            NavigationManager.NavigateTo("/Team/List");
         }
 
     }
