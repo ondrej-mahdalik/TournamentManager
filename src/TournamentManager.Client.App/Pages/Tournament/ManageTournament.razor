@@ -2,6 +2,7 @@
 @using TournamentManager.Common.Models
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
 @using Microsoft.AspNetCore.Authorization
+@using TournamentManager.Common.Enums
 @attribute [Authorize]
 @inject HttpClient Http
 @inject NavigationManager Navigation
@@ -39,51 +40,66 @@
          }
      </div>
      
-     <div class="row w-75">
-    <div class="col">
-        <div class="card shadow mb-2">
-            <div class="card-body">
-                <div class="row">
-                    <div class="col">
-                        <EditForm Model="@_model" OnValidSubmit="@HandleValidSubmit">
-                            <DataAnnotationsValidator/>
-                            <ValidationSummary/>
-                            <div class="mb-2"><label class="form-label" for="name">Name</label><InputText id="name" name="name" class="form-control" type="text" @bind-Value="_model.Name"/></div>
-                            <div class="mb-2"><label class="form-label" for="description">Description (optional)</label><InputTextArea id="description" name="description" @bind-Value="_model.Description" class="form-control"/></div>
-                            <div class="mb-2"><label class="form-label" for="date">Date of beginning</label><InputDate TValue="DateTime" id="date" name="date" class="form-control" @bind-Value="_model.Date" Type="InputDateType.Date"></InputDate></div>
-                            <div class="mb-2"><label class="form-label" for="sport">Sport</label>
-                                @* <InputSelect TValue="Guid?" id="sport" name="sport" class="form-select" @bind-Value="_model.SportId"> *@
-                                @*     @foreach (var sport in _sports) *@
-                                @*     { *@
-                                @*         <option value="@sport.Id">@sport.Name</option> *@
-                                @*     } *@
-                                @*     <option value="" selected>Other</option> *@
-                                @* </InputSelect> *@
-                            </div>
-                            <div class="mb-2"><label class="form-label" for="signup-type">Play mode</label>
-                                <select id="signup-type" name="signup-type" class="form-select">
-                                    <option value="12" selected>Individual</option>
-                                    <option value="13">Teams</option>
-                                </select>
-                            </div>
-                            <div class="mb-2"><label class="form-label" for="max-players">Maximum number of players</label><InputNumber TValue="int" id="max-players" name="max-players" @bind-Value="_model.MaxAttendees" class="form-control" min="1" type="number" style="width: 30%;"></InputNumber></div>
-                            <div class="mb-2">
-                                <div class="form-check form-switch"><label class="form-check-label" for="formCheck-1">Public</label><InputCheckbox class="form-check-input" type="checkbox" id="formCheck-1" @bind-Value="_model.IsPublic"></InputCheckbox></div>
-                            </div>
-                            <div class="d-xl-flex justify-content-xl-end"><button class="btn btn-primary text-end d-xl-flex" type="submit">Edit</button></div>
-                        </EditForm>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-     
-     <div class="row mb-4">
      @if (!_resultOk)
      {
-         <p class="text-danger"><i class="fas fa-exclamation-circle pe-0 me-1"></i>@_errorMessage</p>
+         <div class="row">
+             <div class="col">
+                 @if (!_allUsersHaveMatch)
+                 {
+                     <MessageBox MessageType="MessageType.Warning" Title="Warning" Message="Not all participants have a match assigned" ShowCloseButton="true"></MessageBox>
+                 }
+                 else
+                 {
+                     <MessageBox MessageType="MessageType.Error" Title="Error" Message="@_errorMessage" ShowCloseButton="false"></MessageBox>
+                 }
+             </div>
+         </div>
      }
+     
+     <div class="row w-75">
+         <div class="col">
+             <div class="card shadow mb-4">
+                 <div class="card-body">
+                     <div class="row">
+                         <div class="col">
+                             <EditForm Model="@_model" OnValidSubmit="@HandleValidSubmit">
+                                 <DataAnnotationsValidator/>
+                                 <ValidationSummary/>
+                                 <div class="mb-2"><label class="form-label" for="name">Name</label><InputText id="name" name="name" class="form-control" type="text" @bind-Value="_model.Name"/></div>
+                                 <div class="mb-2"><label class="form-label" for="description">Description (optional)</label><InputTextArea id="description" name="description" @bind-Value="_model.Description" class="form-control"/></div>
+                                 <div class="mb-2"><label class="form-label" for="date">Date of beginning</label><InputDate TValue="DateTime" id="date" name="date" class="form-control" @bind-Value="_model.Date" Type="InputDateType.Date"></InputDate></div>
+                                 <div class="mb-2"><label class="form-label" for="sport">Sport</label>
+                                     <InputSelect TValue="Guid?" id="sport" name="sport" class="form-select" @bind-Value="_model.SportId">
+                                         @if (_sports != null)
+                                         {
+                                             foreach (var sport in _sports)
+                                             {
+                                                 <option value="@sport.Id">@sport.Name</option>
+                                             }
+                                         }
+                                         <option value="">Other</option>
+                                     </InputSelect>
+                                 </div>
+                                 <div class="mb-2"><label class="form-label" for="signup-type">Play mode</label>
+                                     <select id="signup-type" name="signup-type" class="form-select">
+                                         <option value="12" selected>Individual</option>
+                                         <option value="13">Teams</option>
+                                     </select>
+                                 </div>
+                                 <div class="mb-2"><label class="form-label" for="max-players">Maximum number of players</label><InputNumber TValue="int" id="max-players" name="max-players" @bind-Value="_model.MaxAttendees" class="form-control" min="1" type="number" style="width: 30%;"></InputNumber></div>
+                                 <div class="mb-2">
+                                     <div class="form-check form-switch"><label class="form-check-label" for="formCheck-1">Public</label><InputCheckbox class="form-check-input" type="checkbox" id="formCheck-1" @bind-Value="_model.IsPublic"></InputCheckbox></div>
+                                 </div>
+                                 <div class="d-xl-flex justify-content-xl-end"><button class="btn btn-primary text-end d-xl-flex" type="submit">Edit</button></div>
+                             </EditForm>
+                         </div>
+                     </div>
+                 </div>
+             </div>
+         </div>
+     </div>
+     
+     <div class="row mb-4">
      <div class="col">
          <div class="card shadow mb-4">
              <div class="card-header">
@@ -254,7 +270,7 @@
                          }
                      </div>
                      <div class="row">
-                         @if (_approvedParticipants.Count > 0)
+                         @if (_approvedParticipants != null && _approvedParticipants.Count > 0)
                          {
                              <div class="col-md-6 align-self-center">
                                  <p id="dataTable_info" class="dataTables_info" role="status" aria-live="polite">Showing @(1 + _selectedPageIndex2 * _showCount2) to @((_showCount2 + _selectedPageIndex2 * _showCount2) < ApprovedParticipantsFiltered.Count ? (_showCount2 + _selectedPageIndex2 * _showCount2) : ApprovedParticipantsFiltered.Count) of @(ApprovedParticipantsFiltered.Count)</p></div>
@@ -310,53 +326,58 @@
          }
          else
          {
-             foreach (var match in _matches)
+             if (_matches != null)
              {
-                 <div class="col-4">
-                     <div class="card mb-4 shadow">
-                         <div class="card-body">
-                             <div class="row">
-                                 <div class="col">
-                                     <h6 class="text-primary">Round @match.Round</h6>
+                 foreach (var match in _matches)
+                 {
+                     <div class="col-4">
+                         <div class="card mb-4 shadow">
+                             <div class="card-body">
+                                 <div class="row">
+                                     <div class="col">
+                                         <h6 class="text-primary">Round @match.Round</h6>
+                                     </div>
+                                     <div class="col">
+                                         <p>Zatím @_tournament?.Date.ToString("dd. MM. yyyy")<br></p>
+                                     </div>
                                  </div>
-                                 <div class="col">
-                                     <p>Zatím @_tournament?.Date.ToString("dd. MM. yyyy")<br></p>
+                                 <div class="row">
+                                     <div class="col">
+                                         <p>
+                                             @if (match.Team1 is not null && (match.Team1?.LogoUrl is not null || match.Team1?.LogoUrl != ""))
+                                             {
+                                                 @:<img alt="team1-image" class="img-fluid" width="60" height="60" src="@match.Team1?.LogoUrl">
+                                             }
+                                             @match.Team1?.Name
+                                         </p>
+                                     </div>
+                                     <div class="col align-self-center">
+                                         <p class="lead text-center">@match.Score1</p>
+                                     </div>
                                  </div>
-                             </div>
-                             <div class="row">
-                                 <div class="col">
-                                     <p>
-                                         @if (match.Team1 is not null && (match?.Team1?.LogoUrl is not null || match?.Team1?.LogoUrl != ""))
-                                         {
-                                             <img alt="team1-image" class="img-fluid" width="60" height="60" src="@match?.Team1?.LogoUrl">
-                                         }
-                                         @match?.Team1?.Name
-                                     </p>
+                                 <div class="row">
+                                     <div class="col">
+                                         <p>
+                                             @if (match.Team2 is not null && (match.Team2?.LogoUrl is not null || match.Team2?.LogoUrl != ""))
+                                             {
+                                                 @:<img alt="team2-image" class="img-fluid" width="60" height="60" src="@match.Team2?.LogoUrl">
+                                             }
+                                             @match.Team2?.Name
+                                         </p>
+                                     </div>
+                                     <div class="col align-self-center">
+                                         <p class="lead text-center">@match.Score2</p>
+                                     </div>
                                  </div>
-                                 <div class="col align-self-center">
-                                     <p class="lead text-center">@match?.Score1</p>
+                                 <div class="row justify-content-end">
+                                     <div class="col col-auto">
+                                         <button class="btn btn-primary" type="button">Manage</button>
+                                     </div>
                                  </div>
-                             </div>
-                             <div class="row">
-                                 <div class="col">
-                                     <p>
-                                         @if (match?.Team2 is not null && (match?.Team2?.LogoUrl is not null || match?.Team2?.LogoUrl != ""))
-                                         {
-                                             <img alt="team2-image" class="img-fluid" width="60" height="60" src="@match?.Team2?.LogoUrl">
-                                         }
-                                         @match?.Team2?.Name
-                                     </p>
-                                 </div>
-                                 <div class="col align-self-center">
-                                     <p class="lead text-center">@match?.Score2</p>
-                                 </div>
-                             </div>
-                             <div class="row justify-content-end">
-                                 <div class="col col-auto"><button class="btn btn-primary" type="button">Manage</button></div>
                              </div>
                          </div>
                      </div>
-                 </div>
+                 }
              }
          }
      </div>
@@ -377,9 +398,10 @@
     private List<TeamIsParticipatingModel>? _approvedParticipants;
     private List<TeamIsParticipatingModel>? _pendingParticipants;
     private List<UserModel>? _teamLeaders;
+    private List<SportModel>? _sports;
     private TournamentModel _model = TournamentModel.Empty;
 
-    private bool _isLoading = false;
+    private bool _isLoading;
     private int _showCount = 10;
     private int _showCount2 = 10;
     private int _selectedPageIndex;
@@ -387,6 +409,7 @@
     private string _message = "Tournament has no matches";
     private string _searchPending = "";
     private string _searchApproved = "";
+    private bool _allUsersHaveMatch = true;
     
     private bool _resultOk = true;
     private string _errorMessage = String.Empty;
@@ -433,14 +456,12 @@
             var allParticipants = await Http.GetFromJsonAsync<List<TeamIsParticipatingModel>>("/api/TeamIsParticipating") ?? new();
             _approvedParticipants = allParticipants.Where(x => x.TournamentId == _tournament?.Id && x.Approved).ToList();
             _pendingParticipants = allParticipants.Where(x => x.TournamentId == _tournament?.Id && !x.Approved).OrderBy(x => x.CreatedOn).ToList();
+            _sports = await Http.GetFromJsonAsync<List<SportModel>>("/api/Sport") ?? new();
             _teamLeaders = new();
 
             if (_tournament is not null)
             {
-                _model = new TournamentModel(_tournament.Name, _tournament.Date, _tournament.IsPublic, _tournament.IsApproved, _tournament.InProgress, _tournament.MaxAttendees, _tournament.Description)
-                {
-                    SportId = _tournament.SportId
-                };
+                _model = (TournamentModel) _tournament.Clone();
             }
             
             CheckIfAllParticipantsHaveMatch();
@@ -470,20 +491,30 @@
 
     private async Task HandleValidSubmit()
     {
-        _model.CreatorId = _tournament.CreatorId;
+        _model.CreatorId = _tournament?.CreatorId;
+        var result = await Http.PutAsJsonAsync("api/Tournament", _model);
+        if (!result.IsSuccessStatusCode)
+        {
+            _resultOk = false;
+        }
+        else
+        {
+            _resultOk = true;
+            Navigation.NavigateTo($"/Tournament/Detail/{@_tournament?.Id}");   
+        }
+        
     }
 
     private void CheckIfAllParticipantsHaveMatch()
     {
-        bool allUsersHaveMatch = true;
         if (_approvedParticipants is not null && _approvedParticipants.Count > 1)
         {
-            allUsersHaveMatch = _approvedParticipants.All(x =>
+            _allUsersHaveMatch = _approvedParticipants.All(x =>
             {
-                return _matches.Any(y => y.Team1Id == x.TeamId || y.Team2Id == x.TeamId);
+                return _matches is not null && _matches.Any(y => y.Team1Id == x.TeamId || y.Team2Id == x.TeamId);
             });
         }
-        Console.WriteLine(allUsersHaveMatch);
+        _resultOk = _allUsersHaveMatch;
     }
 
     private async Task DeleteTournament()
@@ -580,7 +611,7 @@
                 _errorMessage = "";
                 _message = "Generating matches...";
                 StateHasChanged();
-                await CreateMatches();
+                await GenerateMatches();
                 if (_resultOk)
                 {
                     await DeletePendingParticipants();
@@ -589,21 +620,21 @@
         }
     }
 
-    private async Task CreateMatches()
+    private async Task GenerateMatches()
     {
         var matchesToGenerate = new List<MatchModel>();
         if (_approvedParticipants is null || _tournament is null) return;
         
-        List<TeamIsParticipatingModel> randomOrderParticipants = _approvedParticipants.GetRange(0, _approvedParticipants.Count)
-            .OrderBy(i => Guid.NewGuid()).ToList(); // Randomize the order of the participants
-
+        var randomOrderParticipants = _approvedParticipants.GetRange(0, _approvedParticipants.Count)
+            .OrderBy(_ => Guid.NewGuid()).ToList(); // Randomize the order of the participants
+        
         var matchesInFirstRound = randomOrderParticipants.Count - Math.Pow(2, Math.Floor(Math.Log2(randomOrderParticipants.Count)));
         var order = 1;
         if (matchesInFirstRound == 0)
         {
             for (var i = 0; i < randomOrderParticipants.Count; i += 2)
             {
-                MatchModel match = new MatchModel(_tournament.Id, 0, 0, 1, order++)
+                var match = new MatchModel(_tournament.Id, 0, 0, 1, order++)
                 {
                     Team1Id = randomOrderParticipants[i].TeamId,
                     Team2Id = randomOrderParticipants[i+1].TeamId
@@ -616,7 +647,7 @@
             var i = 0;
             for (; i < matchesInFirstRound * 2; i += 2)
             {
-                MatchModel match = new MatchModel(_tournament.Id, 0, 0, 1, order++)
+                var match = new MatchModel(_tournament.Id, 0, 0, 1, order++)
                 {
                     Team1Id = randomOrderParticipants[i].TeamId,
                     Team2Id = randomOrderParticipants[i + 1].TeamId
@@ -630,7 +661,7 @@
             order = 1;
             for (; i < randomOrderParticipants.Count; i += 2)
             {
-                MatchModel match = new MatchModel(_tournament.Id, 0, 0, 2, order++)
+                var match = new MatchModel(_tournament.Id, 0, 0, 2, order++)
                 {
                     Team1Id = randomOrderParticipants[i].TeamId,
                     Team2Id = i + 1 < randomOrderParticipants.Count ? randomOrderParticipants[i+1].TeamId : null

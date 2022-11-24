@@ -1,7 +1,6 @@
 ﻿@page "/Tournament/List"
 @using TournamentManager.Common.Models
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
-@using Microsoft.AspNetCore.Authorization
 @using TournamentManager.Client.App.Extensions
 @inject HttpClient Http
 @inject PublicHttpClient PublicHttp
@@ -19,7 +18,7 @@
         </div>
         <div class="card shadow">
             <div class="card-body">
-                @if (_tournaments is null)
+                @if (_isLoading)
                 {
                     <p class="text-center fw-bold">Loading...</p>
                 }
@@ -30,7 +29,7 @@
                             
                             <div class="row d-xxl-flex justify-content-start align-items-center">
                                 <div class="col-xxl-3">
-                                    <div id="dataTable_length" class="dataTables_length" aria-controls="dataTable"><label class="form-label">Show&nbsp;<select class="d-inline-block form-select form-select-sm">
+                                    <div id="dataTable_length" class="dataTables_length" aria-controls="dataTable"><label class="form-label">Show&nbsp;<select @onchange="OnItemsOnPageChanged" class="d-inline-block form-select form-select-sm">
                                                 <option value="10" selected>10</option>
                                                 <option value="25">25</option>
                                                 <option value="50">50</option>
@@ -51,7 +50,7 @@
                         </div>
                     </div>
                     <div class="table-responsive table mt-2" role="grid">
-                        @if (TournamentsFiltered.Count == 0)
+                        @if (!_isLoading && TournamentsFiltered.Count == 0)
                         {
                             <p class="text-center fw-bold">No tournaments found</p>
                         }
@@ -139,8 +138,9 @@
     private int _showCount = 10;
     private int _selectedPageIndex;
     private bool _showPastTournaments = false;
+    private bool _isLoading = true;
     private Dictionary<Guid, int> _numberOfParticipants = new();
-    private List<TournamentModel> _tournaments = new();
+    private List<TournamentModel>? _tournaments = new();
     private List<TournamentModel> TournamentsFiltered => _tournaments?
         .Where(x =>
         {
@@ -168,6 +168,7 @@
     protected override async Task OnInitializedAsync()
     {
         var state = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        _isLoading = true;
         List<TeamIsParticipatingModel> participants = new();
         if (state.User.Identity?.IsAuthenticated ?? false)
         {
@@ -175,6 +176,7 @@
             {
                 _tournaments = await Http.GetFromJsonAsync<List<TournamentModel>>("api/Tournament") ?? new List<TournamentModel>();
                 participants = await Http.GetFromJsonAsync<List<TeamIsParticipatingModel>>("/api/TeamIsParticipating") ?? new();
+                _isLoading = false;
             }
             catch (AccessTokenNotAvailableException exception)
             {
@@ -186,11 +188,14 @@
             _tournaments = await PublicHttp.Client.GetFromJsonAsync<List<TournamentModel>>("api/Tournament") ?? new List<TournamentModel>();
             participants = await PublicHttp.Client.GetFromJsonAsync<List<TeamIsParticipatingModel>>("/api/TeamIsParticipating") ?? new();
         }
-        
-        foreach (var tournament in _tournaments)
+
+        if (_tournaments != null)
         {
-            _numberOfParticipants.Add(tournament.Id, participants.Count(x => x.Approved && x.TournamentId == tournament.Id));
-        }        
+            foreach (var tournament in _tournaments)
+            {
+                _numberOfParticipants.Add(tournament.Id, participants.Count(x => x.Approved && x.TournamentId == tournament.Id));
+            }
+        }
     }
 
     private void OnItemsOnPageChanged(ChangeEventArgs e)
