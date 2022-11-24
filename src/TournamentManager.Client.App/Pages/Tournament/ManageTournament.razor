@@ -12,310 +12,314 @@
 <div class="d-flex flex-column" id="content-wrapper">
 <div id="content">
 <div class="container-fluid">
-<div class="row mb-3">
-    <div class="col d-xl-flex d-flex align-items-center">
-        <h3 class="text-dark d-xl-flex">@_tournament?.Name</h3>
-    </div>
-    <div class="col col-auto"><a href="/Tournament/List"><button class="btn btn-light" type="button">Back to All Tournaments</button></a></div>
-    @if (_loggedUser is not null && _loggedUser.Id == _tournament?.CreatorId)
+ @if (@_isLoading)
     {
-        <div class="col col-auto d-flex align-items-center"><button class="btn btn-danger" @onclick="DeleteTournament" type="button">Delete Tournament</button></div>
-    }
-    
-    @if (_tournament is not null && _tournament.IsApproved && _loggedUser?.Id == _tournament?.CreatorId && 
-         !_tournament!.InProgress && _approvedParticipants?.Count > 1)
-    {
-        <div class="col col-auto d-flex align-items-center"><button class="btn btn-success" @onclick="StartTournament" type="button">Start Tournament</button></div>
-    }
-</div>
-<div class="row mb-4">
-    @if (!_resultOk)
-    {
-        <p class="text-danger"><i class="fas fa-exclamation-circle pe-0 me-1"></i>@_errorMessage</p>
-    }
-    <div class="col">
-        <div class="card shadow mb-4">
-            <div class="card-header">
-                <h6 class="text-primary mb-0">Pending sign-ups</h6>
-            </div>
-            <div class="card-body">
-                @if (_pendingParticipants is null)
-                {
-                    <p class="text-center fw-bold">Loading...</p>
-                }
-                else
-                {
-                    <div class="row">
-                        <div class="col-md-6 text-nowrap">
-                            <div id="dataTable_length" class="dataTables_length" aria-controls="dataTable">
-                                <label class="form-label">Show&nbsp;
-                                    <select @onchange="OnItemsOnPageChanged" class="d-inline-block form-select form-select-sm">
-                                        <option value="10" selected="selected">10</option>
-                                        <option value="25">25</option>
-                                        <option value="50">50</option>
-                                        <option value="100">100</option>
-                                    </select>&nbsp;
-                                </label>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="text-md-end dataTables_filter" id="dataTable_filter"><label class="form-label"><input type="search" @oninput="OnSearchQueryChanged" class="form-control form-control-sm" aria-controls="dataTable" placeholder="Search"></label></div>
-                        </div>
-                    </div>
-                    <div class="table-responsive table mt-2" id="dataTable-1" role="grid" aria-describedby="dataTable_info">
-                        @if (PendingParticipantsFiltered.Count == 0)
-                        {
-                            <p class="text-center fw-bold">No pending participants found</p>
-                        }
-                        else
-                        {
-                            <table class="table my-0" id="dataTable">
-                                <thead>
-                                <tr>
-                                    <th>Team Name</th>
-                                    <th>Team Leader</th>
-                                    <th>Date Registered</th>
-                                    <th>Actions</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                @foreach (var participant in PendingParticipantsFilteredPages[_selectedPageIndex])
-                                {
-                                    var leader = _teamLeaders?.Where(x => x.Id == participant.Team?.LeaderId).ToList()[0];
-                                    <tr>
-                                        <td>@participant.Team?.Name</td>
-                                        <td>@leader?.FirstName @leader?.LastName</td>
-                                        <td>Datum registrace?</td>
-                                        <td class="text-center"><i @onclick="() => ApproveParticipant(participant)" class="fas fa-user-check me-1" data-bs-toggle="tooltip" data-bss-tooltip="" data-bs-placement="right" title="Approve participant"></i><i @onclick="() => DeleteParticipant(participant)" class="fas fa-user-times" data-bs-toggle="tooltip" data-bss-tooltip="" data-bs-placement="right" title="Reject participant"></i></td>
-                                    </tr>
-                                }
-                                </tbody>
-                                <tfoot>
-                                <tr></tr>
-                                </tfoot>
-                            </table>
-                        }
-                    </div>
-                    <div class="row">
-                        @if (PendingParticipantsFiltered.Count > 0)
-                        {
-                            <div class="col-md-6 align-self-center">
-                                <p id="dataTable_info" class="dataTables_info" role="status" aria-live="polite">Showing @(1 + _selectedPageIndex * _showCount) to @((_showCount + _selectedPageIndex * _showCount) < PendingParticipantsFiltered.Count ? (_showCount + _selectedPageIndex * _showCount) : PendingParticipantsFiltered.Count) of @(PendingParticipantsFiltered.Count)</p></div>
-                            <div class="col-md-6">
-                                <nav class="d-lg-flex justify-content-lg-end dataTables_paginate paging_simple_numbers">
-                                    <ul class="pagination">
-                                        <li class="page-item @(_selectedPageIndex <= 0 ? "disabled" : "")"><a role="button" class="page-link" aria-label="Previous" @onclick="() => _selectedPageIndex--"><span class="user-select-none" aria-hidden="true">«</span></a></li>
-                                        @for (var i = _selectedPageIndex - 1; i <= _selectedPageIndex + 1; i++)
-                                        {
-                                            var num = i;
-                                            if (_selectedPageIndex == 0)
-                                                num = i + 1; // So user cant go to page -1
-
-                                            else if (_selectedPageIndex >= PendingParticipantsFilteredPages.Count - 1)
-                                                num = i - 1; // So user cant go to a page that is too high
-
-                                            if (num > PendingParticipantsFilteredPages.Count - 1)
-                                            {
-                                                break; // If there are fewer than 3 pages total
-                                            }
-                                            if (_selectedPageIndex == 1 && PendingParticipantsFilteredPages.Count == 2 && i == 0)
-                                            {
-                                                // If only 2 pages are available, clicking the second one would make page 0 appear
-                                                // which is obviously not possible
-                                                continue;
-                                            }
-
-                                            <li class="page-item @(_selectedPageIndex == num ? "active" : "")">
-                                                <a class="page-link" @onclick="() => _selectedPageIndex = num" role="button">@(num + 1)</a>
-                                            </li>
-                                        }
-                                        <li class="page-item @(_selectedPageIndex >= @PendingParticipantsFilteredPages.Count - 1 ? "disabled" : "")">
-                                            <a class="page-link" aria-label="Next" @onclick="() => _selectedPageIndex++" role="button"><span class="user-select-none" aria-hidden="true">»</span></a>
-                                        </li>
-                                    </ul>
-                                </nav>
-                            </div>
-                        }
-                    </div>
-                }
-            </div>
+        <div class="card shadow">
+        <div class="card-body">
+            <p class="text-center fw-bold">Loading...</p>
         </div>
-    </div>
-    <div class="col">
-        <div class="card shadow mb-4">
-            <div class="card-header">
-                <h6 class="text-primary mb-0">Participants</h6>
-            </div>
-            <div class="card-body">
-                @if (_approvedParticipants is null)
-                {
-                    <p class="text-center fw-bold">Loading...</p>
-                }
-                else
-                {
-                    <div class="row">
-                        <div class="col-md-6 text-nowrap">
-                            <div id="dataTable_length" class="dataTables_length" aria-controls="dataTable">
-                                <label class="form-label">Show&nbsp;
-                                    <select @onchange="OnItemsOnPageChanged2" class="d-inline-block form-select form-select-sm">
-                                        <option value="10" selected="selected">10</option>
-                                        <option value="25">25</option>
-                                        <option value="50">50</option>
-                                        <option value="100">100</option>
-                                    </select>&nbsp;
-                                </label>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="text-md-end dataTables_filter" id="dataTable_filter"><label class="form-label"><input type="search" @oninput="OnSearchQueryChanged2" class="form-control form-control-sm" aria-controls="dataTable" placeholder="Search"></label></div>
-                        </div>
-                    </div>
-                    <div class="table-responsive table mt-2" id="dataTable-1" role="grid" aria-describedby="dataTable_info">
-                        @if (ApprovedParticipantsFiltered.Count == 0)
-                        {
-                            <p class="text-center fw-bold">No participants found</p>
-                        }
-                        else
-                        {
-                            <table class="table my-0" id="dataTable">
-                                <thead>
-                                <tr>
-                                    <th>Team Name</th>
-                                    <th>Team Leader</th>
-                                    <th>Date Registered</th>
-                                    <th>Actions</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                @foreach (var participant in ApprovedParticipantsFilteredPages[_selectedPageIndex2])
-                                {
-                                    var leader = _teamLeaders?.Where(x => x.Id == participant.Team?.LeaderId).ToList()[0];
-                                    <tr>
-                                        <td>@participant.Team?.Name</td>
-                                        <td>@leader?.FirstName @leader?.LastName</td>
-                                        <td>Datum registrace?</td>
-                                        <td class="text-center"><i @onclick="() => DeleteParticipant(participant)" class="fas fa-user-times" data-bs-toggle="tooltip" data-bss-tooltip="" data-bs-placement="right" title="Reject participant"></i></td>
-                                    </tr>
-                                }
-                                </tbody>
-                                <tfoot>
-                                <tr></tr>
-                                </tfoot>
-                            </table>
-                        }
-                    </div>
-                    <div class="row">
-                        @if (_approvedParticipants.Count > 0)
-                        {
-                            <div class="col-md-6 align-self-center">
-                                <p id="dataTable_info" class="dataTables_info" role="status" aria-live="polite">Showing @(1 + _selectedPageIndex2 * _showCount2) to @((_showCount2 + _selectedPageIndex2 * _showCount2) < ApprovedParticipantsFiltered.Count ? (_showCount2 + _selectedPageIndex2 * _showCount2) : ApprovedParticipantsFiltered.Count) of @(ApprovedParticipantsFiltered.Count)</p></div>
-                            <div class="col-md-6">
-                                <nav class="d-lg-flex justify-content-lg-end dataTables_paginate paging_simple_numbers">
-                                    <ul class="pagination">
-                                        <li class="page-item @(_selectedPageIndex2 <= 0 ? "disabled" : "")"><a role="button" class="page-link" aria-label="Previous" @onclick="() => _selectedPageIndex2--"><span class="user-select-none" aria-hidden="true">«</span></a></li>
-                                        @for (var i = _selectedPageIndex2 - 1; i <= _selectedPageIndex2 + 1; i++)
-                                        {
-                                            var num = i;
-                                            if (_selectedPageIndex2 == 0)
-                                                num = i + 1; // So user cant go to page -1
-
-                                            else if (_selectedPageIndex2 >= ApprovedParticipantsFilteredPages.Count - 1)
-                                                num = i - 1; // So user cant go to a page that is too high
-
-                                            if (num > ApprovedParticipantsFilteredPages.Count - 1)
-                                            {
-                                                break; // If there are fewer than 3 pages total
-                                            }
-                                            if (_selectedPageIndex2 == 1 && ApprovedParticipantsFilteredPages.Count == 2 && i == 0)
-                                            {
-                                                // If only 2 pages are available, clicking the second one would make page 0 appear
-                                                // which is obviously not possible
-                                                continue;
-                                            }
-
-                                            <li class="page-item @(_selectedPageIndex2 == num ? "active" : "")">
-                                                <a class="page-link" @onclick="() => _selectedPageIndex2 = num" role="button">@(num + 1)</a>
-                                            </li>
-                                        }
-                                        <li class="page-item @(_selectedPageIndex2 >= @ApprovedParticipantsFilteredPages.Count - 1 ? "disabled" : "")">
-                                            <a class="page-link" aria-label="Next" @onclick="() => _selectedPageIndex2++" role="button"><span class="user-select-none" aria-hidden="true">»</span></a>
-                                        </li>
-                                    </ul>
-                                </nav>
-                            </div>
-                        }
-                    </div>
-                }
-            </div>
         </div>
-    </div>
-</div>
-<div class="row">
-    <div class="col">
-        <h4 class="text-center text-primary"><span style="color: rgba(var(--bs-primary-rgb), var(--bs-text-opacity)) ;">Tournament Matches</span><br></h4>
-    </div>
-</div>
-<div class="row">
-    @if (_matches is null)
-    {
-        <p class="text-center fw-bold">Loading...</p>
     }
-    else if (_matches.Count == 0)
-    {
-        <p class="text-center fw-bold">@_message</p>
-    }
-    else
-    {
-        foreach (var match in _matches)
-        {
-            <div class="col-4">
-                <div class="card mb-4 shadow">
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col">
-                                <h6 class="text-primary">Round @match.Round</h6>
-                            </div>
-                            <div class="col">
-                                <p>Zatím @_tournament?.Date.ToString("dd. MM. yyyy")<br></p>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col">
-                                <p>
-                                    @if (match?.Team1?.LogoUrl is not null || match?.Team1?.LogoUrl != "")
-                                    {
-                                        <img alt="team1-image" class="img-fluid" width="60" height="60" src="@match?.Team1?.LogoUrl">
-                                    }                                                                                           
-                                    @match?.Team1?.Name
-                                </p>
-                            </div>
-                            <div class="col align-self-center">
-                                <p class="lead text-center">@match?.Score1</p>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col">
-                                <p>
-                                    @if (match?.Team2?.LogoUrl is not null || match?.Team2?.LogoUrl != "")
-                                    {
-                                        <img alt="team2-image" class="img-fluid" width="60" height="60" src="@match?.Team2?.LogoUrl">
-                                    }                                                                                           
-                                    @match?.Team2?.Name
-                                </p>
-                            </div>
-                            <div class="col align-self-center">
-                                <p class="lead text-center">@match?.Score2</p>
-                            </div>
-                        </div>
-                        <div class="row justify-content-end">
-                            <div class="col col-auto"><button class="btn btn-primary" type="button">Manage</button></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        }
-    }
-</div>
+ else
+ {
+     <div class="row mb-3">
+         <div class="col d-xl-flex d-flex align-items-center">
+             <h3 class="text-dark d-xl-flex">@_tournament?.Name</h3>
+         </div>
+         <div class="col col-auto"><a href="/Tournament/Detail/@_tournament?.Id"><button class="btn btn-light" type="button">Back to the Tournament Detail</button></a></div>
+         @if (_loggedUser is not null && _loggedUser.Id == _tournament?.CreatorId)
+         {
+             <div class="col col-auto d-flex align-items-center"><button class="btn btn-danger" @onclick="DeleteTournament" type="button">Delete Tournament</button></div>
+         }
+
+         @if (_tournament is not null && _tournament.IsApproved && _loggedUser?.Id == _tournament?.CreatorId &&
+              !_tournament!.InProgress && _approvedParticipants?.Count > 1)
+         {
+             <div class="col col-auto d-flex align-items-center"><button class="btn btn-success" @onclick="StartTournament" type="button">Start Tournament</button></div>
+         }
+     </div>
+     <div class="row mb-4">
+     @if (!_resultOk)
+     {
+         <p class="text-danger"><i class="fas fa-exclamation-circle pe-0 me-1"></i>@_errorMessage</p>
+     }
+     <div class="col">
+         <div class="card shadow mb-4">
+             <div class="card-header">
+                 <h6 class="text-primary mb-0">Pending sign-ups</h6>
+             </div>
+             <div class="card-body">
+                 @if (_pendingParticipants is not null)
+                 {
+                     <div class="row">
+                         <div class="col-md-6 text-nowrap">
+                             <div id="dataTable_length" class="dataTables_length" aria-controls="dataTable">
+                                 <label class="form-label">Show&nbsp;
+                                     <select @onchange="OnItemsOnPageChanged" class="d-inline-block form-select form-select-sm">
+                                         <option value="10" selected="selected">10</option>
+                                         <option value="25">25</option>
+                                         <option value="50">50</option>
+                                         <option value="100">100</option>
+                                     </select>&nbsp;
+                                 </label>
+                             </div>
+                         </div>
+                         <div class="col-md-6">
+                             <div class="text-md-end dataTables_filter" id="dataTable_filter"><label class="form-label"><input type="search" @oninput="OnSearchQueryChanged" class="form-control form-control-sm" aria-controls="dataTable" placeholder="Search"></label></div>
+                         </div>
+                     </div>
+                     <div class="table-responsive table mt-2" id="dataTable-1" role="grid" aria-describedby="dataTable_info">
+                         @if (PendingParticipantsFiltered.Count == 0)
+                         {
+                             <p class="text-center fw-bold">No pending participants found</p>
+                         }
+                         else
+                         {
+                             <table class="table my-0" id="dataTable">
+                                 <thead>
+                                 <tr>
+                                     <th>Team Name</th>
+                                     <th>Team Leader</th>
+                                     <th>Date Registered</th>
+                                     <th>Actions</th>
+                                 </tr>
+                                 </thead>
+                                 <tbody>
+                                 @foreach (var participant in PendingParticipantsFilteredPages[_selectedPageIndex])
+                                 {
+                                     var leader = _teamLeaders?.Where(x => x.Id == participant.Team?.LeaderId).ToList()[0];
+                                     <tr>
+                                         <td>@participant.Team?.Name</td>
+                                         <td>@leader?.FirstName @leader?.LastName</td>
+                                         <td>@participant.CreatedOn.ToString("dd. MM. yyyy")</td>
+                                         <td class="text-center"><i @onclick="() => ApproveParticipant(participant)" class="fas fa-user-check me-1" data-bs-toggle="tooltip" data-bss-tooltip="" data-bs-placement="right" title="Approve participant"></i><i @onclick="() => DeleteParticipant(participant)" class="fas fa-user-times" data-bs-toggle="tooltip" data-bss-tooltip="" data-bs-placement="right" title="Reject participant"></i></td>
+                                     </tr>
+                                 }
+                                 </tbody>
+                                 <tfoot>
+                                 <tr></tr>
+                                 </tfoot>
+                             </table>
+                         }
+                     </div>
+                     <div class="row">
+                         @if (PendingParticipantsFiltered.Count > 0)
+                         {
+                             <div class="col-md-6 align-self-center">
+                                 <p id="dataTable_info" class="dataTables_info" role="status" aria-live="polite">Showing @(1 + _selectedPageIndex * _showCount) to @((_showCount + _selectedPageIndex * _showCount) < PendingParticipantsFiltered.Count ? (_showCount + _selectedPageIndex * _showCount) : PendingParticipantsFiltered.Count) of @(PendingParticipantsFiltered.Count)</p></div>
+                             <div class="col-md-6">
+                                 <nav class="d-lg-flex justify-content-lg-end dataTables_paginate paging_simple_numbers">
+                                     <ul class="pagination">
+                                         <li class="page-item @(_selectedPageIndex <= 0 ? "disabled" : "")"><a role="button" class="page-link" aria-label="Previous" @onclick="() => _selectedPageIndex--"><span class="user-select-none" aria-hidden="true">«</span></a></li>
+                                         @for (var i = _selectedPageIndex - 1; i <= _selectedPageIndex + 1; i++)
+                                         {
+                                             var num = i;
+                                             if (_selectedPageIndex == 0)
+                                                 num = i + 1; // So user cant go to page -1
+
+                                             else if (_selectedPageIndex >= PendingParticipantsFilteredPages.Count - 1)
+                                                 num = i - 1; // So user cant go to a page that is too high
+
+                                             if (num > PendingParticipantsFilteredPages.Count - 1)
+                                             {
+                                                 break; // If there are fewer than 3 pages total
+                                             }
+                                             if (_selectedPageIndex == 1 && PendingParticipantsFilteredPages.Count == 2 && i == 0)
+                                             {
+                                                 // If only 2 pages are available, clicking the second one would make page 0 appear
+                                                 // which is obviously not possible
+                                                 continue;
+                                             }
+
+                                             <li class="page-item @(_selectedPageIndex == num ? "active" : "")">
+                                                 <a class="page-link" @onclick="() => _selectedPageIndex = num" role="button">@(num + 1)</a>
+                                             </li>
+                                         }
+                                         <li class="page-item @(_selectedPageIndex >= @PendingParticipantsFilteredPages.Count - 1 ? "disabled" : "")">
+                                             <a class="page-link" aria-label="Next" @onclick="() => _selectedPageIndex++" role="button"><span class="user-select-none" aria-hidden="true">»</span></a>
+                                         </li>
+                                     </ul>
+                                 </nav>
+                             </div>
+                         }
+                     </div>
+                 }
+             </div>
+         </div>
+     </div>
+     <div class="col">
+         <div class="card shadow mb-4">
+             <div class="card-header">
+                 <h6 class="text-primary mb-0">Participants</h6>
+             </div>
+             <div class="card-body">
+                 <div class="row">
+                         <div class="col-md-6 text-nowrap">
+                             <div id="dataTable_length" class="dataTables_length" aria-controls="dataTable">
+                                 <label class="form-label">Show&nbsp;
+                                     <select @onchange="OnItemsOnPageChanged2" class="d-inline-block form-select form-select-sm">
+                                         <option value="10" selected="selected">10</option>
+                                         <option value="25">25</option>
+                                         <option value="50">50</option>
+                                         <option value="100">100</option>
+                                     </select>&nbsp;
+                                 </label>
+                             </div>
+                         </div>
+                         <div class="col-md-6">
+                             <div class="text-md-end dataTables_filter" id="dataTable_filter"><label class="form-label"><input type="search" @oninput="OnSearchQueryChanged2" class="form-control form-control-sm" aria-controls="dataTable" placeholder="Search"></label></div>
+                         </div>
+                     </div>
+                     <div class="table-responsive table mt-2" id="dataTable-1" role="grid" aria-describedby="dataTable_info">
+                         @if (ApprovedParticipantsFiltered.Count == 0)
+                         {
+                             <p class="text-center fw-bold">No participants found</p>
+                         }
+                         else
+                         {
+                             <table class="table my-0" id="dataTable">
+                                 <thead>
+                                 <tr>
+                                     <th>Team Name</th>
+                                     <th>Team Leader</th>
+                                     <th>Date Registered</th>
+                                     @if (_tournament is not null && !_tournament.InProgress)
+                                     {
+                                         <th>Actions</th>
+                                     }
+                                 </tr>
+                                 </thead>
+                                 <tbody>
+                                 @foreach (var participant in ApprovedParticipantsFilteredPages[_selectedPageIndex2])
+                                 {
+                                     var leader = _teamLeaders?.Where(x => x.Id == participant.Team?.LeaderId).ToList()[0];
+                                     <tr>
+                                         <td>@participant.Team?.Name</td>
+                                         <td>@leader?.FirstName @leader?.LastName</td>
+                                         <td>@participant.CreatedOn.ToString("dd. MM. yyyy")</td>
+                                         <td class="text-center">
+                                             @if (_tournament is not null && !_tournament.InProgress)
+                                             {
+                                                 <i @onclick="() => DeleteParticipant(participant)" class="fas fa-user-times" data-bs-toggle="tooltip" data-bss-tooltip="" data-bs-placement="right" title="Reject participant"></i>
+                                             }
+                                         </td>
+                                     </tr>
+                                 }
+                                 </tbody>
+                                 <tfoot>
+                                 <tr></tr>
+                                 </tfoot>
+                             </table>
+                         }
+                     </div>
+                     <div class="row">
+                         @if (_approvedParticipants.Count > 0)
+                         {
+                             <div class="col-md-6 align-self-center">
+                                 <p id="dataTable_info" class="dataTables_info" role="status" aria-live="polite">Showing @(1 + _selectedPageIndex2 * _showCount2) to @((_showCount2 + _selectedPageIndex2 * _showCount2) < ApprovedParticipantsFiltered.Count ? (_showCount2 + _selectedPageIndex2 * _showCount2) : ApprovedParticipantsFiltered.Count) of @(ApprovedParticipantsFiltered.Count)</p></div>
+                             <div class="col-md-6">
+                                 <nav class="d-lg-flex justify-content-lg-end dataTables_paginate paging_simple_numbers">
+                                     <ul class="pagination">
+                                         <li class="page-item @(_selectedPageIndex2 <= 0 ? "disabled" : "")"><a role="button" class="page-link" aria-label="Previous" @onclick="() => _selectedPageIndex2--"><span class="user-select-none" aria-hidden="true">«</span></a></li>
+                                         @for (var i = _selectedPageIndex2 - 1; i <= _selectedPageIndex2 + 1; i++)
+                                         {
+                                             var num = i;
+                                             if (_selectedPageIndex2 == 0)
+                                                 num = i + 1; // So user cant go to page -1
+
+                                             else if (_selectedPageIndex2 >= ApprovedParticipantsFilteredPages.Count - 1)
+                                                 num = i - 1; // So user cant go to a page that is too high
+
+                                             if (num > ApprovedParticipantsFilteredPages.Count - 1)
+                                             {
+                                                 break; // If there are fewer than 3 pages total
+                                             }
+                                             if (_selectedPageIndex2 == 1 && ApprovedParticipantsFilteredPages.Count == 2 && i == 0)
+                                             {
+                                                 // If only 2 pages are available, clicking the second one would make page 0 appear
+                                                 // which is obviously not possible
+                                                 continue;
+                                             }
+
+                                             <li class="page-item @(_selectedPageIndex2 == num ? "active" : "")">
+                                                 <a class="page-link" @onclick="() => _selectedPageIndex2 = num" role="button">@(num + 1)</a>
+                                             </li>
+                                         }
+                                         <li class="page-item @(_selectedPageIndex2 >= @ApprovedParticipantsFilteredPages.Count - 1 ? "disabled" : "")">
+                                             <a class="page-link" aria-label="Next" @onclick="() => _selectedPageIndex2++" role="button"><span class="user-select-none" aria-hidden="true">»</span></a>
+                                         </li>
+                                     </ul>
+                                 </nav>
+                             </div>
+                         }
+                     </div>
+                     </div>
+         </div>
+     </div>
+     </div>
+     <div class="row">
+         <div class="col">
+             <h4 class="text-center text-primary"><span style="color: rgba(var(--bs-primary-rgb), var(--bs-text-opacity)) ;">Tournament Matches</span><br></h4>
+         </div>
+     </div>
+     <div class="row">
+         @if (_matches is not null && _matches.Count == 0)
+         {
+             <p class="text-center fw-bold">@_message</p>
+         }
+         else
+         {
+             foreach (var match in _matches)
+             {
+                 <div class="col-4">
+                     <div class="card mb-4 shadow">
+                         <div class="card-body">
+                             <div class="row">
+                                 <div class="col">
+                                     <h6 class="text-primary">Round @match.Round</h6>
+                                 </div>
+                                 <div class="col">
+                                     <p>Zatím @_tournament?.Date.ToString("dd. MM. yyyy")<br></p>
+                                 </div>
+                             </div>
+                             <div class="row">
+                                 <div class="col">
+                                     <p>
+                                         @if (match.Team1 is not null && (match?.Team1?.LogoUrl is not null || match?.Team1?.LogoUrl != ""))
+                                         {
+                                             <img alt="team1-image" class="img-fluid" width="60" height="60" src="@match?.Team1?.LogoUrl">
+                                         }
+                                         @match?.Team1?.Name
+                                     </p>
+                                 </div>
+                                 <div class="col align-self-center">
+                                     <p class="lead text-center">@match?.Score1</p>
+                                 </div>
+                             </div>
+                             <div class="row">
+                                 <div class="col">
+                                     <p>
+                                         @if (match?.Team2 is not null && (match?.Team2?.LogoUrl is not null || match?.Team2?.LogoUrl != ""))
+                                         {
+                                             <img alt="team2-image" class="img-fluid" width="60" height="60" src="@match?.Team2?.LogoUrl">
+                                         }
+                                         @match?.Team2?.Name
+                                     </p>
+                                 </div>
+                                 <div class="col align-self-center">
+                                     <p class="lead text-center">@match?.Score2</p>
+                                 </div>
+                             </div>
+                             <div class="row justify-content-end">
+                                 <div class="col col-auto"><button class="btn btn-primary" type="button">Manage</button></div>
+                             </div>
+                         </div>
+                     </div>
+                 </div>
+             }
+         }
+     </div>
+ }
 </div>
 </div>
 </div>
@@ -332,6 +336,7 @@
     private List<TeamIsParticipatingModel>? _approvedParticipants;
     private List<TeamIsParticipatingModel>? _pendingParticipants;
     private List<UserModel>? _teamLeaders;
+    private bool _isLoading = false;
     private int _showCount = 10;
     private int _showCount2 = 10;
     private int _selectedPageIndex;
@@ -379,12 +384,14 @@
     {
         try
         {
+            _isLoading = true;
             _tournament = await Http.GetFromJsonAsync<TournamentModel>($"/api/Tournament/{Id}");
-            _matches = _tournament?.Matches.OrderBy(x => x.Round).ToList() ?? new();
+            _matches = _tournament?.Matches.OrderBy(x => x.Round).ThenBy(x => x.Order).ToList() ?? new();
             var allParticipants = await Http.GetFromJsonAsync<List<TeamIsParticipatingModel>>("/api/TeamIsParticipating") ?? new();
             _approvedParticipants = allParticipants.Where(x => x.TournamentId == _tournament?.Id && x.Approved).ToList();
-            _pendingParticipants = allParticipants.Where(x => x.TournamentId == _tournament?.Id && !x.Approved).ToList();
+            _pendingParticipants = allParticipants.Where(x => x.TournamentId == _tournament?.Id && !x.Approved).OrderBy(x => x.CreatedOn).ToList();
             _teamLeaders = new();
+            _isLoading = false;
             
             foreach (var participant in allParticipants)
             {
@@ -412,7 +419,7 @@
     {
         try
         {
-            if (_tournament is not null && !_tournament.InProgress)
+            if (_tournament is not null)
             {
                 var result = await Http.DeleteAsync($"/api/Tournament/{_tournament.Id}");
                 if (result.IsSuccessStatusCode)
@@ -451,6 +458,7 @@
                 _errorMessage = "";
                 _pendingParticipants?.Remove(participant);
                 _approvedParticipants?.Add(participant);
+                _approvedParticipants?.Sort((x, y) => String.CompareOrdinal(x.Team?.Name, y.Team?.Name));
             }
         }
     }
@@ -499,14 +507,19 @@
             {
                 _resultOk = true;
                 _errorMessage = "";
-                CreateMatches();
+                _message = "Generating matches...";
+                StateHasChanged();
+                await CreateMatches();
+                if (_resultOk)
+                {
+                    await DeletePendingParticipants();
+                }
             }
         }
     }
 
-    private async void CreateMatches()
+    private async Task CreateMatches()
     {
-        _message = "Generating matches...";
         var matchesToGenerate = new List<MatchModel>();
         if (_approvedParticipants is null || _tournament is null) return;
         
@@ -567,8 +580,40 @@
             _errorMessage = "";
         }
 
-        _matches = (await Http.GetFromJsonAsync<TournamentModel>($"/api/Tournament/{_tournament.Id}"))?.Matches.OrderBy(x => x.Round).ToList() ?? new();
+        _matches = (await Http.GetFromJsonAsync<TournamentModel>($"/api/Tournament/{_tournament.Id}"))?.Matches.OrderBy(x => x.Round).ThenBy(x => x.Order).ToList() ?? new();
         StateHasChanged();
+    }
+
+    private async Task DeletePendingParticipants()
+    {
+        if (_pendingParticipants is not null)
+        {
+            try
+            {
+                List<TeamIsParticipatingModel> participantsToRemove = new();
+                participantsToRemove.AddRange(_pendingParticipants);
+                foreach (var participant in participantsToRemove)
+                {
+                    var result = await Http.DeleteAsync($"/api/TeamIsParticipating/{participant.Id}");
+                    if (!result.IsSuccessStatusCode)
+                    {
+                        _resultOk = false;
+                        _errorMessage = "Unable to delete all pending participants";
+                        break;
+                    }
+                    else
+                    {
+                        _resultOk = true;
+                        _errorMessage = "";
+                        _pendingParticipants.Remove(participant);
+                    }
+                }
+            }
+            catch (AccessTokenNotAvailableException exception)
+            {
+                exception.Redirect();
+            }
+        }
     }
      
     private void OnItemsOnPageChanged(ChangeEventArgs e)
