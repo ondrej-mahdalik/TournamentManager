@@ -48,7 +48,7 @@
                             </div>
                             <div class="mb-2"><label class="form-label" for="max-players">Maximum number of players</label><InputNumber TValue="int" id="max-players" name="max-players" @bind-Value="_model.MaxAttendees" class="form-control" min="1" type="number" style="width: 30%;"></InputNumber></div>
                             <div class="mb-2">
-                                <div class="form-check"><label class="form-check-label" for="formCheck-1">Public</label><InputCheckbox class="form-check-input" type="checkbox" id="formCheck-1" @bind-Value="_model.IsPublic"></InputCheckbox></div>
+                                <div class="form-check form-switch"><label class="form-check-label" for="formCheck-1">Public</label><InputCheckbox class="form-check-input" type="checkbox" id="formCheck-1" @bind-Value="_model.IsPublic"></InputCheckbox></div>
                             </div>
                             <div class="d-xl-flex justify-content-xl-end"><button class="btn btn-primary text-end d-xl-flex" type="submit">Create</button></div>
                         </EditForm>

@@ -38,6 +38,47 @@
              <div class="col col-auto d-flex align-items-center"><button class="btn btn-success" @onclick="StartTournament" type="button">Start Tournament</button></div>
          }
      </div>
+     
+     <div class="row w-75">
+    <div class="col">
+        <div class="card shadow mb-2">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col">
+                        <EditForm Model="@_model" OnValidSubmit="@HandleValidSubmit">
+                            <DataAnnotationsValidator/>
+                            <ValidationSummary/>
+                            <div class="mb-2"><label class="form-label" for="name">Name</label><InputText id="name" name="name" class="form-control" type="text" @bind-Value="_model.Name"/></div>
+                            <div class="mb-2"><label class="form-label" for="description">Description (optional)</label><InputTextArea id="description" name="description" @bind-Value="_model.Description" class="form-control"/></div>
+                            <div class="mb-2"><label class="form-label" for="date">Date of beginning</label><InputDate TValue="DateTime" id="date" name="date" class="form-control" @bind-Value="_model.Date" Type="InputDateType.Date"></InputDate></div>
+                            <div class="mb-2"><label class="form-label" for="sport">Sport</label>
+                                @* <InputSelect TValue="Guid?" id="sport" name="sport" class="form-select" @bind-Value="_model.SportId"> *@
+                                @*     @foreach (var sport in _sports) *@
+                                @*     { *@
+                                @*         <option value="@sport.Id">@sport.Name</option> *@
+                                @*     } *@
+                                @*     <option value="" selected>Other</option> *@
+                                @* </InputSelect> *@
+                            </div>
+                            <div class="mb-2"><label class="form-label" for="signup-type">Play mode</label>
+                                <select id="signup-type" name="signup-type" class="form-select">
+                                    <option value="12" selected>Individual</option>
+                                    <option value="13">Teams</option>
+                                </select>
+                            </div>
+                            <div class="mb-2"><label class="form-label" for="max-players">Maximum number of players</label><InputNumber TValue="int" id="max-players" name="max-players" @bind-Value="_model.MaxAttendees" class="form-control" min="1" type="number" style="width: 30%;"></InputNumber></div>
+                            <div class="mb-2">
+                                <div class="form-check form-switch"><label class="form-check-label" for="formCheck-1">Public</label><InputCheckbox class="form-check-input" type="checkbox" id="formCheck-1" @bind-Value="_model.IsPublic"></InputCheckbox></div>
+                            </div>
+                            <div class="d-xl-flex justify-content-xl-end"><button class="btn btn-primary text-end d-xl-flex" type="submit">Edit</button></div>
+                        </EditForm>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+     
      <div class="row mb-4">
      @if (!_resultOk)
      {
@@ -336,6 +377,8 @@
     private List<TeamIsParticipatingModel>? _approvedParticipants;
     private List<TeamIsParticipatingModel>? _pendingParticipants;
     private List<UserModel>? _teamLeaders;
+    private TournamentModel _model = TournamentModel.Empty;
+
     private bool _isLoading = false;
     private int _showCount = 10;
     private int _showCount2 = 10;
@@ -391,6 +434,16 @@
             _approvedParticipants = allParticipants.Where(x => x.TournamentId == _tournament?.Id && x.Approved).ToList();
             _pendingParticipants = allParticipants.Where(x => x.TournamentId == _tournament?.Id && !x.Approved).OrderBy(x => x.CreatedOn).ToList();
             _teamLeaders = new();
+
+            if (_tournament is not null)
+            {
+                _model = new TournamentModel(_tournament.Name, _tournament.Date, _tournament.IsPublic, _tournament.IsApproved, _tournament.InProgress, _tournament.MaxAttendees, _tournament.Description)
+                {
+                    SportId = _tournament.SportId
+                };
+            }
+            
+            CheckIfAllParticipantsHaveMatch();
             _isLoading = false;
             
             foreach (var participant in allParticipants)
@@ -413,6 +466,24 @@
         {
             exception.Redirect();
         }
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        _model.CreatorId = _tournament.CreatorId;
+    }
+
+    private void CheckIfAllParticipantsHaveMatch()
+    {
+        bool allUsersHaveMatch = true;
+        if (_approvedParticipants is not null && _approvedParticipants.Count > 1)
+        {
+            allUsersHaveMatch = _approvedParticipants.All(x =>
+            {
+                return _matches.Any(y => y.Team1Id == x.TeamId || y.Team2Id == x.TeamId);
+            });
+        }
+        Console.WriteLine(allUsersHaveMatch);
     }
 
     private async Task DeleteTournament()

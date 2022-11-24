@@ -25,15 +25,19 @@
                 {
                     <div class="row">
                         <div class="col-md-6 text-nowrap">
-                            <div id="dataTable_length" class="dataTables_length" aria-controls="dataTable">
-                                <label class="form-label">Show
-                                    <select @onchange="OnItemsOnPageChanged" class="d-inline-block form-select form-select-sm">
-                                        <option value="10" selected="selected">10</option>
-                                        <option value="25">25</option>
-                                        <option value="50">50</option>
-                                        <option value="100">100</option>
-                                    </select>
-                                </label>
+                            
+                            <div class="row d-xxl-flex justify-content-start align-items-center">
+                                <div class="col-xxl-3">
+                                    <div id="dataTable_length" class="dataTables_length" aria-controls="dataTable"><label class="form-label">Show&nbsp;<select class="d-inline-block form-select form-select-sm">
+                                                <option value="10" selected>10</option>
+                                                <option value="25">25</option>
+                                                <option value="50">50</option>
+                                                <option value="100">100</option>
+                                            </select></label></div>
+                                </div>
+                                <div class="col-xxl-3">
+                                    <div class="form-check form-switch"><input @bind="_showPastTournaments" id="formCheck-1" class="form-check-input" type="checkbox" /><label class="form-check-label" for="formCheck-1">Show past tournaments</label></div>
+                                </div>
                             </div>
                         </div>
                         <div class="col-md-6">
@@ -65,7 +69,7 @@
                                 <tbody>
                                 @foreach (var tournament in TournamentsFilteredPages[_selectedPageIndex])
                                 {
-
+                                
                                     <tr>
                                         <td>@(tournament.Sport?.Name ?? "Other")</td>
                                         <td>@tournament.Name</td>
@@ -132,6 +136,7 @@
     private string _search = "";
     private int _showCount = 10;
     private int _selectedPageIndex;
+    private bool _showPastTournaments = false;
     private Dictionary<Guid, int> _numberOfParticipants = new();
     private List<TournamentModel>? _tournaments;
     private List<TournamentModel> TournamentsFiltered => _tournaments?
@@ -142,9 +147,12 @@
             var date = x.Date.ToString("dd. MM. yyyy").Contains(_search);
             var creatorFirstName = x.Creator?.FirstName?.ToLower().Contains(_search.ToLower()) ?? false;
             var creatorLastName = x.Creator?.LastName?.ToLower().Contains(_search.ToLower()) ?? false;
-            
-            return name || sport || date || creatorFirstName || creatorLastName;
-        }).ToList()
+            if (_showPastTournaments)
+            {
+                return name || sport || date || creatorFirstName || creatorLastName;
+            }
+            return (name || sport || date || creatorFirstName || creatorLastName) && (x.Date.Date >= DateTime.Now.Date);
+        }).OrderBy(x => x.Date).ToList()
         ?? new();
     
     private List<List<TournamentModel>> TournamentsFilteredPages => TournamentsFiltered.Select((x, i) => new  // Splits the one big list into smaller lists of size _showCount
