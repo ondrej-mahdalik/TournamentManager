@@ -9,7 +9,115 @@
 
 <AuthorizeView>
     <Authorized>
-        <h3> Logged in user</h3>
+        <div id="content">
+            <div class="container-fluid mb-5">
+                <div class="d-sm-flex justify-content-between align-items-center mb-4">
+                    <h3 class="text-dark mb-0">Dashboard</h3>
+                </div>
+                <!-- TODO add active tournaments -->
+                <div class="row">
+                    <div class="col">
+                        <div class="card shadow m-2">
+                            <div class="card-header">
+                                <div class="row d-lg-flex align-items-lg-center">
+                                    <div class="col">
+                                        <h6 class="text-primary mb-0">Upcoming tournaments</h6>
+                                    </div>
+                                    <div class="col text-end"><a href="/Tournament/List" class="btn btn-primary btn-sm">Show all</a></div>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div id="dataTable-1" class="table-responsive table mt-2" role="grid" aria-describedby="dataTable_info">
+                                    <table id="dataTable" class="table my-0">
+                                        <thead>
+                                            <tr>
+                                                <th>Name</th>
+                                                <th class="text-start">Participants</th>
+                                                <th class="text-start">Date</th>
+                                                <th class="text-start"></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>Golden racket</td>
+                                                <td>15/20</td>
+                                                <td>30.11.2022</td>
+                                                <td class="text-end"><a data-bs-target="Team/detail.html" href="../Tournament/detail.html"><button class="btn btn-primary btn-sm" type="button">Detail</button></a></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Basketball open</td>
+                                                <td>10/30</td>
+                                                <td>24.12.2022</td>
+                                                <td class="text-end"><a data-bs-target="Team/detail.html" href="../Tournament/detail.html"><button class="btn btn-primary btn-sm" type="button">Detail</button></a></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Chess tournament</td>
+                                                <td>1/20</td>
+                                                <td>1.2.2023</td>
+                                                <td class="text-end"><a data-bs-target="Team/detail.html" href="../Tournament/detail.html"><button class="btn btn-primary btn-sm" type="button">Detail</button></a></td>
+                                            </tr>
+                                        </tbody>
+                                        <tfoot>
+                                            <tr></tr>
+                                        </tfoot>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <div class="card shadow m-2">
+                            <div class="card-header">
+                                <div class="row">
+                                    <div class="col d-lg-flex align-items-lg-center">
+                                        <h6 class="text-primary mb-0">Your finished tournaments</h6>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div id="dataTable-2" class="table-responsive table mt-2" role="grid" aria-describedby="dataTable_info">
+                                    <table id="dataTable" class="table my-0">
+                                        <thead>
+                                            <tr>
+                                                <th>Name</th>
+                                                <th class="text-start">Position</th>
+                                                <th class="text-start">Date</th>
+                                                <th class="text-start"></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>Football championship</td>
+                                                <td>1.</td>
+                                                <td>30.9.2022</td>
+                                                <td class="text-end"><a data-bs-target="Team/detail.html" href="../Tournament/detail.html"><button class="btn btn-primary btn-sm" type="button">Detail</button></a></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Golf Brno</td>
+                                                <td>25.</td>
+                                                <td>1.2.2022</td>
+                                                <td class="text-end"><a data-bs-target="Team/detail.html" href="../Tournament/detail.html"><button class="btn btn-primary btn-sm" type="button">Detail</button></a></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Yugioh</td>
+                                                <td>5.</td>
+                                                <td>8.6.2021</td>
+                                                <td class="text-end"><a data-bs-target="Team/detail.html" href="../Tournament/detail.html"><button class="btn btn-primary btn-sm" type="button">Detail</button></a></td>
+                                            </tr>
+                                        </tbody>
+                                        <tfoot>
+                                            <tr></tr>
+                                        </tfoot>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </Authorized>
     <NotAuthorized>
 
@@ -24,7 +132,7 @@
                             <div class="card-header">
                                 <div class="row d-lg-flex align-items-lg-center">
                                     <div class="col">
-                                        <h6 class="text-primary mb-0">Upcoming tournaments</h6>
+                                        <h4 class="mb-0">Upcoming tournaments</h4>
                                     </div>
                                     <div class="col text-end"><a href="/Tournaments/List" class="btn btn-primary btn-sm">Show all</a></div>
                                 </div>
@@ -80,9 +188,9 @@
                             <div class="card-header">
                                 <div class="row d-lg-flex align-items-lg-center">
                                     <div class="col">
-                                        <h6 class="text-primary mb-0">Best players</h6>
+                                        <h4 class="mb-0">Best players</h4>
                                     </div>
-                                    <div class="col text-end"><a href="../Tournament/list.html"><button class="btn btn-primary btn-sm" type="button">Show all</button></a></div>
+                                    <div class="col text-end"><a href="/Tournament/List" class="btn btn-primary btn-sm">Show all</a></div>
                                 </div>
                             </div>
                             <div class="card-body">
@@ -151,7 +259,7 @@
                 // _tournamentsPublic = _tournamentsPublic.Where(x => x.IsPublic).ToList(); // Should not be needed, should be handled by controller
                 /* var participants = await Http.GetFromJsonAsync<List<TeamIsParticipatingModel>>("/api/TeamIsParticipating") ?? new();
                 foreach (var tournament in _tournamentsPublic)
-                {
+                    {
                     _numberOfParticipantsPublic.Add(tournament.Id, participants.Count(x => x.TournamentId == tournament.Id && x.Approved ));
                 }*/
 
@@ -160,6 +268,10 @@
             {
                 exception.Redirect();
             }
+        }
+        else // Logged user
+        {
+            
         }
 
     }
