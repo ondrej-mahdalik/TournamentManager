@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using TournamentManager.Server.Auth.Models;
+using TournamentManager.Server.BL.Facades;
 
 namespace TournamentManager.Server.App.Areas.Identity.Pages.Account.Manage
 {
@@ -15,15 +16,18 @@ namespace TournamentManager.Server.App.Areas.Identity.Pages.Account.Manage
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly ILogger<DeletePersonalDataModel> _logger;
+        private readonly UserFacade _userFacade;
 
         public DeletePersonalDataModel(
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
-            ILogger<DeletePersonalDataModel> logger)
+            ILogger<DeletePersonalDataModel> logger,
+            UserFacade userFacade)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _logger = logger;
+            _userFacade = userFacade;
         }
 
         /// <summary>
@@ -73,6 +77,14 @@ namespace TournamentManager.Server.App.Areas.Identity.Pages.Account.Manage
             {
                 return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
             }
+
+            var mainUser = await _userFacade.GetByApplicationUserIdAsync(user.Id);
+            if (mainUser == null)
+            {
+                return NotFound($"Unable to load user with ID '{user.Id}'.");
+            }
+            
+            await _userFacade.DeleteAsync(mainUser);
 
             RequirePassword = await _userManager.HasPasswordAsync(user);
             if (RequirePassword)

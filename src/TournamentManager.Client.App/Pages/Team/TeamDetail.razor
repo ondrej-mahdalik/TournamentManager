@@ -2,7 +2,6 @@
 @using TournamentManager.Common.Models
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
-@attribute [Authorize]
 @inject HttpClient Http
 @inject NavigationManager NavigationManager;
 
@@ -61,7 +60,7 @@
                                 @if (_leader is null)
                                 {
                                     <tr>
-                                        <td><em>Loading ...</em></td>
+                                        <td><em>Deleted user</em></td>
                                     </tr>
                                 }
                                 else

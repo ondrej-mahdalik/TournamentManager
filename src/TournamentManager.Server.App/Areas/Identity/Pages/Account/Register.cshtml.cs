@@ -139,7 +139,8 @@ namespace TournamentManager.Server.App.Areas.Identity.Pages.Account
                     var userId = await _userManager.GetUserIdAsync(authUser);
                     var mainUser = new UserModel(Input.Email)
                     {
-                        ApplicationUserId = userId
+                        ApplicationUserId = userId,
+                        RegisteredAt = DateTime.Now
                     };
                     await _userFacade.SaveAsync(mainUser);
                     
