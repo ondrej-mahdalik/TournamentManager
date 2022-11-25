@@ -62,7 +62,7 @@
                                     <th>Sport<i class="fas fa-baseball-ball pe-0 ms-2"></i></th>
                                     <th>Name</th>
                                     <th>Date</th>
-                                    <th>Visibility</th>
+                                    <th>Organizer</th>
                                     <th>Occupation</th>
                                     <th>Winner</th>
                                 </tr>
@@ -75,7 +75,7 @@
                                         <td>@(tournament.Sport?.Name ?? "Other")</td>
                                         <td>@tournament.Name</td>
                                         <td>@tournament.Date.ToString("dd. MM. yyyy")</td>
-                                        <td>@(tournament.IsPublic ? "Public" : "Private")</td>
+                                        <td>@tournament.Creator?.FirstName @tournament.Creator?.LastName</td>
                                         <td>@_numberOfParticipants[@tournament.Id] / @tournament.MaxAttendees</td>
                                         <td class="text-end"><a data-bs-target="/Tournament/@tournament.Id" href="/Tournament/Detail/@tournament.Id"><button class="btn btn-primary" type="button">Detail</button></a></td>
                                     </tr>
@@ -141,6 +141,7 @@
     private bool _isLoading = true;
     private Dictionary<Guid, int> _numberOfParticipants = new();
     private List<TournamentModel>? _tournaments = new();
+    private List<UserModel>? _users = new();
     private List<TournamentModel> TournamentsFiltered => _tournaments?
         .Where(x =>
         {
@@ -175,8 +176,8 @@
             try
             {
                 _tournaments = await Http.GetFromJsonAsync<List<TournamentModel>>("api/Tournament") ?? new List<TournamentModel>();
+                _users = await Http.GetFromJsonAsync<List<UserModel>>("api/User") ?? new List<UserModel>();
                 participants = await Http.GetFromJsonAsync<List<TeamIsParticipatingModel>>("/api/TeamIsParticipating") ?? new();
-                _isLoading = false;
             }
             catch (AccessTokenNotAvailableException exception)
             {
@@ -194,8 +195,11 @@
             foreach (var tournament in _tournaments)
             {
                 _numberOfParticipants.Add(tournament.Id, participants.Count(x => x.Approved && x.TournamentId == tournament.Id));
+                tournament.Creator = _users?.FirstOrDefault(x => x.Id == tournament.CreatorId);
             }
         }
+        
+        _isLoading = false;
     }
 
     private void OnItemsOnPageChanged(ChangeEventArgs e)

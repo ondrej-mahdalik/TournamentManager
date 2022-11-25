@@ -36,12 +36,12 @@ public class TournamentController : AuthorizedControllerBase
         var tournament = await _tournamentFacade.GetAsync(id);
         if (tournament is null)
             return NotFound();
-        
-        var user = await GetLoggedUser();
-        if (!user.IsAdministrator && !tournament.IsPublic && tournament.CreatorId != user.Id)
-            return Forbid();
 
-        return Ok(tournament);
+        var user = await GetLoggedUser();
+        if ((user?.IsAdministrator ?? false) || tournament.IsPublic || tournament.CreatorId == user?.Id)
+            return Ok(tournament);
+
+        return Forbid();
     }
 
     [Authorize]

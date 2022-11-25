@@ -8,7 +8,7 @@ public class UserMapperProfile : Profile
 {
     public UserMapperProfile()
     {
-        CreateMap<DAL.Entities.UserEntity, UserModel>()
+        CreateMap<UserEntity, UserModel>()
             .MaxDepth(3)
             .ForMember(x => x.FirstName, action => action.Ignore())
             .ForMember(x => x.LastName, action => action.Ignore())
