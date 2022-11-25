@@ -26,7 +26,7 @@ public class UserController : AuthorizedControllerBase
     public async Task<ActionResult<UserModel?>> GetCurrentUser()
     {
         var user = await GetLoggedUser();
-        return await GetUserProperties(user);
+        return Ok(await GetUserProperties(user));
     }
 
     [HttpGet]
@@ -35,8 +35,12 @@ public class UserController : AuthorizedControllerBase
         var temp = await _userFacade.GetAsync();
         var users = new List<UserModel>();
         foreach (var user in temp)
-            users.Add(await GetUserProperties(user));
-        
+        {
+            var tempUser = await GetUserProperties(user);
+            if (tempUser != null)
+                users.Add(tempUser);
+        }
+
         return Ok(users);
     }
 

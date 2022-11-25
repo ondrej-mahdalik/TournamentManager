@@ -29,8 +29,11 @@ public class AuthorizedControllerBase : ControllerBase
         return await _userFacade.GetByApplicationUserIdAsync(applicationUser.Id);
     }
     
-    public async Task<UserModel> GetUserProperties(UserModel user)
+    public async Task<UserModel?> GetUserProperties(UserModel? user)
     {
+        if (user is null)
+            return null;
+        
         var applicationUserId = await _userFacade.GetApplicationUserId(user.Id);
         if (applicationUserId is null)
             return user;

@@ -72,7 +72,7 @@ public class TeamIsParticipatingController : AuthorizedControllerBase
             return NoContent();
 
         var user = await GetLoggedUser();
-        var creatorId = (await _tournamentFacade.GetAsync(participation.TournamentId)).CreatorId;
+        var creatorId = (await _tournamentFacade.GetAsync(participation.TournamentId))?.CreatorId;
         if (user is null || creatorId is null || (!user.IsAdministrator && participation.Team?.LeaderId != user.Id &&
             creatorId != user.Id))
             return Forbid();
