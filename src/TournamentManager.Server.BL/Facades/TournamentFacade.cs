@@ -39,9 +39,11 @@ public class TournamentFacade : CRUDFacade<TournamentEntity, TournamentModel>
         var tournament = await uow.GetRepository<TournamentEntity>()
             .Get()
             .FirstOrDefaultAsync(x => x.Id == tournamentId);
-        var user = await uow.GetRepository<UserEntity>()
-            .Get()
-            .FirstOrDefaultAsync(x => x.Id == userId);
+        UserEntity? user = null;
+        if (userId is not null)
+            user = await uow.GetRepository<UserEntity>()
+                .Get()
+                .FirstOrDefaultAsync(x => x.Id == userId);
 
         if (tournament is null)
             return false;

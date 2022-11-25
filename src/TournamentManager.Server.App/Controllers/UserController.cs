@@ -26,7 +26,7 @@ public class UserController : AuthorizedControllerBase
     public async Task<ActionResult<UserModel?>> GetCurrentUser()
     {
         var user = await GetLoggedUser();
-        return await GetUserProperties(user);
+        return Ok(await GetUserProperties(user));
     }
 
     [HttpGet]

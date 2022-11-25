@@ -9,7 +9,7 @@
 <div class="d-flex flex-column" id="content-wrapper">
 <div id="content">
     <div class="container-fluid">
-        @if (_tournament is null || _isLoading)
+        @if (_tournament is null)
         {
             <div class="card shadow">
                 <div class="card-body">
@@ -21,14 +21,14 @@
         {
             <div class="row mb-3">
                 <div class="col text-center d-xl-flex d-flex align-items-center">
-                    <h3 class="text-dark d-xl-flex">@_tournament?.Name</h3>
+                    <h3 class="text-dark d-xl-flex">@_tournament.Name</h3>
                 </div>
                 <div class="col col-auto"><a href="/Tournament/list"><button class="btn btn-light" type="button">Back to All Tournaments</button></a></div>
-                @if (_tournament is not null && _tournament.Participatings.Count < _tournament.MaxAttendees)
+                @if (_tournament.Participatings.Count < _tournament.MaxAttendees)
                 {
                     <div class="col col-auto"><a href="#"><button class="btn btn-primary" type="button">Participate</button></a></div>
                 }
-                @if (_loggedUser is not null && _loggedUser.Id == _tournament?.CreatorId)
+                @if (_loggedUser?.Id == _tournament.CreatorId)
                 {
                     <div class="col col-auto"><a href="/Tournament/Manage/@_tournament.Id"><button class="btn btn-primary" type="button">Manage Tournament</button></a></div>
                 }
@@ -41,12 +41,12 @@
                             <div class="row mb-3">
                                 <div class="col">
                                     <div>
-                                        <h6 class="text-primary">Date</h6><span>@_tournament?.Date.ToString("dd. MM. yyyy")</span>
+                                        <h6 class="text-primary">Date</h6><span>@_tournament.Date.ToString("dd. MM. yyyy")</span>
                                     </div>
                                 </div>
                                 <div class="col">
                                     <div>
-                                        <h6 class="text-primary">Players participating</h6><span>@_numberOfParticipants/@_tournament?.MaxAttendees</span>
+                                        <h6 class="text-primary">Players participating</h6><span>@_numberOfParticipants/@_tournament.MaxAttendees</span>
                                     </div>
                                 </div>
                             </div>
@@ -54,13 +54,13 @@
                                 <div class="col">
                                     <div>
                                         <h6 class="text-primary">Description</h6>
-                                        <p>@_tournament?.Description<br></p>
+                                        <p>@_tournament.Description<br></p>
                                     </div>
                                 </div>
                                 <div class="col">
                                     <div>
                                         <h6 class="text-primary">Sport</h6>
-                                        <p>@(_tournament?.Sport is not null ? _tournament.Sport.Name : "Other")<br></p>
+                                        <p>@(_tournament.Sport is not null ? _tournament.Sport.Name : "Other")<br></p>
                                     </div>
                                 </div>
                             </div>
@@ -97,7 +97,7 @@
                                     <div class="row border-bottom mb-2">
                                         <div class="col">
                                             <p>
-                                                @if (match.Team1 is not null && (match.Team1?.LogoUrl is not null || match.Team1?.LogoUrl != ""))
+                                                @if (!string.IsNullOrWhiteSpace(match.Team1?.LogoUrl))
                                                 {
                                                     <img alt="team1-image" class="img-fluid" width="60" height="60" src="@match.Team1?.LogoUrl">
                                                 }
@@ -111,7 +111,7 @@
                                     <div class="row">
                                         <div class="col">
                                             <p>
-                                                @if (match.Team2 is not null && (match.Team2?.LogoUrl is not null || match.Team2?.LogoUrl != ""))
+                                                @if (!string.IsNullOrWhiteSpace(match.Team2?.LogoUrl))
                                                 {
                                                     <img alt="team2-image" class="img-fluid" width="60" height="60" src="@match.Team2?.LogoUrl">
                                                 }
@@ -142,23 +142,19 @@
     private UserModel? _loggedUser;
     private List<MatchModel>? _matches;
     private int _numberOfParticipants;
-    private bool _isLoading;
 
     protected override async Task OnInitializedAsync()
     {
         try
         {
-            _isLoading = true;
             _tournament = await Http.GetFromJsonAsync<TournamentModel>($"/api/Tournament/{Id}");
             _numberOfParticipants = _tournament?.Participatings.Count(x => x.Approved) ?? 0;
             _matches = _tournament?.Matches.OrderBy(x => x.Round).ThenBy(x => x.Order).ToList() ?? new List<MatchModel>();
             _loggedUser = await Http.GetFromJsonAsync<UserModel>("/api/User/current");
-            _isLoading = false;
         }
         catch (AccessTokenNotAvailableException exception)
         {
             exception.Redirect();
         }
-
     }
 }

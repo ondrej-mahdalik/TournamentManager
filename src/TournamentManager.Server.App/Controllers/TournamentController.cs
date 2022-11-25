@@ -38,7 +38,7 @@ public class TournamentController : AuthorizedControllerBase
             return NotFound();
 
         var user = await GetLoggedUser();
-        if ((user?.IsAdministrator ?? false) || tournament.IsPublic || tournament.CreatorId == user?.Id)
+        if (tournament.IsPublic || user is not null && (user.IsAdministrator || tournament.CreatorId == user.Id))
             return Ok(tournament);
 
         return Forbid();
