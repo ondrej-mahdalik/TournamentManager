@@ -27,7 +27,8 @@ builder.Configuration
 
 var authConnectionString = builder.Configuration.GetConnectionString("AuthConnection") ?? throw new InvalidOperationException("Connection string 'AuthConnection' not found.");
 var mainConnectionString = builder.Configuration.GetConnectionString("MainConnection") ?? throw new InvalidOperationException("Connection string 'MainConnection' not found.");
-var skipMigrationAndSeedDemoData = builder.Configuration.GetSection("DALOptions").GetValue<bool>("SkipMigrationAndSeedDemoData");
+var recreateDatabase = builder.Configuration.GetSection("DALOptions").GetValue<bool>("RecreateDatabase");
+var seedDemoData = builder.Configuration.GetSection("DALOptions").GetValue<bool>("SeedDemoData");
 var dalType = builder.Configuration.GetSection("DALOptions")["Type"];
 
 ConfigureControllers(builder.Services);
@@ -193,15 +194,18 @@ async Task SetupDatabase(WebApplication application)
     
     var dbContextFactory = scope.ServiceProvider.GetRequiredService<IDbContextFactory<TournamentManagerDbContext>>();
     await using var mainDbContext = dbContextFactory.CreateDbContext();
-    
 
-    if (skipMigrationAndSeedDemoData)
+    if (recreateDatabase)
     {
-        await mainDbContext.Database.EnsureDeletedAsync();
-        await mainDbContext.Database.EnsureCreatedAsync();
         await authDbContext.Database.EnsureDeletedAsync();
-        await authDbContext.Database.EnsureCreatedAsync();
-        
+        await mainDbContext.Database.EnsureDeletedAsync();
+    }
+    
+    await authDbContext.Database.EnsureCreatedAsync();
+    await mainDbContext.Database.EnsureCreatedAsync();
+    
+    if (seedDemoData)
+    {
         UserSeeds.Seed(mainDbContext);
         TournamentSeeds.Seed(mainDbContext);
         SportSeeds.Seed(mainDbContext);
@@ -211,11 +215,6 @@ async Task SetupDatabase(WebApplication application)
         // TODO Seed other models
 
         await ApplicationUserSeeds.SeedAsync(scope.ServiceProvider);
-    }
-    else
-    {
-        await mainDbContext.Database.EnsureCreatedAsync();
-        await authDbContext.Database.EnsureCreatedAsync();
     }
 }
 

@@ -9,7 +9,7 @@ public class TournamentMapperProfile : Profile
     public TournamentMapperProfile()
     {
         CreateMap<TournamentEntity, TournamentModel>()
-            //.MaxDepth(3)
+            .MaxDepth(3)
             .ReverseMap()
             .ForMember(x => x.Creator, action => action.Ignore())
             .ForMember(x => x.Matches, action => action.Ignore())
