@@ -33,20 +33,22 @@ public class TournamentFacade : CRUDFacade<TournamentEntity, TournamentModel>
         await base.DeleteAsync(id);
     }
 
-    public async Task<bool> CanUserViewTournament(Guid userId, Guid tournamentId)
+    public async Task<bool> CanUserViewTournament(Guid? userId, Guid tournamentId)
     {
         await using var uow = UnitOfWorkFactory.Create();
         var tournament = await uow.GetRepository<TournamentEntity>()
             .Get()
             .FirstOrDefaultAsync(x => x.Id == tournamentId);
-        var user = await uow.GetRepository<UserEntity>()
-            .Get()
-            .FirstOrDefaultAsync(x => x.Id == userId);
+        UserEntity? user = null;
+        if (userId is not null)
+            user = await uow.GetRepository<UserEntity>()
+                .Get()
+                .FirstOrDefaultAsync(x => x.Id == userId);
 
-        if (tournament is null || user is null)
+        if (tournament is null)
             return false;
         
-        return tournament.IsPublic || user.IsAdministrator || tournament.CreatorId == userId
+        return tournament.IsPublic || (user?.IsAdministrator ?? false) || tournament.CreatorId == userId
                || await uow.GetRepository<TeamIsParticipatingEntity>()
                    .Get()
                    .AnyAsync(x => x.Team != null && x.TournamentId == tournamentId && x.Team.Members.Any(y => y.UserId == userId));
