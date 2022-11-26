@@ -1,9 +1,11 @@
 ﻿@page "/"
+@using TournamentManager.Client.App.Extensions
 @using TournamentManager.Common.Models
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
 
 @inject HttpClient Http
+@inject PublicHttpClient PublicHttp
 
 <PageTitle>Dashboard</PageTitle>
 
@@ -376,7 +378,7 @@
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    @for (int i = 0; i < 5; i++)
+                                                    @for (int i = 0; i < 5 && i < _tournamentsUpcoming.Count; i++)
                                                     {
                                                         var tournament = _tournamentsUpcoming[i];
                                                         <tr>
@@ -467,24 +469,20 @@
     private List<TournamentModel>? _tournamentsFinished;
     private Dictionary<Guid, int> _numberOfParticipantsFinished = new();
 
+    private List<UserModel>? bestPlayers;
+
 
     protected override async Task OnInitializedAsync()
     {
-        try
-        {
-            _tournaments = await Http.GetFromJsonAsync<List<TournamentModel>>("api/Tournament") ?? new List<TournamentModel>();
-            // _tournamentsPublic = _tournamentsPublic.Where(x => x.IsPublic).ToList(); // Should not be needed, should be handled by controller
-            _participants = await Http.GetFromJsonAsync<List<TeamIsParticipatingModel>>("/api/TeamIsParticipating") ?? new();
 
-            _tournamentsUpcoming = _tournaments.Where(x => x.Date >= DateTime.Now).ToList();
-            foreach (var tournament in _tournamentsUpcoming)
-            {
-                _numberOfParticipantsUpcoming.Add(tournament.Id, _participants.Count(x => x.TournamentId == tournament.Id && x.Approved));
-            }
-        }
-        catch (AccessTokenNotAvailableException exception)
+        _tournaments = await PublicHttp.Client.GetFromJsonAsync<List<TournamentModel>>("api/Tournament") ?? new List<TournamentModel>();
+        // _tournamentsPublic = _tournamentsPublic.Where(x => x.IsPublic).ToList(); // Should not be needed, should be handled by controller
+        _participants = await PublicHttp.Client.GetFromJsonAsync<List<TeamIsParticipatingModel>>("/api/TeamIsParticipating") ?? new();
+
+        _tournamentsUpcoming = _tournaments.Where(x => x.Date >= DateTime.Now).ToList();
+        foreach (var tournament in _tournamentsUpcoming)
         {
-            exception.Redirect();
+            _numberOfParticipantsUpcoming.Add(tournament.Id, _participants.Count(x => x.TournamentId == tournament.Id && x.Approved));
         }
 
         try
@@ -493,13 +491,15 @@
             List<UserIsInTeamModel>? teamMemberships = await Http.GetFromJsonAsync<List<UserIsInTeamModel>>("/api/UserIsInTeam/");
             _currentUserTeamIds = teamMemberships?.Where(m => m.UserId == _currentUser?.Id).Select(m => m.TeamId).ToList();
         }
-        catch (AccessTokenNotAvailableException exception)
+        catch
         {
             _currentUser = null;
         }
 
+
         if (_currentUser is null) // Not logged in
         {
+
 
         }
         else // Logged user
@@ -507,7 +507,7 @@
             if (_participants is null || _currentUserTeamIds is null) return;
             _tournamentsOfUser = _tournaments?.Where(t => _participants.Any(p => p.TournamentId == t.Id && _currentUserTeamIds.Contains(p.TeamId))).ToList();
 
-            _tournamentsFinished = _tournamentsOfUser?.Where(x => x.Date < DateTime.Now && x.WinnerTeamOverride != null).ToList();
+            _tournamentsFinished = _tournamentsOfUser?.Where(x => x.Date < DateTime.Now && x.InProgress == false).ToList();
             if (_tournamentsFinished is not null)
             {
                 foreach (var tournament in _tournamentsFinished)
@@ -516,7 +516,7 @@
                 }
             }
 
-            _tournamentsActive = _tournamentsOfUser?.Where(t => t.Date < DateTime.Now && t.WinnerTeamOverrideId is not null).ToList();
+            _tournamentsActive = _tournamentsOfUser?.Where(t => t.InProgress == true).ToList();
             if (_tournamentsActive is not null)
             {
                 foreach (var tournament in _tournamentsActive)
