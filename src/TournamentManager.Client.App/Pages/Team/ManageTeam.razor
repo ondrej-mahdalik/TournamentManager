@@ -7,7 +7,6 @@
 @attribute [Authorize]
 @inject HttpClient Http
 @inject NavigationManager NavigationManager;
-@inject IJSRuntime JsRuntime;
 
 
 
@@ -449,24 +448,24 @@ else
         UserModel? member = await Http.GetFromJsonAsync<UserModel>($"api/User/current");
         if(member is null)
         {
-            await JsRuntime.InvokeVoidAsync("alert", "Internal database error.\nUser does not exist.");
+            _showError = true;
+            _errorMessage = "Internal database error. User does not exist.";
             return; 
         }
 
-        //bool isConfirmed = await JsRuntime.InvokeAsync<bool>("confirm", $"Do you want remove {member.FirstName} {member.LastName} from this team?\nThis operation is permament!");
-        bool isConfirmed = false;
 
-        var result = await Modal.Show<AdminUserDeletion>($"Do you really want to remove {member.FirstName} {member.LastName} from {_team?.Name}? \n This operation is permanent !").Result;
+        var result = await Modal.Show<Confirmation>($"Do you really want to remove {member.FirstName} {member.LastName} from {_team?.Name}? This operation is permanent !").Result;
         if (result.Cancelled)
             return;
 
         UserIsInTeamModel? membership = _team?.Members.Where(m => m.UserId == member.Id).FirstOrDefault();
         if(membership is null)
         {
-            await JsRuntime.InvokeVoidAsync("alert", "Internal database error.\nUser is not member of this team.");
+            _showError = true;
+            _errorMessage = "Internal database error. User is not member of this team.";
             return;
         }
-        if (isConfirmed)
+        if (result.Confirmed)
         {
             await Http.DeleteAsync($"api/UserIsInTeam/{membership.Id}");
             if(_members is not null)
@@ -540,9 +539,9 @@ else
 
     private async void DeleteTeam()
     {
-        bool isConfirmed = await JsRuntime.InvokeAsync<bool>("confirm", $"Do you want to delete {_team?.Name}?\nThis operation is permament!");
+        var result = await Modal.Show<Confirmation>($"Do you want to delete {_team?.Name}? This operation is permament!").Result;
 
-        if (isConfirmed)
+        if (result.Confirmed)
         {
             var response = await Http.DeleteAsync($"/api/Team/{_team?.Id}");
             // TODO : handle response

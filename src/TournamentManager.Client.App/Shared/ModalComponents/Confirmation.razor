@@ -1,0 +1,14 @@
+﻿@using TournamentManager.Common.Enums
+
+<div class="d-inline-flex gap-2">
+    <button class="btn btn-danger" @onclick="ConfirmAsync">Confirm</button>
+    <button class="btn btn-secondary" @onclick="CancelAsync">Cancel</button>
+</div>
+
+@code {
+    [CascadingParameter]
+    BlazoredModalInstance BlazoredModal { get; set; } = default!;
+
+    private async Task CancelAsync() => await BlazoredModal.CloseAsync(ModalResult.Cancel());
+    private async Task ConfirmAsync() => await BlazoredModal.CloseAsync(ModalResult.Ok());
+}

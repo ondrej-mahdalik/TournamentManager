@@ -5,7 +5,6 @@
 @attribute [Authorize]
 @inject HttpClient Http
 @inject NavigationManager NavigationManager;
-@inject IJSRuntime JsRuntime;
 
 
 <div id="content">
@@ -54,25 +53,6 @@
     private string? _teamName = null;
     private string? _logoUrl;
     private UserModel? _currentUser;
-
-
-    private void OnLogoUrlChanged(ChangeEventArgs e)
-    {
-        string[] allowedFormats = { "jpg", "jpeg", "gif", "png", "apng", "svg", "bmp" };
-        if (e is not null && e.Value is not null)
-        {
-            string value = (string)e.Value;
-            string format = value.Split('.').Last();
-            if (allowedFormats.Contains(format))
-            {
-                _logoUrl = (string)e.Value;
-            }
-            else
-            {
-                _logoUrl = null;
-            }
-        }
-    }
 
     private async void HandleValidSubmit()
     {
