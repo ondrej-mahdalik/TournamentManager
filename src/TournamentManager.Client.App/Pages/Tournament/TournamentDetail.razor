@@ -1,7 +1,10 @@
 ﻿@page "/Tournament/Detail/{Id}"
 @using TournamentManager.Common.Models
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@using TournamentManager.Client.App.Extensions
 @inject HttpClient Http
+@inject PublicHttpClient PublicHttp
+@inject AuthenticationStateProvider AuthenticationStateProvider
 
 <PageTitle>Tournament Detail</PageTitle>
 
@@ -145,16 +148,25 @@
 
     protected override async Task OnInitializedAsync()
     {
-        try
+        var state = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        if (state.User.Identity?.IsAuthenticated ?? false)
         {
-            _tournament = await Http.GetFromJsonAsync<TournamentModel>($"/api/Tournament/{Id}");
-            _numberOfParticipants = _tournament?.Participatings.Count(x => x.Approved) ?? 0;
-            _matches = _tournament?.Matches.OrderBy(x => x.Round).ThenBy(x => x.Order).ToList() ?? new List<MatchModel>();
-            _loggedUser = await Http.GetFromJsonAsync<UserModel>("/api/User/current");
+            try
+            {
+                _tournament = await Http.GetFromJsonAsync<TournamentModel>($"/api/Tournament/{Id}");
+                _loggedUser = await Http.GetFromJsonAsync<UserModel>("/api/User/current");
+            }
+            catch (AccessTokenNotAvailableException exception)
+            {
+                exception.Redirect();
+            }
         }
-        catch (AccessTokenNotAvailableException exception)
+        else
         {
-            exception.Redirect();
+            _tournament = await PublicHttp.Client.GetFromJsonAsync<TournamentModel>($"/api/Tournament/{Id}");
         }
+
+        _numberOfParticipants = _tournament?.Participatings.Count(x => x.Approved) ?? 0;
+        _matches = _tournament?.Matches.OrderBy(x => x.Round).ThenBy(x => x.Order).ToList() ?? new List<MatchModel>();
     }
 }

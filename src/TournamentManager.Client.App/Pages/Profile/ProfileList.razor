@@ -1,8 +1,8 @@
 @page "/Profile/List"
 @using Microsoft.AspNetCore.Components
-@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@using TournamentManager.Client.App.Extensions
 @using TournamentManager.Common.Models
-@inject HttpClient Http
+@inject PublicHttpClient PublicHttp
 
 <div id="content">
     <div class="container-fluid">
@@ -150,15 +150,7 @@
     
     protected override async Task OnInitializedAsync()
     {
-        try
-        {
-            _users = await Http.GetFromJsonAsync<List<UserModel>>("api/User") ?? new List<UserModel>();
-        }
-        catch (AccessTokenNotAvailableException exception)
-        {
-            exception.Redirect();
-        }
-        
+        _users = await PublicHttp.Client.GetFromJsonAsync<List<UserModel>>("api/User") ?? new List<UserModel>();
     }
 
     private void OnItemsOnPageChanged(ChangeEventArgs e)
