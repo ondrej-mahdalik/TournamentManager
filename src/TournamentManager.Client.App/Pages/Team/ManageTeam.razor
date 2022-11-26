@@ -364,6 +364,9 @@ else
                     }
                 }
 
+                _members = _members.OrderBy(x => x.FirstName).ToList();
+                _requestedMembers = _requestedMembers.OrderBy(x => x.FirstName).ToList();
+
                 _newName = _team.Name;
                 _newLogoUrl = _team.LogoUrl;
 
@@ -546,7 +549,7 @@ else
         {
             var response = await Http.DeleteAsync($"/api/Team/{_team?.Id}");
             // TODO : handle response
-            NavigationManager.NavigateTo("/Teams/List");
+            NavigationManager.NavigateTo("/Team/List");
         }
 
     }

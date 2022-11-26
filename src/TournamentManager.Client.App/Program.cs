@@ -1,3 +1,4 @@
+using Blazored.Modal;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
@@ -24,5 +25,6 @@ builder.Services.AddHttpClient<PublicHttpClient>(client => client.BaseAddress = 
 builder.Services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient("TournamentManager.Server.AppAPI"));
 
 builder.Services.AddApiAuthorization();
+builder.Services.AddBlazoredModal();
 
 await builder.Build().RunAsync();

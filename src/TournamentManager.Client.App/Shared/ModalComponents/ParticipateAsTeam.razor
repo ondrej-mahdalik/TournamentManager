@@ -1,0 +1,44 @@
+﻿@inject HttpClient Http
+
+<p>Select team to participate as</p>
+// TODO Display error message if no teams are available
+@if (_teams is not null)
+{
+    <InputSelect TValue="Guid?" @bind-Value="_selectedTeamId">
+        @foreach (var team in _teams)
+        {
+            <option value="@team.Id">@team.Name</option>
+        }
+    </InputSelect>
+}
+<div class="d-inline-flex">
+    <button class="btn btn-secondary" @onclick="CancelAsync">Cancel</button>
+    <button class="btn btn-primary" @onclick="ParticipateAsync">Participate</button>
+</div>
+
+@code {
+    [CascadingParameter]
+    BlazoredModalInstance BlazoredModal { get; set; } = default!;
+
+    [Parameter]
+    public UserModel CurrentUser { get; set; } = default!;
+
+    private List<TeamModel>? _teams;
+    
+    private Guid? _selectedTeamId;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _teams = await Http.GetFromJsonAsync<List<TeamModel>>($"api/Team/ByUser/{CurrentUser.Id}");
+    }
+
+    private async Task ParticipateAsync()
+    {
+        await BlazoredModal.CloseAsync(ModalResult.Ok(_teams?.FirstOrDefault(x => x.Id == _selectedTeamId)));
+    }
+    
+    private async Task CancelAsync()
+    {
+        await BlazoredModal.CloseAsync(ModalResult.Cancel());
+    }
+}

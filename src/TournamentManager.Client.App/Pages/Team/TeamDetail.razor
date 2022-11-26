@@ -1,9 +1,10 @@
 ﻿@page "/Team/Detail/{Id}"
 @using TournamentManager.Common.Models
-@using Microsoft.AspNetCore.Authorization
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@using TournamentManager.Client.App.Extensions
 @inject HttpClient Http
-@inject NavigationManager NavigationManager;
+@inject PublicHttpClient PublicHttp
+@inject NavigationManager NavigationManager
 
 <PageTitle>Team Detail</PageTitle>
 
@@ -231,7 +232,7 @@
                         }
                         else if (_tournaments.Count == 0)
                         {
-                            <p class="text-center fw-bold">Team did not yet participate in any tournaments.</p>
+                            <p class="text-center fw-bold">Team did not yet participate in any public tournaments.</p>
                         }
                         else
                         {
@@ -338,7 +339,12 @@
                                     </div>
                                 }
                             </div>
-                        }
+                            <div class="row">
+                                <div class="col">
+                                    <p class="mb-0 text-secondary">Only public tournaments are displayed.</p>
+                                </div>
+                            </div>
+                                 }
                     </div>
                 </div>
             </div>
@@ -359,16 +365,14 @@
     protected override async Task OnInitializedAsync()
     {
         _members = new List<UserModel>();
-        try
-        {
-            _team = await Http.GetFromJsonAsync<TeamModel>($"/api/Team/{Id}");
+        _team = await PublicHttp.Client.GetFromJsonAsync<TeamModel>($"/api/Team/{Id}");
             if (_team is not null)
             {
-                _leader = await Http.GetFromJsonAsync<UserModel>($"/api/User/{_team.LeaderId}");
+                _leader = await PublicHttp.Client.GetFromJsonAsync<UserModel>($"/api/User/{_team.LeaderId}");
 
                 foreach (UserIsInTeamModel userIsInTeam in _team.Members)
                 {
-                    UserModel? member = await Http.GetFromJsonAsync<UserModel>($"/api/User/{userIsInTeam.UserId}");
+                    UserModel? member = await PublicHttp.Client.GetFromJsonAsync<UserModel>($"/api/User/{userIsInTeam.UserId}");
                     if(member is not null)
                     {
                         _members.Add(member);
@@ -377,17 +381,17 @@
 
             }
 
-            _tournaments = await Http.GetFromJsonAsync<List<TournamentModel>>("api/Tournament") ?? new List<TournamentModel>();
+            _tournaments = await PublicHttp.Client.GetFromJsonAsync<List<TournamentModel>>("api/Tournament") ?? new List<TournamentModel>();
             _tournaments = _tournaments.Where(x => x.Participatings.Any(p => p.TeamId == _team?.Id)).ToList() ;
 
+        try
+        {
             _currentUser = await Http.GetFromJsonAsync<UserModel>($"api/User/current");
         }
-        catch (AccessTokenNotAvailableException exception)
+        catch (AccessTokenNotAvailableException)
         {
-            exception.Redirect();
+            // No action needed, user is not logged in
         }
-
-
     }
 
     private bool HasPendingJoinRequest()
@@ -409,10 +413,10 @@
             return;
         }
 
-        var response = await Http.PutAsJsonAsync($"/api/UserIsInTeam", new UserIsInTeamModel(_currentUser.Id, _team.Id));
+        var response = await PublicHttp.Client.PutAsJsonAsync($"/api/UserIsInTeam", new UserIsInTeamModel(_currentUser.Id, _team.Id));
         // TODO handle response
 
-        _team = await Http.GetFromJsonAsync<TeamModel>($"/api/Team/{Id}");
+        _team = await PublicHttp.Client.GetFromJsonAsync<TeamModel>($"/api/Team/{Id}");
     }
 
     private async Task CancelJoinRequestAsync()
@@ -420,10 +424,10 @@
         if (_team is null || _currentUser is null)
             return;
 
-        var response = await Http.DeleteAsync($"/api/UserIsInTeam/{_team.Members.First(x => x.UserId == _currentUser.Id).Id}");
+        var response = await PublicHttp.Client.DeleteAsync($"/api/UserIsInTeam/{_team.Members.First(x => x.UserId == _currentUser.Id).Id}");
         // TODO handle response
 
-        _team = await Http.GetFromJsonAsync<TeamModel>($"/api/Team/{Id}");
+        _team = await PublicHttp.Client.GetFromJsonAsync<TeamModel>($"/api/Team/{Id}");
     }
 
     private void EditTeam()
@@ -458,7 +462,9 @@
             var lastName = x.LastName is not null && x.LastName.ToLower().Contains(_membersSearch.ToLower());
             var email = x.Email is not null && x.Email.ToLower().Contains(_membersSearch.ToLower());
             return firstName || lastName || email;
-        }).ToList()
+        })
+        .OrderBy(x => x.FirstName)
+        .ToList()
         ?? new(); // Filtration based on _search
 
     private List<List<UserModel>> MembersFilteredPages => MembersFiltered.Select((x, i) => new  // Splits the one big list into smaller lists of size _membersShowCount
@@ -487,7 +493,9 @@
             var creatorLastName = x.Creator?.LastName?.ToLower().Contains(_tournamentsSearch.ToLower()) ?? false;
 
             return name || sport || date || creatorFirstName || creatorLastName;
-        }).ToList()
+        })
+        .OrderByDescending(x => x.Date)
+        .ToList()
         ?? new();
 
     private List<List<TournamentModel>> TournamentsFilteredPages => TournamentsFiltered.Select((x, i) => new  // Splits the one big list into smaller lists of size _tournamentsShowCount

@@ -1,6 +1,5 @@
 @page "/Profile/Detail/{Id:guid}"
-@using TournamentManager.Common.Models
-@inject HttpClient Http
+@inject PublicHttpClient PublicHttp
 
 @if(_user is null)
 {
@@ -74,6 +73,6 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        _user = await Http.GetFromJsonAsync<UserModel>($"api/User/{Id}");
+        _user = await  PublicHttp.Client.GetFromJsonAsync<UserModel>($"api/User/{Id}");
     }
 }

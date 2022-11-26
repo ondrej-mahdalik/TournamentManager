@@ -1,7 +1,7 @@
 ﻿@page "/Team/List"
 @using TournamentManager.Common.Models
-@using Microsoft.AspNetCore.Authorization
-@inject HttpClient Http
+@using TournamentManager.Client.App.Extensions
+@inject PublicHttpClient PublicHttp
 
 <PageTitle>Teams List</PageTitle>
 
@@ -140,7 +140,9 @@
             var leaderFirstName = x.Leader?.FirstName != null && x.Leader.FirstName.ToLower().Contains(_search.ToLower());
             var leaderLastName  = x.Leader?.LastName != null && x.Leader.LastName.ToLower().Contains(_search.ToLower());
             return name || leaderFirstName || leaderLastName;
-        }).ToList()
+        })
+        .OrderBy(x => x.Name)
+        .ToList()
         ?? new(); // Filtration based on _search
 
     private List<List<TeamModel>> TeamsFilteredPages => TeamsFiltered.Select((x, i) => new  // Splits the one big list into smaller lists of size _showCount
@@ -153,9 +155,9 @@
     
     protected override async Task OnInitializedAsync()
     {
-        _teams = await Http.GetFromJsonAsync<List<TeamModel>>("api/Team") ?? new List<TeamModel>();
+        _teams = await PublicHttp.Client.GetFromJsonAsync<List<TeamModel>>("api/Team") ?? new List<TeamModel>();
         foreach (var team in _teams)
-            team.Leader = await Http.GetFromJsonAsync<UserModel>($"api/User/{team.LeaderId}"); // Only users loaded directly from UserController have First and Last name (API limitation)
+            team.Leader = await PublicHttp.Client.GetFromJsonAsync<UserModel>($"api/User/{team.LeaderId}"); // Only users loaded directly from UserController have First and Last name (API limitation)
     }
 
     private void OnSearchQueryChanged(ChangeEventArgs e)
