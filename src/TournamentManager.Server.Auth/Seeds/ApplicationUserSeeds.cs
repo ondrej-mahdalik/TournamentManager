@@ -48,5 +48,6 @@ public static class ApplicationUserSeeds
         
         await userManager.CreateAsync(Admin, "Pass123$");
         await userManager.CreateAsync(User1, "Pass123$");
+        await userManager.CreateAsync(RexWalsh, "Pass123$");
     }
 }
