@@ -15,6 +15,6 @@ public class TournamentMapperProfile : Profile
             .ForMember(x => x.Matches, action => action.Ignore())
             .ForMember(x => x.Participatings, action => action.Ignore())
             .ForMember(x => x.Sport, action => action.Ignore())
-            .ForMember(x => x.WinnerTeamOverride, action => action.Ignore());
+            .ForMember(x => x.WinnerTeam, action => action.Ignore());
     }
 }

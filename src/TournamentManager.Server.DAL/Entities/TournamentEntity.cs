@@ -11,9 +11,9 @@ public record TournamentEntity(string Name,
     public Guid? CreatorId { get; init; }
     public UserEntity? Creator { get; init; }
     
-    public Guid? WinnerTeamOverrideId { get; init; }
+    public Guid? WinnerTeamId { get; init; }
     
-    public TeamEntity? WinnerTeamOverride { get; init; }
+    public TeamEntity? WinnerTeam { get; init; }
     
     public Guid? SportId { get; init; }
     public SportEntity? Sport { get; init; }
