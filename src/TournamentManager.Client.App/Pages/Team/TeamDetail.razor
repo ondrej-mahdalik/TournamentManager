@@ -462,7 +462,9 @@
             var lastName = x.LastName is not null && x.LastName.ToLower().Contains(_membersSearch.ToLower());
             var email = x.Email is not null && x.Email.ToLower().Contains(_membersSearch.ToLower());
             return firstName || lastName || email;
-        }).ToList()
+        })
+        .OrderBy(x => x.FirstName)
+        .ToList()
         ?? new(); // Filtration based on _search
 
     private List<List<UserModel>> MembersFilteredPages => MembersFiltered.Select((x, i) => new  // Splits the one big list into smaller lists of size _membersShowCount
@@ -491,7 +493,9 @@
             var creatorLastName = x.Creator?.LastName?.ToLower().Contains(_tournamentsSearch.ToLower()) ?? false;
 
             return name || sport || date || creatorFirstName || creatorLastName;
-        }).ToList()
+        })
+        .OrderByDescending(x => x.Date)
+        .ToList()
         ?? new();
 
     private List<List<TournamentModel>> TournamentsFilteredPages => TournamentsFiltered.Select((x, i) => new  // Splits the one big list into smaller lists of size _tournamentsShowCount
