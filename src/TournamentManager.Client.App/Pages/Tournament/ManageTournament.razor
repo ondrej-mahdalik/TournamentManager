@@ -46,12 +46,11 @@
              <div class="col">
                  @if (!_allUsersHaveMatch)
                  {
-                     <MessageBox MessageType="MessageType.Warning" Title="Warning" Message="Not all participants have a match assigned" ShowCloseButton="true"></MessageBox>
+                     <MessageBox MessageType="MessageType.Warning" Title="Warning" Message="Not all participants have a match assigned" ShowCloseButton="false"></MessageBox>
                  }
-                 else
-                 {
-                     <MessageBox MessageType="MessageType.Error" Title="Error" Message="@_errorMessage" ShowCloseButton="false"></MessageBox>
-                 }
+                 
+                    <MessageBox MessageType="MessageType.Error" Title="Error" Message="@_errorMessage" ShowCloseButton="true"></MessageBox>
+                 
              </div>
          </div>
      }
@@ -346,7 +345,7 @@
                                          <p>
                                              @if (match.Team1 is not null && (match.Team1?.LogoUrl is not null || match.Team1?.LogoUrl != ""))
                                              {
-                                                 @:<img alt="team1-image" class="img-fluid" width="60" height="60" src="@match.Team1?.LogoUrl">
+                                                 <img alt="team1-image" class="img-fluid" width="60" height="60" src="@match.Team1?.LogoUrl">
                                              }
                                              @match.Team1?.Name
                                          </p>
@@ -360,7 +359,7 @@
                                          <p>
                                              @if (match.Team2 is not null && (match.Team2?.LogoUrl is not null || match.Team2?.LogoUrl != ""))
                                              {
-                                                 @:<img alt="team2-image" class="img-fluid" width="60" height="60" src="@match.Team2?.LogoUrl">
+                                                 <img alt="team2-image" class="img-fluid" width="60" height="60" src="@match.Team2?.LogoUrl">
                                              }
                                              @match.Team2?.Name
                                          </p>
