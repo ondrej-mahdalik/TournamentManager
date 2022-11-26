@@ -75,10 +75,17 @@ public class UserController : AuthorizedControllerBase
         var user = await _userFacade.GetAsync(id);
         if (user is null)
             return NoContent();
-
+        
         var loggedUser = await GetLoggedUser();
         if (loggedUser is null || !loggedUser.IsAdministrator && loggedUser.Id != user.Id)
             return Forbid();
+        
+        if (user.ApplicationUserId is not null)
+        {
+            var applicationUser = await _userManager.FindByIdAsync(user.ApplicationUserId);
+            if (applicationUser != null)
+                await _userManager.DeleteAsync(applicationUser);
+        }
 
         await _userFacade.DeleteAsync(user);
         return Ok();
