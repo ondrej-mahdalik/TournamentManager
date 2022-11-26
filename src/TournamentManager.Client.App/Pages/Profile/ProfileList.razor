@@ -1,7 +1,5 @@
 @page "/Profile/List"
 @using Microsoft.AspNetCore.Components
-@using TournamentManager.Client.App.Extensions
-@using TournamentManager.Common.Models
 @inject PublicHttpClient PublicHttp
 
 <div id="content">
@@ -124,6 +122,9 @@
 
 @code
 {
+    [CascadingParameter]
+    public IModalService Modal { get; set; } = default!;
+    
     private string _search = "";
     private int _showCount = 10;
     private int _selectedPageIndex;
