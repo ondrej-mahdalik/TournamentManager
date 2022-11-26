@@ -1,7 +1,7 @@
 ﻿@page "/Team/List"
 @using TournamentManager.Common.Models
-@using Microsoft.AspNetCore.Authorization
-@inject HttpClient Http
+@using TournamentManager.Client.App.Extensions
+@inject PublicHttpClient PublicHttp
 
 <PageTitle>Teams List</PageTitle>
 
@@ -11,7 +11,7 @@
             <div class="col d-xl-flex d-flex align-items-center">
                 <h3 class="text-dark d-xl-flex">Teams</h3>
             </div>
-            <div class="col col-auto d-flex align-items-center"><a class="btn btn-primary" href="/Team/Create">Create New Team</a></div>
+            <div class="col col-auto d-flex align-items-center"><a class="btn btn-primary" href="create.html">Create New Team</a></div>
         </div>
         <div class="card shadow">
             <div class="card-body shadow">
@@ -150,13 +150,12 @@
     }).GroupBy(x => x.Index / _showCount)
         .Select(x => x.Select(v => v.Value).ToList())
         .ToList();
-
+    
     protected override async Task OnInitializedAsync()
     {
-        _teams = await Http.GetFromJsonAsync<List<TeamModel>>("api/Team") ?? new List<TeamModel>();
-        _teams = _teams.OrderBy(x => x.Name).ToList();
+        _teams = await PublicHttp.Client.GetFromJsonAsync<List<TeamModel>>("api/Team") ?? new List<TeamModel>();
         foreach (var team in _teams)
-            team.Leader = await Http.GetFromJsonAsync<UserModel>($"api/User/{team.LeaderId}"); // Only users loaded directly from UserController have First and Last name (API limitation)
+            team.Leader = await PublicHttp.Client.GetFromJsonAsync<UserModel>($"api/User/{team.LeaderId}"); // Only users loaded directly from UserController have First and Last name (API limitation)
     }
 
     private void OnSearchQueryChanged(ChangeEventArgs e)
