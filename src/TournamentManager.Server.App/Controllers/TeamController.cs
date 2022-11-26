@@ -35,6 +35,13 @@ public class TeamController : AuthorizedControllerBase
 
         return Ok(team);
     }
+    
+    [HttpGet("ByUser/{id:guid}")]
+    public async Task<ActionResult<List<TeamModel>>> GetByUser(Guid id)
+    {
+        var teams = await _teamFacade.GetByUserAsync(id);
+        return Ok(teams);
+    }
 
     [Authorize]
     [HttpPut]

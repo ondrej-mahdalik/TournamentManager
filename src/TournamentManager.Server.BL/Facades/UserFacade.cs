@@ -27,6 +27,17 @@ public class UserFacade : CRUDFacade<UserEntity, UserModel>
         return await GetAsync(userEntity.Id);
     }
 
+    public override async Task<UserModel?> GetAsync(Guid id)
+    {
+        await using var uow = UnitOfWorkFactory.Create();
+        var query = uow.GetRepository<UserEntity>()
+            .Get()
+            .Include(x => x.TeamsAsLeader)
+            .Where(x => x.Id == id);
+
+        return await Mapper.ProjectTo<UserModel>(query).SingleOrDefaultAsync().ConfigureAwait(false);
+    }
+
     public async Task<string?> GetApplicationUserId(Guid id)
     {
         await using var uow = UnitOfWorkFactory.Create();
