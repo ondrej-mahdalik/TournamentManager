@@ -1,7 +1,6 @@
 ﻿@page "/Tournament/Detail/{Id}"
-@using TournamentManager.Common.Models
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
-@using TournamentManager.Client.App.Extensions
+@using TournamentManager.Client.App.Shared.ModalComponents
 @inject HttpClient Http
 @inject PublicHttpClient PublicHttp
 @inject AuthenticationStateProvider AuthenticationStateProvider
@@ -29,7 +28,14 @@
                 <div class="col col-auto"><a href="/Tournament/list"><button class="btn btn-light" type="button">Back to All Tournaments</button></a></div>
                 @if (_tournament.Participatings.Count < _tournament.MaxAttendees)
                 {
-                    <div class="col col-auto"><a href="#"><button class="btn btn-primary" type="button">Participate</button></a></div>
+                    <AuthorizeView>
+                        <Authorized>
+                            <div class="col col-auto"><a class="btn btn-primary" @onclick="ParticipateAsync">Participate</a></div>
+                        </Authorized>
+                        <NotAuthorized>
+                            <div class="col col-auto"><a class="btn btn-primary" href="authentication/login">Participate</a></div>
+                        </NotAuthorized>
+                    </AuthorizeView>
                 }
                 @if (_loggedUser?.Id == _tournament.CreatorId)
                 {
@@ -140,6 +146,9 @@
 @code {
     [Parameter]
     public string? Id { get; set; }
+    
+    [CascadingParameter]
+    IModalService Modal { get; set; } = default!;
 
     private TournamentModel? _tournament;
     private UserModel? _loggedUser;
@@ -168,5 +177,20 @@
 
         _numberOfParticipants = _tournament?.Participatings.Count(x => x.Approved) ?? 0;
         _matches = _tournament?.Matches.OrderBy(x => x.Round).ThenBy(x => x.Order).ToList() ?? new List<MatchModel>();
+    }
+    
+    private async Task ParticipateAsync()
+    {
+        if (_loggedUser is null)
+            return;
+
+        var parameters = new ModalParameters()
+            .Add(nameof(ParticipateAsTeam.CurrentUser), _loggedUser);
+        
+        var result = await Modal.Show<ParticipateAsTeam>("Choose Team", parameters).Result;
+        if (result.Confirmed)
+        {
+            var team = result.Data as TeamModel;
+        }
     }
 }
