@@ -42,8 +42,8 @@ public class TournamentModel : ModelBase, IValidatableObject
     public Guid? CreatorId { get; set; }
     public UserModel? Creator { get; set; }
     
-    public Guid? WinnerTeamOverrideId { get; set; }
-    public TeamModel? WinnerTeamOverride { get; set; }
+    public Guid? WinnerTeamId { get; set; }
+    public TeamModel? WinnerTeam { get; set; }
     
     public Guid? SportId { get; set; }
     public SportModel? Sport { get; set; }
