@@ -20,6 +20,13 @@ public static class UserSeeds
     {
         Id = Guid.Parse("817A00B4-6A3A-427E-B569-1C72342483A3")
     };
+
+    public static readonly UserEntity RexWalsh = new(
+        DateTime.Parse("12.12.2021 15:21"),
+        ApplicationUserSeeds.RexWalsh.Id)
+    {
+        Id = Guid.Parse("70969DD5-5074-461F-8540-3F7F75E7F79F")
+    };
     
     // TODO User seeds
 
@@ -27,5 +34,6 @@ public static class UserSeeds
     {
         dbContext.Users.Add(JohnDoe);
         dbContext.Users.Add(Admin);
+        dbContext.Users.Add(RexWalsh);
     }
 }
