@@ -1,0 +1,93 @@
+﻿@using TournamentManager.Common.Enums
+@inject HttpClient Http
+
+@if (_error)
+{
+    <MessageBox Title="Error" Message="@_errorMessage" MessageType="MessageType.Error" ShowCloseButton="true" />
+}
+else
+{
+    <EditForm Model="@Match" OnValidSubmit="HandleValidSubmitAsync">
+        <DataAnnotationsValidator/>
+        <ValidationSummary/>
+        <div class="row">
+            <div class="col mb-2">
+                <label class="form-label" for="team1select">Team 1</label>
+                <InputSelect class="form-control" id="team1select" TValue="Guid?" @bind-Value="Match.Team1Id">
+                    @foreach (var team in _participants)
+                    {
+                        <option value="@team!.Id">@team.Name</option>
+                    }
+                    <option value=""><i>None</i></option>
+                </InputSelect>
+            </div>
+            <div class="col mb-2">
+                <label class="form-label" for="team1score">Team 1 Score</label>
+                <InputNumber id="team1score" class="form-control" TValue="int" @bind-Value="Match.Score1"/>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col mb-2">
+                <label class="form-label" for="team2select">Team 2</label>
+                <InputSelect TValue="Guid?" id="team2select" class="form-control" @bind-Value="Match.Team2Id">
+                    @foreach (var team in _participants)
+                    {
+                        <option value="@team!.Id">@team.Name</option>
+                    }
+                    <option value=""><i>None</i></option>
+                </InputSelect>
+            </div>
+            <div class="col mb-2">
+                <label class="form-label" for="team2score">Team 2 Score</label>
+                <InputNumber id="team2score" class="form-control" TValue="int" @bind-Value="Match.Score2"/>
+            </div>
+        </div>
+        <div class="d-xl-flex justify-content-xl-end">
+            <button class="btn btn-secondary" type="reset" @onclick="CancelAsync">Cancel</button>
+            <button class="btn btn-primary" type="submit">Save Changes</button>
+        </div>
+    </EditForm>
+}
+
+@code {
+    [CascadingParameter]
+    BlazoredModalInstance BlazoredModal { get; set; } = default!;
+    
+    [Parameter]
+    public MatchModel Match { get; set; } = default!;
+
+    private List<TeamModel?> _participants = new();
+    
+    private bool _error;
+    private string? _errorMessage;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var participatings = await Http.GetFromJsonAsync<List<TeamIsParticipatingModel>>($"api/TeamIsParticipating/ByTournament/{Match.TournamentId}");
+        if (participatings is null)
+        {
+            _errorMessage = "Failed to load teams";
+            _error = true;
+            return;
+        }
+
+        _participants = participatings.Select(x => x.Team).Where(x => x is not null).ToList();
+        _participants.RemoveAll(x => x == null);
+    }
+
+    private async Task HandleValidSubmitAsync()
+    {
+        var response = await Http.PutAsJsonAsync("api/Match", Match);
+        if (!response.IsSuccessStatusCode)
+        {
+            _errorMessage = "An error occurred while saving the match";
+            _error = true;
+        }
+        else
+        {
+            await BlazoredModal.CloseAsync(ModalResult.Ok());
+        }
+    }
+
+    private async Task CancelAsync() => await BlazoredModal.CloseAsync(ModalResult.Cancel());
+}

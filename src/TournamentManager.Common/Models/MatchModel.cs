@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace TournamentManager.Common.Models;
 
-public class MatchModel : ModelBase
+public class MatchModel : ModelBase, IValidatableObject
 {
     public MatchModel(Guid tournamentId,
         int score1,
@@ -30,4 +30,11 @@ public class MatchModel : ModelBase
     
     public Guid? Team2Id { get; set; }
     public TeamModel? Team2 { get; set; }
+    public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+    {
+        if (Team1Id == Team2Id)
+        {
+            yield return new ValidationResult("Teams cannot be the same", new[] { nameof(Team1Id), nameof(Team2Id) });
+        }
+    }
 }
