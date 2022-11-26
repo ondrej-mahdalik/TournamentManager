@@ -1,19 +1,28 @@
-﻿@inject HttpClient Http
+﻿@using TournamentManager.Common.Enums
+@inject HttpClient Http
 
-<p>Select team to participate as</p>
-// TODO Display error message if no teams are available
 @if (_teams is not null)
 {
-    <InputSelect TValue="Guid?" @bind-Value="_selectedTeamId">
-        @foreach (var team in _teams)
-        {
-            <option value="@team.Id">@team.Name</option>
-        }
-    </InputSelect>
+    <div class="row mb-2">
+        <div class="col">
+            @if (!_resultOk)
+            {
+                <MessageBox MessageType="MessageType.Error" Title="Error" Message="Select a team first" ShowCloseButton="false"></MessageBox>
+            }
+            <div class="mb-2"><label class="form-label" for="team">Select a team</label>
+                <select @bind="_selectedTeamId" class="form-select" id="team" name="team">
+                    @foreach (var team in _teams)
+                    {
+                        <option value="@team.Id">@team.Name</option>
+                    }
+                </select>
+            </div>
+        </div>
+    </div>
 }
-<div class="d-inline-flex">
-    <button class="btn btn-secondary" @onclick="CancelAsync">Cancel</button>
-    <button class="btn btn-primary" @onclick="ParticipateAsync">Participate</button>
+<div class="d-flex justify-content-end">
+    <button class="btn btn-danger text-end d-flex me-1" @onclick="CancelAsync">Cancel</button>
+    <button class="btn btn-primary text-end d-flex" @onclick="ParticipateAsync">Participate</button>
 </div>
 
 @code {
@@ -24,6 +33,7 @@
     public UserModel CurrentUser { get; set; } = default!;
 
     private List<TeamModel>? _teams;
+    private bool _resultOk = true;
     
     private Guid? _selectedTeamId;
 
@@ -34,7 +44,16 @@
 
     private async Task ParticipateAsync()
     {
-        await BlazoredModal.CloseAsync(ModalResult.Ok(_teams?.FirstOrDefault(x => x.Id == _selectedTeamId)));
+        if (_selectedTeamId is null)
+        {
+            _resultOk = false;
+        }
+        else
+        {
+            _resultOk = true;
+            var team = _teams?.FirstOrDefault(x => x.Id == _selectedTeamId);
+            await BlazoredModal.CloseAsync(ModalResult.Ok(team));
+        }
     }
     
     private async Task CancelAsync()

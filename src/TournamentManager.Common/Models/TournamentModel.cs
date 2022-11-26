@@ -9,6 +9,7 @@ public class TournamentModel : ModelBase, IValidatableObject
         bool isPublic,
         bool isApproved,
         bool inProgress,
+        bool isIndividual,
         int maxAttendees,
         string? description = null)
     {
@@ -17,6 +18,7 @@ public class TournamentModel : ModelBase, IValidatableObject
         IsPublic = isPublic;
         IsApproved = isApproved;
         InProgress = inProgress;
+        IsIndividual = isIndividual;
         MaxAttendees = maxAttendees;
         Description = description;
     }
@@ -31,9 +33,10 @@ public class TournamentModel : ModelBase, IValidatableObject
     [Required]
     public bool IsPublic { get; set; }
     public bool IsApproved { get; set; }
+    public bool IsIndividual { get; set; }
     public bool InProgress { get; set; }
     
-    [Range(1, 1000, ErrorMessage = "The number of attendees has to be between 1 and 1000")]
+    [Range(2, 1000, ErrorMessage = "The number of attendees has to be between 2 and 1000")]
     public int MaxAttendees { get; set; }
     
     [MaxLength(500)]
@@ -51,7 +54,7 @@ public class TournamentModel : ModelBase, IValidatableObject
     public IList<TeamIsParticipatingModel> Participatings { get; set; } = new List<TeamIsParticipatingModel>();
     public IList<MatchModel> Matches { get; set; } = new List<MatchModel>();
     
-    public static TournamentModel Empty => new(string.Empty, DateTime.Now, false, false, false, 1);
+    public static TournamentModel Empty => new(string.Empty, DateTime.Now, false, false, false, false, 2);
     public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
     {
         if (Date < DateTime.Today)

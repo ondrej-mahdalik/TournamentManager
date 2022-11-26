@@ -6,40 +6,40 @@ namespace TournamentManager.Server.Seeds.MainSeeds;
 public static class TeamSeeds
 {
     public static readonly TeamEntity JohnsTeam = new(
-            "John's team", "https://i.ytimg.com/vi/QQNL83fhWJU/maxresdefault.jpg")
+            "John's team", "https://i.ytimg.com/vi/QQNL83fhWJU/maxresdefault.jpg", false)
     {
         Id = Guid.Parse("B7327A1C-DECE-4251-9467-F6A87D74E349"),
         LeaderId = UserSeeds.JohnDoe.Id,
     };
 
     public static readonly TeamEntity Team1 = new(
-        "UTI", null)
+        "UTI", null, false)
     {
         Id = Guid.Parse("6C26A9A3-2A53-47F1-8AA9-87846AD2C3B6"),
         LeaderId = UserSeeds.Admin.Id
     };
 
     public static readonly TeamEntity Team2 = new(
-        "TTTT", null)
+        "TTTT", null, false)
     {
         Id = Guid.Parse("6B26A9A4-2A57-47F1-8AA9-87846AD2C3B6"),
         LeaderId = UserSeeds.Admin.Id
     };
 
     public static readonly TeamEntity Team3 = new(
-        "Team3", null)
+        "Team3", null, false)
     {
         Id = Guid.Parse("5526B9A5-2A53-47F1-8BB9-87846AD2C366"),
         LeaderId = UserSeeds.Admin.Id
     };
     public static readonly TeamEntity Team4 = new(
-        "Team4", null)
+        "Team4", null, false)
     {
         Id = Guid.Parse("5526A9A5-2A53-47F1-8BD9-87846AD2C366"),
         LeaderId = UserSeeds.Admin.Id
     };
     public static readonly TeamEntity Team5 = new(
-        "Team5", null)
+        "Team5", null, false)
     {
         Id = Guid.Parse("5526A9A5-2A53-47F1-8DD9-87846AD2C366"),
         LeaderId = UserSeeds.Admin.Id

@@ -46,12 +46,12 @@
                                 </InputSelect>
                             </div>
                             <div class="mb-2"><label class="form-label" for="signup-type">Play mode</label>
-                                <select id="signup-type" name="signup-type" class="form-select">
-                                    <option value="12" selected>Individual</option>
-                                    <option value="13">Teams</option>
+                                <select id="signup-type" name="signup-type" class="form-select" @bind="_tournamentMode">
+                                    <option value="Individual">Individual</option>
+                                    <option value="Teams">Teams</option>
                                 </select>
                             </div>
-                            <div class="mb-2"><label class="form-label" for="max-players">Maximum number of players</label><InputNumber TValue="int" id="max-players" name="max-players" @bind-Value="_model.MaxAttendees" class="form-control" min="1" type="number" style="width: 30%;"></InputNumber></div>
+                            <div class="mb-2"><label class="form-label" for="max-players">Maximum number of players</label><InputNumber TValue="int" id="max-players" name="max-players" @bind-Value="_model.MaxAttendees" class="form-control" min="2" type="number" style="width: 30%;"></InputNumber></div>
                             <div class="mb-2">
                                 <div class="form-check form-switch"><label class="form-check-label" for="formCheck-1">Public</label><InputCheckbox class="form-check-input" type="checkbox" id="formCheck-1" @bind-Value="_model.IsPublic"></InputCheckbox></div>
                             </div>
@@ -69,10 +69,12 @@
     private List<SportModel> _sports = new();
     private TournamentModel _model = TournamentModel.Empty;
     private bool _sendOk = true;
+    private string _tournamentMode = "Individual";
 
     private async Task HandleValidSubmit()
     {
         _model.CreatorId = (await Http.GetFromJsonAsync<UserModel>("api/User/current"))?.Id;
+        _model.IsIndividual = _tournamentMode == "Individual" ? true : false;
         var result = await Http.PutAsJsonAsync("api/Tournament", _model);
         if (!result.IsSuccessStatusCode)
         {

@@ -54,7 +54,6 @@
              </div>
          </div>
      }
-     
      <div class="row w-75">
          <div class="col">
              <div class="card shadow mb-4">
@@ -134,8 +133,11 @@
                              <table class="table my-0" id="dataTable">
                                  <thead>
                                  <tr>
-                                     <th>Team Name</th>
-                                     <th>Team Leader</th>
+                                     <th>@(_tournament != null && _tournament.IsIndividual ? "Player Name" : "Team Name")</th>
+                                     @if (_tournament != null && !_tournament.IsIndividual)
+                                     {
+                                        <th>Team Leader</th>
+                                     }
                                      <th>Date Registered</th>
                                      <th>Actions</th>
                                  </tr>
@@ -146,9 +148,12 @@
                                      var leader = _teamLeaders?.Where(x => x.Id == participant.Team?.LeaderId).ToList()[0];
                                      <tr>
                                          <td>@participant.Team?.Name</td>
-                                         <td>@leader?.FirstName @leader?.LastName</td>
+                                         @if (_tournament != null && !_tournament.IsIndividual)
+                                         {
+                                             <td>@leader?.FirstName @leader?.LastName</td>
+                                         }
                                          <td>@participant.CreatedOn.ToString("dd. MM. yyyy")</td>
-                                         <td class="text-center"><i @onclick="() => ApproveParticipant(participant)" class="fas fa-user-check me-1" data-bs-toggle="tooltip" data-bss-tooltip="" data-bs-placement="right" title="Approve participant"></i><i @onclick="() => DeleteParticipant(participant)" class="fas fa-user-times" data-bs-toggle="tooltip" data-bss-tooltip="" data-bs-placement="right" title="Reject participant"></i></td>
+                                         <td class="@(_tournament != null && _tournament.IsIndividual ? "" : "text-center")"><i @onclick="() => ApproveParticipant(participant)" class="fas fa-user-check me-1" data-bs-toggle="tooltip" data-bss-tooltip="" data-bs-placement="right" title="Approve participant"></i><i @onclick="() => DeleteParticipant(participant)" class="fas fa-user-times" data-bs-toggle="tooltip" data-bss-tooltip="" data-bs-placement="right" title="Reject participant"></i></td>
                                      </tr>
                                  }
                                  </tbody>
@@ -236,8 +241,11 @@
                              <table class="table my-0" id="dataTable">
                                  <thead>
                                  <tr>
-                                     <th>Team Name</th>
-                                     <th>Team Leader</th>
+                                     <th>@(_tournament != null && _tournament.IsIndividual ? "Player Name" : "Team Name")</th>
+                                      @if (_tournament != null && !_tournament.IsIndividual)
+                                      {
+                                         <th>Team Leader</th>
+                                      }
                                      <th>Date Registered</th>
                                      @if (_tournament is not null && !_tournament.InProgress)
                                      {
@@ -251,9 +259,12 @@
                                      var leader = _teamLeaders?.Where(x => x.Id == participant.Team?.LeaderId).ToList()[0];
                                      <tr>
                                          <td>@participant.Team?.Name</td>
-                                         <td>@leader?.FirstName @leader?.LastName</td>
+                                         @if (_tournament != null && !_tournament.IsIndividual)
+                                          {
+                                              <td>@leader?.FirstName @leader?.LastName</td>
+                                          }
                                          <td>@participant.CreatedOn.ToString("dd. MM. yyyy")</td>
-                                         <td class="text-center">
+                                         <td class=@(_tournament != null && _tournament.IsIndividual ? "" : "text-center")>
                                              @if (_tournament is not null && !_tournament.InProgress)
                                              {
                                                  <i @onclick="() => DeleteParticipant(participant)" class="fas fa-user-times" data-bs-toggle="tooltip" data-bss-tooltip="" data-bs-placement="right" title="Reject participant"></i>
@@ -333,11 +344,8 @@
                          <div class="card mb-4 shadow">
                              <div class="card-body">
                                  <div class="row">
-                                     <div class="col">
+                                     <div class="col-6">
                                          <h6 class="text-primary">Round @match.Round</h6>
-                                     </div>
-                                     <div class="col">
-                                         <p>Zatím @_tournament?.Date.ToString("dd. MM. yyyy")<br></p>
                                      </div>
                                  </div>
                                  <div class="row">
