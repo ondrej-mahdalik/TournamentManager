@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace TournamentManager.Common.Models;
 
@@ -10,6 +11,9 @@ public class TeamModel : ModelBase
         this.Name = name;
         this.LogoUrl = logoUrl;
     }
+    [Required]
+    [MinLength(2)]
+    [MaxLength(100)]
     public string Name { get; set; }
     public string? LogoUrl { get; set; }
     

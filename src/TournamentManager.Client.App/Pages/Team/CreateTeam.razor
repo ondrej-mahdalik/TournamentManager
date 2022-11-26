@@ -22,8 +22,10 @@
                     <div class="card-body">
                         <div class="row">
                             <div class="col">
-                                <form class="d-xl-flex flex-column justify-content-center w-100" method="post">
-                                    <div class="mb-2"><label class="form-label w-100" for="Name">Name<input class="form-control" type="text" @bind-value="_teamName" name="Name" /></label></div>
+                                <EditForm Model="@_team" OnValidSubmit="@HandleValidSubmit">
+                                    <DataAnnotationsValidator/>
+                                    <ValidationSummary/>
+                                    <div class="mb-2"><label class="form-label w-100" for="Name">Name<InputText class="form-control" type="text" @bind-Value="_team.Name" name="Name" /></label></div>
                                     <div class="mb-2"><label class="form-label w-100" for="Logo">Logo</label>
                                         @if (_logoUrl is null)
                                         {
@@ -34,9 +36,9 @@
                                             <img width="100" style="transform: scale(1);padding-bottom: 0px;margin-bottom: 12px;" src="@_logoUrl" name="Logo" />
                                         }
                                     </div>
-                                    <div class="mb-2"> <input type="url" placeholder="logo url" @onchange="OnLogoUrlChanged"/> </div>
-                                    <div class="d-xxl-flex justify-content-xxl-center"><button class="btn btn-primary" @onclick="HandleSubmit" type="button">Create</button></div>
-                                </form>
+                                    <div class="mb-2"> <InputText type="url" @bind-Value="_team.LogoUrl" /> </div>
+                                    <div class="d-xxl-flex justify-content-xxl-center"><button class="btn btn-primary" type="submit">Create</button></div>
+                                </EditForm>
                             </div>
                         </div>
                     </div>
@@ -72,14 +74,8 @@
         }
     }
 
-    private async void HandleSubmit()
+    private async void HandleValidSubmit()
     {
-        if (_teamName is null || _teamName == string.Empty)
-        {
-            await JsRuntime.InvokeVoidAsync("alert", "Name is required."); // Alert
-            return;
-        }
-
         try
         {
             _currentUser = await Http.GetFromJsonAsync<UserModel>("api/User/current");
@@ -89,17 +85,15 @@
             exception.Redirect();
         }
 
-        if(_currentUser is null)
+        if (_currentUser is null)
         {
             NavigationManager.NavigateToLogin("/authentication/login");
             return;
         }
-
-        _team.Name = _teamName;
-        _team.LogoUrl = _logoUrl;
         _team.LeaderId = _currentUser.Id;
         var response = await Http.PutAsJsonAsync<TeamModel>("/api/Team", _team);
         //TODO : handle response
         NavigationManager.NavigateTo($"/Team/Detail/{_team.Id}");
+        
     }
 }

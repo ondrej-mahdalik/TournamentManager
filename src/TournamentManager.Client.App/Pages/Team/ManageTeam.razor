@@ -41,10 +41,14 @@ else
                         <form>
                             <div class="row">
                                 <div class="col">
-                                    <div><label class="form-label w-100">Team Name<input class="form-control" type="text" @bind="_newName" /></label></div>
-                                    <div><label class="form-label w-100">Team Logo<input class="form-control" type="url" value="@(_newLogoUrl is not null ? _newLogoUrl : string.Empty)" @onchange="OnLogoUrlChanged" /></label></div>
-                                    <div class="text-end"><button class="btn btn-primary" type="button" style="margin-left: 10px;" @onclick="SaveChanges">Save Changes</button></div>
-                                </div>
+                                    <EditForm Model="@_team" OnValidSubmit="@HandleValidSubmit">
+                                        <DataAnnotationsValidator/>
+                                        <ValidationSummary/>
+                                        <div><label class="form-label w-100">Team Name<InputText class="form-control" type="text" @bind-Value="_team.Name" id="name" name="name" /></label></div>
+                                        <div><label class="form-label w-100">Team Logo (optional)<InputText class="form-control" type="url" @bind-Value="_team.LogoUrl" id="logourl" /></label></div>
+                                        <div class="text-end"><button class="btn btn-primary" type="submit" style="margin-left: 10px;">Save Changes</button></div>
+                                    </EditForm>
+                                 </div>
                             </div>
                         </form>
                     </div>
@@ -337,13 +341,11 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-
-        // TODO : Check if current user is Leader or admin
-
         _members = new List<UserModel>();
         _requestedMembers = new List<UserModel>();
         try
         {
+            _currentUser = await Http.GetFromJsonAsync<UserModel>($"api/User/current");
             _team = await Http.GetFromJsonAsync<TeamModel>($"/api/Team/{Id}");
             if (_team is not null)
             {
@@ -371,52 +373,24 @@ else
                 _newLogoUrl = _team.LogoUrl;
 
             }
-            _currentUser = await Http.GetFromJsonAsync<UserModel>($"api/User/current");
         }
         catch (AccessTokenNotAvailableException exception)
         {
             exception.Redirect();
         }
-    }
 
-    private void OnLogoUrlChanged(ChangeEventArgs e)
-    {
-        string[] allowedFormats = { "jpg", "jpeg", "gif", "png", "apng", "svg", "bmp" };
-        if (e is not null && e.Value is not null)
+        if(_currentUser?.IsAdministrator != true && _currentUser?.Id != _team?.LeaderId)
         {
-            string value = (string)e.Value;
-            string format = value.Split('.').Last();
-            if (allowedFormats.Contains(format))
-            {
-                _newLogoUrl = (string)e.Value;
-            }
-            else
-            {
-                _newLogoUrl = null;
-            }
+            NavigationManager.NavigateTo($"/Team/Detail/{_team?.Id}");
         }
     }
 
-    private async void SaveChanges()
+    private async void HandleValidSubmit()
     {
-        if (_team is null)
-        {
-            await OnInitializedAsync();
-        }
-        else if (_newName is null || _newName == string.Empty)
-        {
-            await JsRuntime.InvokeVoidAsync("alert", "Name is required."); // Alert
-        }
-        else
-        {
-            _team.Name = _newName;
-            _team.LogoUrl = _newLogoUrl;
-            var response = await Http.PutAsJsonAsync<TeamModel>("/api/Team", _team);
-            //TODO : handle response
-            await OnInitializedAsync();
-        }
-
-
+        if (_team is null) return;
+        var response = await Http.PutAsJsonAsync<TeamModel>("/api/Team", _team);
+        //TODO : handle response
+        NavigationManager.NavigateTo($"/Team/Detail/{_team?.Id}");
     }
 
     private int _membersShowCount = 10;
