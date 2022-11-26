@@ -2,6 +2,8 @@
 @using TournamentManager.Common.Models
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@using TournamentManager.Client.App.Shared.ModalComponents
+
 @attribute [Authorize]
 @inject HttpClient Http
 @inject NavigationManager NavigationManager;
@@ -19,6 +21,11 @@ else if(_currentUser.Id != _team.LeaderId && !_currentUser.IsAdministrator)
 }
 else
 {
+    @if (_showError)
+    {
+        <MessageBox MessageType="Common.Enums.MessageType.Error" Title="Error" Message="_errorMessage" ShowCloseButton="true"/>
+    }
+
     <div class="container-fluid">
         <div class="row mb-3">
             <div class="col d-flex align-items-center">
@@ -331,12 +338,17 @@ else
 @code {
     [Parameter]
     public string? Id { get; set; }
+    [CascadingParameter]
+    IModalService Modal { get; set; } = default!;
     TeamModel? _team;
     private List<UserModel>? _members;
     private List<UserModel>? _requestedMembers;
     private UserModel? _currentUser;
     private string? _newName;
     private string? _newLogoUrl;
+
+    private bool _showError = false;
+    private string _errorMessage = "";
 
 
     protected override async Task OnInitializedAsync()
@@ -389,7 +401,11 @@ else
     {
         if (_team is null) return;
         var response = await Http.PutAsJsonAsync<TeamModel>("/api/Team", _team);
-        //TODO : handle response
+        if (!response.IsSuccessStatusCode)
+        {
+            _showError = true;
+            _errorMessage = "Could not save changes";
+        }
         NavigationManager.NavigateTo($"/Team/Detail/{_team?.Id}");
     }
 
@@ -437,7 +453,13 @@ else
             return; 
         }
 
-        bool isConfirmed = await JsRuntime.InvokeAsync<bool>("confirm", $"Do you want remove {member.FirstName} {member.LastName} from this team?\nThis operation is permament!");
+        //bool isConfirmed = await JsRuntime.InvokeAsync<bool>("confirm", $"Do you want remove {member.FirstName} {member.LastName} from this team?\nThis operation is permament!");
+        bool isConfirmed = false;
+
+        var result = await Modal.Show<AdminUserDeletion>($"Do you really want to remove {member.FirstName} {member.LastName} from {_team?.Name}? \n This operation is permanent !").Result;
+        if (result.Cancelled)
+            return;
+
         UserIsInTeamModel? membership = _team?.Members.Where(m => m.UserId == member.Id).FirstOrDefault();
         if(membership is null)
         {
@@ -496,7 +518,8 @@ else
         UserIsInTeamModel? membership = _team?.Members.Where(m => m.UserId == requestedMember.Id).FirstOrDefault();
         if (membership is null)
         {
-            await JsRuntime.InvokeVoidAsync("alert", "Membership is null."); // Alert
+            _showError = true;
+            _errorMessage = "Membership is null";
             return;
         }
         membership.IsApproved = true;
