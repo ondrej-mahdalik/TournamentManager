@@ -41,7 +41,7 @@ public static class TeamIsParticipatingSeeds
         TournamentId = TournamentSeeds.Tournament1.Id,
         TeamId = TeamSeeds.Team5.Id
     };
-    public static readonly TeamIsParticipatingEntity JohsInNYTournament = new(false,
+    public static readonly TeamIsParticipatingEntity JohsInNYTournament = new(true,
         DateTime.Parse("25 October 2022 15:40"))
     {
         TournamentId = TournamentSeeds.NY2024.Id,
