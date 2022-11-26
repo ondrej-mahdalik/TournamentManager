@@ -413,7 +413,7 @@
             return;
         }
 
-        var response = await PublicHttp.Client.PutAsJsonAsync($"/api/UserIsInTeam", new UserIsInTeamModel(_currentUser.Id, _team.Id));
+        var response = await Http.PutAsJsonAsync($"/api/UserIsInTeam", new UserIsInTeamModel(_currentUser.Id, _team.Id));
         // TODO handle response
 
         _team = await PublicHttp.Client.GetFromJsonAsync<TeamModel>($"/api/Team/{Id}");
@@ -424,9 +424,9 @@
         if (_team is null || _currentUser is null)
             return;
 
-        var response = await PublicHttp.Client.DeleteAsync($"/api/UserIsInTeam/{_team.Members.First(x => x.UserId == _currentUser.Id).Id}");
+        var response = await Http.DeleteAsync($"/api/UserIsInTeam/{_team.Members.First(x => x.UserId == _currentUser.Id).Id}");
         // TODO handle response
-
+        
         _team = await PublicHttp.Client.GetFromJsonAsync<TeamModel>($"/api/Team/{Id}");
     }
 
