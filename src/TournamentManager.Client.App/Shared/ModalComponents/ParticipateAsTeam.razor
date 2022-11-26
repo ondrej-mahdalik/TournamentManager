@@ -1,7 +1,7 @@
 ﻿@using TournamentManager.Common.Enums
 @inject HttpClient Http
 
-@if (_teams is not null)
+@if (_teams is not null && _teams.Count > 0)
 {
     <div class="row mb-2">
         <div class="col">
@@ -20,9 +20,16 @@
         </div>
     </div>
 }
+else
+{
+    <MessageBox MessageType="MessageType.Warning" Title="Warning" Message="You are not leading any teams" ShowCloseButton="true"></MessageBox>
+}
 <div class="d-flex justify-content-end">
     <button class="btn btn-danger text-end d-flex me-1" @onclick="CancelAsync">Cancel</button>
-    <button class="btn btn-primary text-end d-flex" @onclick="ParticipateAsync">Participate</button>
+    @if (_teams is not null && _teams.Count != 0)
+    {
+        <button class="btn btn-primary text-end d-flex" @onclick="ParticipateAsync">Participate</button>
+    }
 </div>
 
 @code {
