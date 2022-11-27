@@ -5,6 +5,7 @@ using Newtonsoft.Json;
 using TournamentManager.Server.BL.Facades;
 using TournamentManager.Common.Models;
 using TournamentManager.Server.Auth.Models;
+using static System.Net.WebRequestMethods;
 
 namespace TournamentManager.Server.App.Controllers;
 
@@ -13,12 +14,18 @@ namespace TournamentManager.Server.App.Controllers;
 public class TournamentController : AuthorizedControllerBase
 {
     private readonly TournamentFacade _tournamentFacade;
-    
+    private readonly UserIsInTeamFacade _userIsInTeamFacade;
+    private readonly TeamIsParticipatingFacade _teamIsParticipatingFacade;
+
     public TournamentController(TournamentFacade tournamentFacade,
         UserFacade userFacade,
-        UserManager<ApplicationUser> userManager) : base(userFacade, userManager)
+        UserManager<ApplicationUser> userManager,
+        UserIsInTeamFacade userIsInTeamFacade,
+        TeamIsParticipatingFacade teamIsParticipatingFacade) : base(userFacade, userManager)
     {
         _tournamentFacade = tournamentFacade;
+        _userIsInTeamFacade = userIsInTeamFacade;
+        _teamIsParticipatingFacade = teamIsParticipatingFacade;
     }
     
     [HttpGet]
@@ -27,7 +34,15 @@ public class TournamentController : AuthorizedControllerBase
         var tournaments = await _tournamentFacade.GetAsync();
         
         var user = await GetLoggedUser();
-        return Ok(user?.IsAdministrator ?? false ? tournaments : tournaments.Where(x => x.IsPublic || x.CreatorId == user?.Id));
+        var _teamMembershipsEnumerable = await _userIsInTeamFacade.GetAsync();
+        List<UserIsInTeamModel>? _teamMemberships = _teamMembershipsEnumerable.ToList();
+        List<Guid> _currentUserTeamIds = _teamMemberships?.Where(m => m.UserId == user?.Id).Select(m => m.TeamId).ToList() ?? new();
+        var _participatingsEnumerable = await _teamIsParticipatingFacade.GetAsync();
+        List<TeamIsParticipatingModel> _participatings = _participatingsEnumerable.ToList();
+
+        return Ok(user?.IsAdministrator ?? false ? tournaments : tournaments.Where(x => x.IsPublic || x.CreatorId == user?.Id ||
+        _participatings.Any(p => p.TournamentId == x.Id && _currentUserTeamIds.Contains(p.TeamId)) ));
+
     }
 
     [HttpGet("{id:guid}")]
