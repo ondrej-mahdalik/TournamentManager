@@ -490,15 +490,7 @@
     protected override async Task OnInitializedAsync()
     {
 
-        _tournaments = await PublicHttp.Client.GetFromJsonAsync<List<TournamentModel>>("api/Tournament") ?? new List<TournamentModel>();
-        // _tournamentsPublic = _tournamentsPublic.Where(x => x.IsPublic).ToList(); // Should not be needed, should be handled by controller
-        _participants = await PublicHttp.Client.GetFromJsonAsync<List<TeamIsParticipatingModel>>("/api/TeamIsParticipating") ?? new();
 
-        _tournamentsUpcoming = _tournaments.Where(x => x.Date >= DateTime.Now).ToList();
-        foreach (var tournament in _tournamentsUpcoming)
-        {
-            _numberOfParticipantsUpcoming.Add(tournament.Id, _participants.Count(x => x.TournamentId == tournament.Id && x.Approved));
-        }
 
         try
         {
@@ -514,6 +506,15 @@
 
         if (_currentUser is null) // Not logged in
         {
+            _tournaments = await PublicHttp.Client.GetFromJsonAsync<List<TournamentModel>>("api/Tournament") ?? new List<TournamentModel>();
+            // _tournamentsPublic = _tournamentsPublic.Where(x => x.IsPublic).ToList(); // Should not be needed, should be handled by controller
+            _participants = await PublicHttp.Client.GetFromJsonAsync<List<TeamIsParticipatingModel>>("/api/TeamIsParticipating") ?? new();
+            _tournamentsUpcoming = _tournaments.Where(x => x.Date >= DateTime.Now).ToList();
+            foreach (var tournament in _tournamentsUpcoming)
+            {
+                _numberOfParticipantsUpcoming.Add(tournament.Id, _participants.Count(x => x.TournamentId == tournament.Id && x.Approved));
+            }
+
             List<UserModel>? users = await PublicHttp.Client.GetFromJsonAsync<List<UserModel>>("/api/User/");
             List<UserIsInTeamModel>? memberships = await PublicHttp.Client.GetFromJsonAsync<List<UserIsInTeamModel>>("/api/UserIsInTeam/");
             if (users is null || memberships is null) return;
@@ -528,6 +529,15 @@
         }
         else // Logged user
         {
+            _tournaments = await Http.GetFromJsonAsync<List<TournamentModel>>("api/Tournament") ?? new List<TournamentModel>();
+            // _tournamentsPublic = _tournamentsPublic.Where(x => x.IsPublic).ToList(); // Should not be needed, should be handled by controller
+            _participants = await Http.GetFromJsonAsync<List<TeamIsParticipatingModel>>("/api/TeamIsParticipating") ?? new();
+            _tournamentsUpcoming = _tournaments.Where(x => x.Date >= DateTime.Now).ToList();
+            foreach (var tournament in _tournamentsUpcoming)
+            {
+                _numberOfParticipantsUpcoming.Add(tournament.Id, _participants.Count(x => x.TournamentId == tournament.Id && x.Approved));
+            }
+
             if (_participants is null || _currentUserTeamIds is null) return;
             _tournamentsOfUser = _tournaments?.Where(t => _participants.Any(p => p.TournamentId == t.Id && _currentUserTeamIds.Contains(p.TeamId))).ToList();
 
