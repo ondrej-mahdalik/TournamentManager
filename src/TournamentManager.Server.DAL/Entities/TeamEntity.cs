@@ -1,7 +1,7 @@
 ﻿namespace TournamentManager.Server.DAL.Entities;
 
 public record TeamEntity(string Name,
-    string? LogoUrl) : EntityBase
+    string? LogoUrl, bool IsPersonal) : EntityBase
 {
     public Guid? LeaderId { get; init; }
     public UserEntity? Leader { get; init; }

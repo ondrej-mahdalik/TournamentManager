@@ -1,7 +1,7 @@
 ﻿@page "/Tournament/Manage/{Id}"
-@using TournamentManager.Common.Models
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
 @using Microsoft.AspNetCore.Authorization
+@using TournamentManager.Client.App.Shared.ModalComponents
 @using TournamentManager.Common.Enums
 @attribute [Authorize]
 @inject HttpClient Http
@@ -44,18 +44,18 @@
      {
          <div class="row">
              <div class="col">
-                 @if (!_allUsersHaveMatch)
+                 @if (_allTeamsHaveMatch)
                  {
-                     <MessageBox MessageType="MessageType.Warning" Title="Warning" Message="Not all participants have a match assigned" ShowCloseButton="true"></MessageBox>
+
+                     <MessageBox MessageType="MessageType.Error" Title="Error" Message="@_errorMessage" ShowCloseButton="true"></MessageBox>
+
+                     <MessageBox MessageType="MessageType.Warning" Title="Warning" Message="Not all participants have a match assigned" ShowCloseButton="false"></MessageBox>
+
                  }
-                 else
-                 {
-                     <MessageBox MessageType="MessageType.Error" Title="Error" Message="@_errorMessage" ShowCloseButton="false"></MessageBox>
-                 }
+                 
              </div>
          </div>
      }
-     
      <div class="row w-75">
          <div class="col">
              <div class="card shadow mb-4">
@@ -135,8 +135,11 @@
                              <table class="table my-0" id="dataTable">
                                  <thead>
                                  <tr>
-                                     <th>Team Name</th>
-                                     <th>Team Leader</th>
+                                     <th>@(_tournament != null && _tournament.IsIndividual ? "Player Name" : "Team Name")</th>
+                                     @if (_tournament != null && !_tournament.IsIndividual)
+                                     {
+                                        <th>Team Leader</th>
+                                     }
                                      <th>Date Registered</th>
                                      <th>Actions</th>
                                  </tr>
@@ -147,9 +150,12 @@
                                      var leader = _teamLeaders?.Where(x => x.Id == participant.Team?.LeaderId).ToList()[0];
                                      <tr>
                                          <td>@participant.Team?.Name</td>
-                                         <td>@leader?.FirstName @leader?.LastName</td>
+                                         @if (_tournament != null && !_tournament.IsIndividual)
+                                         {
+                                             <td>@leader?.FirstName @leader?.LastName</td>
+                                         }
                                          <td>@participant.CreatedOn.ToString("dd. MM. yyyy")</td>
-                                         <td class="text-center"><i @onclick="() => ApproveParticipant(participant)" class="fas fa-user-check me-1" data-bs-toggle="tooltip" data-bss-tooltip="" data-bs-placement="right" title="Approve participant"></i><i @onclick="() => DeleteParticipant(participant)" class="fas fa-user-times" data-bs-toggle="tooltip" data-bss-tooltip="" data-bs-placement="right" title="Reject participant"></i></td>
+                                         <td class="@(_tournament != null && _tournament.IsIndividual ? "" : "text-center")"><i @onclick="() => ApproveParticipant(participant)" class="fas fa-user-check me-1" data-bs-toggle="tooltip" data-bss-tooltip="" data-bs-placement="right" title="Approve participant"></i><i @onclick="() => DeleteParticipant(participant)" class="fas fa-user-times" data-bs-toggle="tooltip" data-bss-tooltip="" data-bs-placement="right" title="Reject participant"></i></td>
                                      </tr>
                                  }
                                  </tbody>
@@ -237,8 +243,11 @@
                              <table class="table my-0" id="dataTable">
                                  <thead>
                                  <tr>
-                                     <th>Team Name</th>
-                                     <th>Team Leader</th>
+                                     <th>@(_tournament != null && _tournament.IsIndividual ? "Player Name" : "Team Name")</th>
+                                      @if (_tournament != null && !_tournament.IsIndividual)
+                                      {
+                                         <th>Team Leader</th>
+                                      }
                                      <th>Date Registered</th>
                                      @if (_tournament is not null && !_tournament.InProgress)
                                      {
@@ -252,9 +261,12 @@
                                      var leader = _teamLeaders?.Where(x => x.Id == participant.Team?.LeaderId).ToList()[0];
                                      <tr>
                                          <td>@participant.Team?.Name</td>
-                                         <td>@leader?.FirstName @leader?.LastName</td>
+                                         @if (_tournament != null && !_tournament.IsIndividual)
+                                          {
+                                              <td>@leader?.FirstName @leader?.LastName</td>
+                                          }
                                          <td>@participant.CreatedOn.ToString("dd. MM. yyyy")</td>
-                                         <td class="text-center">
+                                         <td class=@(_tournament != null && _tournament.IsIndividual ? "" : "text-center")>
                                              @if (_tournament is not null && !_tournament.InProgress)
                                              {
                                                  <i @onclick="() => DeleteParticipant(participant)" class="fas fa-user-times" data-bs-toggle="tooltip" data-bss-tooltip="" data-bs-placement="right" title="Reject participant"></i>
@@ -270,7 +282,7 @@
                          }
                      </div>
                      <div class="row">
-                         @if (_approvedParticipants != null && _approvedParticipants.Count > 0)
+                         @if (_approvedParticipants is {Count: > 0 })
                          {
                              <div class="col-md-6 align-self-center">
                                  <p id="dataTable_info" class="dataTables_info" role="status" aria-live="polite">Showing @(1 + _selectedPageIndex2 * _showCount2) to @((_showCount2 + _selectedPageIndex2 * _showCount2) < ApprovedParticipantsFiltered.Count ? (_showCount2 + _selectedPageIndex2 * _showCount2) : ApprovedParticipantsFiltered.Count) of @(ApprovedParticipantsFiltered.Count)</p></div>
@@ -319,65 +331,81 @@
              <h4 class="text-center text-primary"><span style="color: rgba(var(--bs-primary-rgb), var(--bs-text-opacity)) ;">Tournament Matches</span><br></h4>
          </div>
      </div>
+     @if (_teamIsInMultipleMatches)
+     {
+         <div class="row">
+             <div class="col">
+                 <MessageBox MessageType="MessageType.Warning" Title="Warning" Message="A team is in more than one match within one round."></MessageBox>
+             </div>
+         </div>
+     }
+     @if (!_allTeamsHaveMatch)
+     {
+         <div class="row">
+             <div class="col">
+                 <MessageBox MessageType="MessageType.Warning" Title="Warning" Message="Not all teams have a match assigned."></MessageBox>
+             </div>
+         </div>
+     }
      <div class="row">
-         @if (_matches is not null && _matches.Count == 0)
+         @if (_matches is null)
          {
-             <p class="text-center fw-bold">@_message</p>
+             <p class="text-center fw-bold">Loading...</p>
+         }
+         else if (_matches.Count == 0)
+         {
+            <p class="text-center fw-bold">@_message</p>
          }
          else
          {
-             if (_matches != null)
+             foreach (var match in _matches)
              {
-                 foreach (var match in _matches)
-                 {
-                     <div class="col-4">
-                         <div class="card mb-4 shadow">
-                             <div class="card-body">
-                                 <div class="row">
-                                     <div class="col">
-                                         <h6 class="text-primary">Round @match.Round</h6>
-                                     </div>
-                                     <div class="col">
-                                         <p>Zatím @_tournament?.Date.ToString("dd. MM. yyyy")<br></p>
-                                     </div>
+                 <div class="col-4">
+                     <div class="card mb-4 shadow">
+                         <div class="card-body">
+                             <div class="row">
+                                <div class="col-6">
+                                     <h6 class="text-primary">Round @match.Round</h6>
                                  </div>
-                                 <div class="row">
-                                     <div class="col">
-                                         <p>
-                                             @if (match.Team1 is not null && (match.Team1?.LogoUrl is not null || match.Team1?.LogoUrl != ""))
-                                             {
-                                                 @:<img alt="team1-image" class="img-fluid" width="60" height="60" src="@match.Team1?.LogoUrl">
-                                             }
-                                             @match.Team1?.Name
-                                         </p>
-                                     </div>
-                                     <div class="col align-self-center">
-                                         <p class="lead text-center">@match.Score1</p>
-                                     </div>
+
+                                
+                             </div>
+                             <div class="row">
+                                 <div class="col">
+                                     <p>
+                                         @if (match.Team1 is not null && (match.Team1?.LogoUrl is not null || match.Team1?.LogoUrl != ""))
+                                         {
+                                             <img alt="team1-image" class="img-fluid" width="60" height="60" src="@match.Team1?.LogoUrl">
+                                         }
+                                         @match.Team1?.Name
+                                     </p>
                                  </div>
-                                 <div class="row">
-                                     <div class="col">
-                                         <p>
-                                             @if (match.Team2 is not null && (match.Team2?.LogoUrl is not null || match.Team2?.LogoUrl != ""))
-                                             {
-                                                 @:<img alt="team2-image" class="img-fluid" width="60" height="60" src="@match.Team2?.LogoUrl">
-                                             }
-                                             @match.Team2?.Name
-                                         </p>
-                                     </div>
-                                     <div class="col align-self-center">
-                                         <p class="lead text-center">@match.Score2</p>
-                                     </div>
+                                 <div class="col align-self-center">
+                                     <p class="lead text-center">@match.Score1</p>
                                  </div>
-                                 <div class="row justify-content-end">
-                                     <div class="col col-auto">
-                                         <button class="btn btn-primary" type="button">Manage</button>
-                                     </div>
+                             </div>
+                             <div class="row">
+                                 <div class="col">
+                                     <p>
+                                         @if (match.Team2 is not null && (match.Team2?.LogoUrl is not null || match.Team2?.LogoUrl != ""))
+                                         {
+                                             <img alt="team2-image" class="img-fluid" width="60" height="60" src="@match.Team2?.LogoUrl">
+                                         }
+                                         @match.Team2?.Name
+                                     </p>
+                                 </div>
+                                 <div class="col align-self-center">
+                                     <p class="lead text-center">@match.Score2</p>
+                                 </div>
+                             </div>
+                             <div class="row justify-content-end">
+                                 <div class="col col-auto">
+                                     <button class="btn btn-primary" type="button" @onclick="() => ManageTournamentAsync(match)">Manage</button>
                                  </div>
                              </div>
                          </div>
                      </div>
-                 }
+                 </div>
              }
          }
      </div>
@@ -391,6 +419,9 @@
 
     [Parameter]
     public string? Id { get; set; }
+    
+    [CascadingParameter]
+    IModalService Modal { get; set; } = default!;
 
     private TournamentModel? _tournament;
     private UserModel? _loggedUser;
@@ -409,10 +440,10 @@
     private string _message = "Tournament has no matches";
     private string _searchPending = "";
     private string _searchApproved = "";
-    private bool _allUsersHaveMatch = true;
+    private bool _allTeamsHaveMatch = true;
     
     private bool _resultOk = true;
-    private string _errorMessage = String.Empty;
+    private string _errorMessage = string.Empty;
 
     private List<TeamIsParticipatingModel> PendingParticipantsFiltered => _pendingParticipants?
         .Where(x =>
@@ -465,6 +496,7 @@
             }
             
             CheckIfAllParticipantsHaveMatch();
+            CheckTeamIsInMultipleMatches();
             _isLoading = false;
             
             foreach (var participant in allParticipants)
@@ -509,12 +541,12 @@
     {
         if (_approvedParticipants is not null && _approvedParticipants.Count > 1)
         {
-            _allUsersHaveMatch = _approvedParticipants.All(x =>
+            _allTeamsHaveMatch = _approvedParticipants.All(x =>
             {
                 return _matches is not null && _matches.Any(y => y.Team1Id == x.TeamId || y.Team2Id == x.TeamId);
             });
         }
-        _resultOk = _allUsersHaveMatch;
+        _resultOk = _allTeamsHaveMatch;
     }
 
     private async Task DeleteTournament()
@@ -703,12 +735,10 @@
                         _errorMessage = "Unable to delete all pending participants";
                         break;
                     }
-                    else
-                    {
-                        _resultOk = true;
-                        _errorMessage = "";
-                        _pendingParticipants.Remove(participant);
-                    }
+                    
+                    _resultOk = true;
+                    _errorMessage = "";
+                    _pendingParticipants.Remove(participant);
                 }
             }
             catch (AccessTokenNotAvailableException exception)
@@ -741,7 +771,34 @@
         _searchApproved = e.Value?.ToString() ?? "";
         _selectedPageIndex2 = 0;
     }
+    
+    private async Task ManageTournamentAsync(MatchModel match)
+    {
+        var parameters = new ModalParameters()
+            .Add(nameof(EditMatch.Match), match);
+        
+        var result = await Modal.Show<EditMatch>("Edit Match", parameters).Result;
+        if (result.Confirmed)
+        {
+            _matches = null;
+            await OnInitializedAsync();
+        }
+    }
 
+    private void CheckTeamIsInMultipleMatches()
+    {
+        if (_matches is null)
+        {
+            _teamIsInMultipleMatches = false;
+            return;
+        }
 
+        _teamIsInMultipleMatches = _matches.Any(
+            match => _matches
+                .Where(x => x.Round == match.Round)
+                .Any(x => x.TournamentId != match.Id && (x.Team1Id == match.Team1Id || x.Team2Id == match.Team1Id || x.Team1Id == match.Team2Id || x.Team2Id == match.Team2Id))
+            );
+    }
 
+    private bool _teamIsInMultipleMatches;
 }

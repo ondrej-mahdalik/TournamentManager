@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using TournamentManager.Server.BL.Facades;
 using TournamentManager.Common.Models;
 using TournamentManager.Server.Auth.Models;
@@ -30,6 +31,13 @@ public class TeamIsParticipatingController : AuthorizedControllerBase
     public async Task<ActionResult<List<TeamIsParticipatingModel>>> GetAll()
     {
         return Ok(await _teamIsParticipatingFacade.GetAsync());
+    }
+    
+    [HttpGet("ByTournament/{id:guid}")]
+    public async Task<ActionResult<List<TeamIsParticipatingModel>>> GetByTournament(Guid id)
+    {
+        var teams = (await _teamIsParticipatingFacade.GetAsync()).Where(x => x.TournamentId == id).ToList();
+        return Ok(teams);
     }
 
     [HttpGet("{id:guid}")]

@@ -12,6 +12,7 @@ public static class TournamentSeeds
         true,
         true,
         false,
+        false,
         20)
     {
         Id = Guid.Parse("83D0C8E4-E38B-43B2-8E64-3EBA5EC773FD"),
@@ -25,6 +26,7 @@ public static class TournamentSeeds
         "2023",
         true,
         true,
+        false,
         false,
         54)
     {

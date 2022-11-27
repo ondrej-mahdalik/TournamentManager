@@ -1,6 +1,7 @@
 ﻿@page "/Tournament/Detail/{Id}"
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
 @using TournamentManager.Client.App.Shared.ModalComponents
+@using TournamentManager.Common.Enums
 @inject HttpClient Http
 @inject PublicHttpClient PublicHttp
 @inject AuthenticationStateProvider AuthenticationStateProvider
@@ -21,21 +22,44 @@
         }
         else
         {
+            @if (!_resultOk)
+            {
+                <div class="row">
+                        <div class="col">
+                            <MessageBox MessageType="MessageType.Error" Title="Error" Message="@_errorMessage" ShowCloseButton="true"></MessageBox>
+                        </div>
+                    </div>
+                
+            }
             <div class="row mb-3">
                 <div class="col text-center d-xl-flex d-flex align-items-center">
                     <h3 class="text-dark d-xl-flex">@_tournament.Name</h3>
                 </div>
                 <div class="col col-auto"><a href="/Tournament/list"><button class="btn btn-light" type="button">Back to All Tournaments</button></a></div>
-                @if (_tournament.Participatings.Count < _tournament.MaxAttendees)
+                @if (_tournament.Participatings.Count < _tournament.MaxAttendees && !_tournament.InProgress)
                 {
-                    <AuthorizeView>
-                        <Authorized>
-                            <div class="col col-auto"><a class="btn btn-primary" @onclick="ParticipateAsync">Participate</a></div>
-                        </Authorized>
-                        <NotAuthorized>
-                            <div class="col col-auto"><a class="btn btn-primary" href="authentication/login">Participate</a></div>
-                        </NotAuthorized>
-                    </AuthorizeView>
+                    if (_teamParticipatingId == Guid.Empty)
+                    {
+                        <AuthorizeView>
+                            <Authorized>
+                                <div class="col col-auto"><a class="btn btn-primary" @onclick="ParticipateAsync">Participate</a></div>
+                            </Authorized>
+                            <NotAuthorized>
+                                <div class="col col-auto"><a class="btn btn-primary" href="authentication/login">Participate</a></div>
+                            </NotAuthorized>
+                        </AuthorizeView>
+                    }
+                    else
+                    {
+                        <AuthorizeView>
+                            <Authorized>
+                                <div class="col col-auto"><a class="btn btn-danger" @onclick="LeaveTournament">Leave Tournament</a></div>
+                            </Authorized>
+                            <NotAuthorized>
+                                <div class="col col-auto"><a class="btn btn-danger" href="authentication/login">Leave Tournament</a></div>
+                            </NotAuthorized>
+                        </AuthorizeView>
+                    }
                 }
                 @if (_loggedUser?.Id == _tournament.CreatorId)
                 {
@@ -96,12 +120,10 @@
                             <div class="card shadow mb-4">
                                 <div class="card-body">
                                     <div class="row">
-                                        <div class="col">
+                                        <div class="col-6">
                                             <h6 class="text-primary">Round @match.Round</h6>
                                         </div>
-                                        <div class="col">
-                                            <p>25. 5. 2020<br></p>
-                                        </div>
+                                        
                                     </div>
                                     <div class="row border-bottom mb-2">
                                         <div class="col">
@@ -154,6 +176,9 @@
     private UserModel? _loggedUser;
     private List<MatchModel>? _matches;
     private int _numberOfParticipants;
+    private bool _resultOk = true;
+    private Guid _teamParticipatingId;
+    private string _errorMessage = "";
 
     protected override async Task OnInitializedAsync()
     {
@@ -164,6 +189,21 @@
             {
                 _tournament = await Http.GetFromJsonAsync<TournamentModel>($"/api/Tournament/{Id}");
                 _loggedUser = await Http.GetFromJsonAsync<UserModel>("/api/User/current");
+                if (_loggedUser is not null && _tournament is not null)
+                {
+                    var userAsLeaderTeams = await Http.GetFromJsonAsync<List<TeamModel>>($"/api/Team/ByUser/{_loggedUser.Id}") ?? new();
+                    foreach (var userAsLeaderTeam in userAsLeaderTeams)
+                    {
+                        var teamParticipating = _tournament.Participatings.FirstOrDefault(x => x.TeamId == userAsLeaderTeam.Id);
+                        if (teamParticipating is not null)
+                        {
+                            _teamParticipatingId = teamParticipating.Id;
+                        }
+                        
+                    }
+                    
+                }
+
             }
             catch (AccessTokenNotAvailableException exception)
             {
@@ -178,19 +218,123 @@
         _numberOfParticipants = _tournament?.Participatings.Count(x => x.Approved) ?? 0;
         _matches = _tournament?.Matches.OrderBy(x => x.Round).ThenBy(x => x.Order).ToList() ?? new List<MatchModel>();
     }
+
+    private async Task LeaveTournament()
+    {
+        try
+        {
+            var result = await Http.DeleteAsync($"/api/TeamIsParticipating/{_teamParticipatingId}");
+            if (!result.IsSuccessStatusCode)
+            {
+                _resultOk = false;
+                _errorMessage = "Unable to leave the tournament";
+            }
+            else
+            {
+                _resultOk = true;
+                _errorMessage = "";
+                _teamParticipatingId = Guid.Empty;
+            }
+        }
+        catch (AccessTokenNotAvailableException exception)
+        {
+            exception.Redirect();
+        }
+    }
     
     private async Task ParticipateAsync()
     {
-        if (_loggedUser is null)
+        if (_loggedUser is null || _tournament is null)
             return;
-
-        var parameters = new ModalParameters()
-            .Add(nameof(ParticipateAsTeam.CurrentUser), _loggedUser);
         
-        var result = await Modal.Show<ParticipateAsTeam>("Choose Team", parameters).Result;
-        if (result.Confirmed)
+        if (_tournament.IsIndividual)
         {
-            var team = result.Data as TeamModel;
+            var personalUserTeams = await Http.GetFromJsonAsync<List<TeamModel>>($"api/Team/ByUser/{_loggedUser.Id}");
+            TeamModel newUserTeam;
+            if (personalUserTeams is null || personalUserTeams.Count == 0)
+            {
+                newUserTeam = new TeamModel($"{_loggedUser.FirstName} {_loggedUser.LastName}", null, true)
+                {
+                    LeaderId = _loggedUser.Id
+                };
+                var result = await Http.PutAsJsonAsync("/api/Team", newUserTeam);
+                if (!result.IsSuccessStatusCode)
+                {
+                    _resultOk = false;
+                    _errorMessage = "Unable to participate";
+                }
+                else
+                {
+                    _resultOk = true;
+                    _errorMessage = "";
+                }
+            }
+            else
+            {
+                var personalUserTeam = personalUserTeams.FirstOrDefault(x => x.IsPersonal);
+                if (personalUserTeam is null)
+                {
+                    newUserTeam = new TeamModel($"{_loggedUser.FirstName} {_loggedUser.LastName}", null, true)
+                    {
+                        LeaderId = _loggedUser.Id
+                    };
+                    var result = await Http.PutAsJsonAsync("/api/Team", newUserTeam);
+                    if (!result.IsSuccessStatusCode)
+                    {
+                        _resultOk = false;
+                        _errorMessage = "Unable to participate";
+                    }
+                    else
+                    {
+                        _resultOk = true;
+                        _errorMessage = "";
+                    }
+                }
+                else
+                {
+                    newUserTeam = (TeamModel) personalUserTeam.Clone();
+                }
+            }
+            var teamToParticipate = new TeamIsParticipatingModel(false, DateTime.Now, newUserTeam.Id, _tournament.Id);
+            var result2 = await Http.PutAsJsonAsync("api/TeamIsParticipating", teamToParticipate);
+            if (!result2.IsSuccessStatusCode)
+            {
+               
+                _resultOk = false;
+                _errorMessage = "Unable to participate";
+            }
+            else
+            {
+                _resultOk = true;
+                _errorMessage = "";
+                _teamParticipatingId = teamToParticipate.Id;
+            }
+        }
+        else
+        {
+            var parameters = new ModalParameters()
+                .Add(nameof(ParticipateAsTeam.CurrentUser), _loggedUser);
+            var result = await Modal.Show<ParticipateAsTeam>("Team Selection", parameters).Result;
+            if (result.Confirmed)
+            {
+                var team = result.Data as TeamModel;
+                if (team is not null)
+                {
+                    var participatingTeam = new TeamIsParticipatingModel(false, DateTime.Now, team.Id, _tournament.Id);
+                    var result2 = await Http.PutAsJsonAsync("/api/TeamIsParticipating", participatingTeam);
+                    if (!result2.IsSuccessStatusCode)
+                    {
+                        _resultOk = false;
+                        _errorMessage = "Unable to participate";
+                    }
+                    else
+                    {
+                        _resultOk = true;
+                        _errorMessage = "";
+                        _teamParticipatingId = participatingTeam.Id;
+                    }
+                }
+            }
         }
     }
 }
