@@ -62,7 +62,7 @@
 
                     }
                 }
-                @if (_loggedUser?.Id == _tournament.CreatorId || (bool) _loggedUser?.IsAdministrator)
+                @if (_loggedUser?.Id == _tournament.CreatorId ||  (_loggedUser?.IsAdministrator ?? false))
                 {
                     <div class="col col-auto"><a href="/Tournament/Manage/@_tournament.Id"><button class="btn btn-primary" type="button">Manage Tournament</button></a></div>
                 }
@@ -135,7 +135,7 @@
                                             <p>
                                                 @if (!string.IsNullOrWhiteSpace(match.Team1?.LogoUrl))
                                                 {
-                                                    <img alt="team1-image" class="img-fluid" width="60" height="60" src="@match.Team1?.LogoUrl">
+                                                    <img alt="team1-image" class="rounded-circle me-2" width="30" height="30" src="@match.Team1?.LogoUrl">
                                                 }
                                                 @match.Team1?.Name
                                             </p>
@@ -149,7 +149,7 @@
                                             <p>
                                                 @if (!string.IsNullOrWhiteSpace(match.Team2?.LogoUrl))
                                                 {
-                                                    <img alt="team2-image" class="img-fluid" width="60" height="60" src="@match.Team2?.LogoUrl">
+                                                    <img alt="team2-image" class="rounded-circle me-2" width="30" height="30" src="@match.Team2?.LogoUrl">
                                                 }
                                                 @match.Team2?.Name
                                             </p>
@@ -230,18 +230,23 @@
     {
         try
         {
-            var result = await Http.DeleteAsync($"/api/TeamIsParticipating/{_teamParticipatingId}");
-            if (!result.IsSuccessStatusCode)
+            var message = new ModalParameters().Add(nameof(Confirmation.Message), "Are you sure you want to leave the tournament?");
+            var result = await Modal.Show<Confirmation>("Leave the Tournament", message).Result;
+            if (result.Confirmed)
             {
-                _resultOk = false;
-                _errorMessage = "Unable to leave the tournament";
-            }
-            else
-            {
-                _resultOk = true;
-                _errorMessage = "";
-                _teamParticipatingId = Guid.Empty;
-                await OnInitializedAsync();
+                var response = await Http.DeleteAsync($"/api/TeamIsParticipating/{_teamParticipatingId}");
+                if (!response.IsSuccessStatusCode)
+                {
+                    _resultOk = false;
+                    _errorMessage = "Unable to leave the tournament";
+                }
+                else
+                {
+                    _resultOk = true;
+                    _errorMessage = "";
+                    _teamParticipatingId = Guid.Empty;
+                    await OnInitializedAsync();
+                }
             }
         }
         catch (AccessTokenNotAvailableException exception)

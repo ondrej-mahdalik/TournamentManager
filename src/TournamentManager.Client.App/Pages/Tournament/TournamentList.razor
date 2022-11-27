@@ -36,9 +36,15 @@
                                                 <option value="100">100</option>
                                             </select></label></div>
                                 </div>
-                                <div class="col-xxl-3">
-                                    <div class="form-check form-switch"><input @bind="_showPastTournaments" id="formCheck-1" class="form-check-input" type="checkbox" /><label class="form-check-label" for="formCheck-1">Show past tournaments</label></div>
+                                <div class="col-xxl-3 me-5">
+                                    <div class="form-check form-switch"><input @bind="_showPastTournaments" id="showPast" class="form-check-input" type="checkbox" /><label class="form-check-label" for="showPast">Show past tournaments</label></div>
                                 </div>
+                                @if (_loggedUser is not null)
+                                {
+                                    <div class="col-xxl-3">
+                                         <div class="form-check form-switch"><input @bind="_showMyTournaments" id="showMy" class="form-check-input" type="checkbox" /><label class="form-check-label" for="showMy">Show my created tournaments</label></div>
+                                    </div>
+                                }
                             </div>
                         </div>
                         <div class="col-md-6">
@@ -140,12 +146,15 @@
     private string _search = "";
     private int _showCount = 10;
     private int _selectedPageIndex;
-    private bool _showPastTournaments = false;
+    private bool _showPastTournaments;
+    private bool _showMyTournaments;
     private bool _isLoading = true;
     private Dictionary<Guid, int> _numberOfParticipants = new();
     private Dictionary<Guid, string> _winners = new();
     private List<TournamentModel>? _tournaments = new();
+    private UserModel? _loggedUser;
     private List<UserModel>? _users = new();
+    private List<TeamIsParticipatingModel> _participants = new();
     private List<TournamentModel> TournamentsFiltered => _tournaments?
         .Where(x =>
         {
@@ -154,10 +163,16 @@
             var date = x.Date.ToString("dd. MM. yyyy").Contains(_search);
             var creatorFirstName = x.Creator?.FirstName?.ToLower().Contains(_search.ToLower()) ?? false;
             var creatorLastName = x.Creator?.LastName?.ToLower().Contains(_search.ToLower()) ?? false;
-            if (_showPastTournaments)
+            if (_showPastTournaments && !_showMyTournaments)
             {
                 return name || sport || date || creatorFirstName || creatorLastName;
             }
+            else if (_showMyTournaments && _showPastTournaments)
+                return (name || sport || date || creatorFirstName || creatorLastName) && x.CreatorId == _loggedUser?.Id;
+            
+            else if (!_showPastTournaments && _showMyTournaments)
+                return (name || sport || date || creatorFirstName || creatorLastName) && (x.Date.Date >= DateTime.Now.Date) && x.CreatorId == _loggedUser?.Id;
+            
             return (name || sport || date || creatorFirstName || creatorLastName) && (x.Date.Date >= DateTime.Now.Date);
         }).OrderBy(x => x.Date).ToList()
         ?? new();
@@ -174,15 +189,15 @@
     {
         var state = await AuthenticationStateProvider.GetAuthenticationStateAsync();
         _isLoading = true;
-        List<TeamIsParticipatingModel> participants = new();
         if (state.User.Identity?.IsAuthenticated ?? false)
         {
             try
             {
                 _tournaments = await Http.GetFromJsonAsync<List<TournamentModel>>("api/Tournament") ?? new List<TournamentModel>();
                 _users = await Http.GetFromJsonAsync<List<UserModel>>("api/User") ?? new List<UserModel>();
-                participants = await Http.GetFromJsonAsync<List<TeamIsParticipatingModel>>("/api/TeamIsParticipating") ?? new();
-                
+                _participants = await Http.GetFromJsonAsync<List<TeamIsParticipatingModel>>("/api/TeamIsParticipating") ?? new();
+                _loggedUser = await Http.GetFromJsonAsync<UserModel>("/api/User/current");
+
             }
             catch (AccessTokenNotAvailableException exception)
             {
@@ -192,19 +207,20 @@
         else
         {
             _tournaments = await PublicHttp.Client.GetFromJsonAsync<List<TournamentModel>>("api/Tournament") ?? new List<TournamentModel>();
-            participants = await PublicHttp.Client.GetFromJsonAsync<List<TeamIsParticipatingModel>>("/api/TeamIsParticipating") ?? new();
+            _participants = await PublicHttp.Client.GetFromJsonAsync<List<TeamIsParticipatingModel>>("/api/TeamIsParticipating") ?? new();
+            _loggedUser = null;
         }
 
         if (_tournaments != null)
         {
             foreach (var tournament in _tournaments)
             {
-                _numberOfParticipants.Add(tournament.Id, participants.Count(x => x.Approved && x.TournamentId == tournament.Id));
+                _numberOfParticipants.Add(tournament.Id, _participants.Count(x => x.Approved && x.TournamentId == tournament.Id));
                 tournament.Creator = _users?.FirstOrDefault(x => x.Id == tournament.CreatorId);
 
                 if (tournament.WinnerTeamId is not null)
                 {
-                    var winner = participants.FirstOrDefault(x => x.TeamId == tournament.WinnerTeamId && tournament.Id == x.TournamentId);
+                    var winner = _participants.FirstOrDefault(x => x.TeamId == tournament.WinnerTeamId && tournament.Id == x.TournamentId);
                     if (winner is not null)
                     {
                         if (winner.Team?.Name != null) 

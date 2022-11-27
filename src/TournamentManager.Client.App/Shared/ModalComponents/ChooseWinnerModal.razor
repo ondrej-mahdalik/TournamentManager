@@ -10,7 +10,7 @@
                 <MessageBox MessageType="MessageType.Error" Title="Error" Message="Select the winner first" ShowCloseButton="false"></MessageBox>
             }
             <div class="mb-2"><label class="form-label" for="winner">Select a winner</label>
-                <select @bind="_selectedParticipantId" class="form-select" id="winner" name="winner">
+                <select @bind="ProposedWinner" class="form-select" id="winner" name="winner">
                     @foreach (var p in Participants)
                     {
                         <option value="@p.TeamId">@p.Team?.Name</option>
@@ -39,20 +39,22 @@ else
     [Parameter]
     public List<TeamIsParticipatingModel> Participants { get; set; } = default!;
 
-    private Guid? _selectedParticipantId;
+    [Parameter]
+    public Guid ProposedWinner { get; set; } = default!;
+    
     private bool _resultOk = true;
     
 
     private async Task WinAsync()
     {
-        if (_selectedParticipantId is null)
+        if (ProposedWinner == Guid.Empty)
         {
             _resultOk = false;
         }
         else
         {
             _resultOk = true;
-            await BlazoredModal.CloseAsync(ModalResult.Ok(_selectedParticipantId));
+            await BlazoredModal.CloseAsync(ModalResult.Ok(ProposedWinner));
         }
     }
     

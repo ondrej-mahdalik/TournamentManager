@@ -394,7 +394,7 @@
                                      <p>
                                          @if (match.Team1 is not null && (match.Team1?.LogoUrl is not null && match.Team1?.LogoUrl != ""))
                                          {
-                                             <img alt="team1-image" class="img-fluid" width="60" height="60" src="@match.Team1?.LogoUrl">
+                                             <img alt="team1-image" class="rounded-circle me-2" width="30" height="30" src="@match.Team1?.LogoUrl">
                                          }
                                          @match.Team1?.Name
                                      </p>
@@ -408,7 +408,7 @@
                                      <p>
                                          @if (match.Team2 is not null && (match.Team2?.LogoUrl is not null && match.Team2?.LogoUrl != ""))
                                          {
-                                             <img alt="team2-image" class="img-fluid" width="60" height="60" src="@match.Team2?.LogoUrl">
+                                             <img alt="team2-image" class="rounded-circle me-2" width="30" height="30" src="@match.Team2?.LogoUrl">
                                          }
                                          @match.Team2?.Name
                                      </p>
@@ -425,8 +425,7 @@
                                          }
                                          @if (_tournament != null && _showWinner && match.Round == _tournament.NumOfRounds)
                                          {
-                                             <button class="btn btn-success me-1" type="button" @onclick="() => ChooseWinner(match, false)">Choose Winner Automatically</button>
-                                             <button class="btn btn-danger me-1" type="button" @onclick="() => ChooseWinner(match, true)">Choose Winner Manually</button>
+                                             <button class="btn btn-success me-1" type="button" @onclick="() => ChooseWinner(match)">Choose Winner</button>
                                          }
                                      </div>
                                  </div>
@@ -586,16 +585,21 @@
         {
             if (_tournament is not null)
             {
-                var result = await Http.DeleteAsync($"/api/Tournament/{_tournament.Id}");
-                if (result.IsSuccessStatusCode)
+                var message = new ModalParameters().Add(nameof(Confirmation.Message), "Are you sure you want to delete the tournament? This action cannot be undone.");
+                var result = await Modal.Show<Confirmation>("Delete the Tournament", message).Result;
+                if (result.Confirmed)
                 {
-                    Navigation.NavigateTo("/Tournament/List");
-                    _errorMessage = "";
-                }
-                else
-                {
-                    _resultOk = false;
-                    _errorMessage = "Unable to delete the tournament.";
+                    var response = await Http.DeleteAsync($"/api/Tournament/{_tournament.Id}");
+                    if (response.IsSuccessStatusCode)
+                    {
+                        Navigation.NavigateTo("/Tournament/List");
+                        _errorMessage = "";
+                    }
+                    else
+                    {
+                        _resultOk = false;
+                        _errorMessage = "Unable to delete the tournament.";
+                    }
                 }
             }
         }
@@ -890,36 +894,32 @@
     }
     private bool _teamIsInMultipleMatches;
 
-    private async Task ChooseWinner(MatchModel match, bool showModal)
+    private async Task ChooseWinner(MatchModel match)
     {
-        if (_tournament != null)
+        if (_tournament != null && _approvedParticipants is not null)
         {
-            if (showModal)
+            var proposedWinner = match.Score1 >= match.Score2 ? match.Team1Id : match.Team2Id;
+            if (proposedWinner != null)
             {
                 var parameters = new ModalParameters()
-                    .Add(nameof(ChooseWinnerModal.Participants), _approvedParticipants);
-        
+                    .Add(nameof(ChooseWinnerModal.Participants), _approvedParticipants)
+                    .Add(nameof(ChooseWinnerModal.ProposedWinner), proposedWinner);
+    
                 var res = await Modal.Show<ChooseWinnerModal>("Choose a winner", parameters).Result;
                 if (res.Confirmed)
                 {
-                    var winnerId = res.Data as Guid?;
-                    _tournament.WinnerTeamId = winnerId;
-                    
+                    _tournament.WinnerTeamId = res.Data as Guid?;
+                    var result = await Http.PutAsJsonAsync("/api/Tournament", _tournament);
+                    if (!result.IsSuccessStatusCode)
+                    {
+                        _resultOk = false;
+                        _errorMessage = "Unable to choose the winner";
+                    }
+                    else
+                    {
+                        Navigation.NavigateTo("/Tournament/List");
+                    }
                 }
-            }
-            else
-            {
-                _tournament.WinnerTeamId = match.Score1 >= match.Score2 ? match.Team1Id : match.Team2Id;
-            }
-            var result = await Http.PutAsJsonAsync("/api/Tournament", _tournament);
-            if (!result.IsSuccessStatusCode)
-            {
-                _resultOk = false;
-                _errorMessage = "Unable to choose the winner";
-            }
-            else
-            {
-                Navigation.NavigateTo("/Tournament/List");
             }
         }
     }
