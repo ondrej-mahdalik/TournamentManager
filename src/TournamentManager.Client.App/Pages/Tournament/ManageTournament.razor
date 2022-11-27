@@ -795,8 +795,8 @@
 
         _teamIsInMultipleMatches = _matches.Any(
             match => _matches
-                .Where(x => x.Round == match.Round)
-                .Any(x => x.TournamentId != match.Id && (x.Team1Id == match.Team1Id || x.Team2Id == match.Team1Id || x.Team1Id == match.Team2Id || x.Team2Id == match.Team2Id))
+                .Where(x => x.Round == match.Round && x.Id != match.Id)
+                .Any(x => x.Team1Id == match.Team1Id || x.Team2Id == match.Team1Id || x.Team1Id == match.Team2Id || x.Team2Id == match.Team2Id)
             );
     }
 
