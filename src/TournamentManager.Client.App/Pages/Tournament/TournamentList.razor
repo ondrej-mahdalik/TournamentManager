@@ -62,6 +62,7 @@
                                     <th>Sport<i class="fas fa-baseball-ball pe-0 ms-2"></i></th>
                                     <th>Name</th>
                                     <th>Date</th>
+                                    <th>Play Mode</th>
                                     <th>Organizer</th>
                                     <th>Occupation</th>
                                     <th>Winner</th>
@@ -75,7 +76,8 @@
                                         <td>@(tournament.Sport?.Name ?? "Other")</td>
                                         <td>@tournament.Name</td>
                                         <td>@tournament.Date.ToString("dd. MM. yyyy")</td>
-                                        <td>@tournament.Creator?.FirstName @tournament.Creator?.LastName</td>
+                                        <td>@(tournament.IsIndividual ? "Individual" : "Teams")</td>
+                                        <td>@(tournament.Creator?.FirstName is not null ? $"{tournament.Creator.FirstName} {tournament.Creator.LastName}" : "Deleted user")</td>
                                         <td>@_numberOfParticipants[@tournament.Id] / @tournament.MaxAttendees</td>
                                         <td class="text-end"><a data-bs-target="/Tournament/@tournament.Id" href="/Tournament/Detail/@tournament.Id"><button class="btn btn-primary" type="button">Detail</button></a></td>
                                     </tr>

@@ -6,6 +6,7 @@ public record TournamentEntity(string Name,
     bool IsPublic,
     bool IsApproved,
     bool InProgress,
+    bool IsIndividual,
     int MaxAttendees) : EntityBase
 {
     public Guid? CreatorId { get; init; }
