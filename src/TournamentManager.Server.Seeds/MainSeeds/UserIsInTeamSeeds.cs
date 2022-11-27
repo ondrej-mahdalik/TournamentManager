@@ -12,4 +12,12 @@ public static class UserIsInTeamSeeds
         UserId = UserSeeds.RexWalsh.Id,
     };
 
+    public static readonly UserIsInTeamEntity AlenaInJohns = new()
+    {
+        Id = Guid.Parse("02275EE5-DFE1-4737-AEB4-EDCC5344071D"),
+        IsApproved = false,
+        TeamId = TeamSeeds.JohnsTeam.Id,
+        UserId = UserSeeds.AlenaVaf.Id,
+    };
+
 }

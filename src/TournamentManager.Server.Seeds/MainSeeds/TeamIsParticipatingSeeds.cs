@@ -55,6 +55,20 @@ public static class TeamIsParticipatingSeeds
         TeamId = TeamSeeds.JohnsTeam.Id
     };
 
+    public static readonly TeamIsParticipatingEntity JohnsInNY2021 = new(true,
+        DateTime.Parse("12/21/2020 12:21"))
+    {
+        TournamentId = TournamentSeeds.NY2021.Id,
+        TeamId = TeamSeeds.JohnsTeam.Id
+    };
+
+    public static readonly TeamIsParticipatingEntity CardWarriorsInNY2021 = new(true,
+        DateTime.Parse("12/6/2020 4:21"))
+    {
+        TournamentId = TournamentSeeds.NY2021.Id,
+        TeamId = TeamSeeds.CardWarriors.Id
+    };
+
 
     public static void Seed(TournamentManagerDbContext dbContext)
     {
@@ -66,6 +80,8 @@ public static class TeamIsParticipatingSeeds
         dbContext.Participatings.Add(Team6InAwesomeTournament);
         dbContext.Participatings.Add(JohsInNYTournament);
         dbContext.Participatings.Add(JohnsInGoldenPuck);
+        dbContext.Participatings.Add(JohnsInNY2021);
+        dbContext.Participatings.Add(CardWarriorsInNY2021);
     }
 
 }

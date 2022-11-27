@@ -68,6 +68,22 @@ public static class TournamentSeeds
         SportId = SportSeeds.TableTennis.Id
     };
 
+    public static readonly TournamentEntity NY2021 = new(
+        "New years tournament",
+        DateTime.Parse("1/1/2021"),
+        "2021",
+        true,
+        true,
+        false,
+        false,
+        54)
+    {
+        Id = Guid.Parse("11410468-759F-45D2-8DB1-EE03B9A9D8CF"),
+        CreatorId = UserSeeds.RexWalsh.Id,
+        SportId = SportSeeds.Basketball.Id,
+        WinnerTeamId = TeamSeeds.JohnsTeam.Id
+    };
+
 
     public static void Seed(TournamentManagerDbContext dbContext)
     {
@@ -75,5 +91,6 @@ public static class TournamentSeeds
         dbContext.Tournaments.Add(NY2024);
         dbContext.Tournaments.Add(GoldenPuck);
         dbContext.Tournaments.Add(EffortBall);
+        dbContext.Tournaments.Add(NY2021);
     }
 }

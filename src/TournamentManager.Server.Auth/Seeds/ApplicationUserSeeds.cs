@@ -41,7 +41,40 @@ public static class ApplicationUserSeeds
         EmailConfirmed = true,
         SecurityStamp = Guid.NewGuid().ToString("D")
     };
-    
+
+    public static readonly ApplicationUser AlenaVaf = new()
+    {
+        Id = Guid.Parse("D9152C90-73E8-40B4-845B-E03CF1CAD133").ToString(),
+        UserName = "vaf@gmail.com",
+        FirstName = "Alena",
+        LastName = "Vaf",
+        Email = "vaf@gmail.com",
+        EmailConfirmed = true,
+        SecurityStamp = Guid.NewGuid().ToString("D")
+    };
+
+    public static readonly ApplicationUser PavelWolf = new()
+    {
+        Id = Guid.Parse("4A805AFF-EFBF-4429-9D8D-7C6EF7CD5F40").ToString(),
+        UserName = "vlkzlesa@seznam.cz",
+        FirstName = "Pavel",
+        LastName = "Wolf",
+        Email = "vlkzlesa@seznam.cz",
+        EmailConfirmed = true,
+        SecurityStamp = Guid.NewGuid().ToString("D")
+    };
+
+    public static readonly ApplicationUser DarthVader = new()
+    {
+        Id = Guid.Parse("7BBE3851-A3DD-4C27-9999-EC14E20829FB"),
+        UserName = "darth@vader.com",
+        FirstName = "Darth",
+        LastName = "Vader",
+        Email = "darth@vader.com",
+        EmailConfirmed = true,
+        SecurityStamp = Guid.NewGuid().ToString("D")
+    };
+
     public static async Task SeedAsync(IServiceProvider serviceProvider)
     {
         var userManager = serviceProvider.GetRequiredService<UserManager<ApplicationUser>>();
@@ -49,5 +82,8 @@ public static class ApplicationUserSeeds
         await userManager.CreateAsync(Admin, "Pass123$");
         await userManager.CreateAsync(User1, "Pass123$");
         await userManager.CreateAsync(RexWalsh, "Pass123$");
+        await userManager.CreateAsync(AlenaVaf, "Pass123$");
+        await userManager.CreateAsync(PavelWolf, "Pass123$");
+        await userManager.CreateAsync(DarthVader, "Pass123$");
     }
 }
