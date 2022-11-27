@@ -8,9 +8,9 @@ public class TeamModel : ModelBase
     public TeamModel(string name,
         string? logoUrl, bool isPersonal)
     {
-        this.Name = name;
-        this.LogoUrl = logoUrl;
-        this.IsPersonal = isPersonal;
+        Name = name;
+        LogoUrl = logoUrl;
+        IsPersonal = isPersonal;
     }
     [Required]
     [MinLength(2)]

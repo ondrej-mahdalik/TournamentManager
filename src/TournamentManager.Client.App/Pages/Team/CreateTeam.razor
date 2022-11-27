@@ -10,8 +10,8 @@
 <div id="content">
     <div class="container-fluid">
         <div class="row mb-3">
-            <div class="col d-xl-flex d-flex align-items-center">
-                <h3 class="text-dark d-xl-flex">New Team</h3>
+            <div class="col d-flex align-items-center">
+                <h3 class="text-primary">New Team</h3>
             </div>
             <div class="col col-auto"><a href="Team/List" class="btn btn-light">Back to All Teams</a></div>
         </div>
@@ -24,19 +24,26 @@
                                 <EditForm Model="@_team" OnValidSubmit="@HandleValidSubmit">
                                     <DataAnnotationsValidator/>
                                     <ValidationSummary/>
-                                    <div class="mb-2"><label class="form-label w-100" for="Name">Name<InputText class="form-control" type="text" @bind-Value="_team.Name" name="Name" /></label></div>
-                                    <div class="mb-2"><label class="form-label w-100" for="Logo">Logo</label>
-                                        @if (_logoUrl is null)
+                                    <div class="mb-2">
+                                        <label class="form-label w-100" for="teamName">Name</label>
+                                        <InputText id="teamName" class="form-control" type="text" @bind-Value="_team.Name" />
+                                    </div>
+                                    <div class="mb-2">
+                                        
+                                        @if (_team.LogoUrl is null)
                                         {
-                                            <img width="100" style="transform: scale(1);padding-bottom: 0px;margin-bottom: 12px;" src="/assets/img/logo_placeholder.jpg"  name="Logo" />
+                                            <img class="pb-0" width="100" src="/assets/img/logo_placeholder.jpg" alt="Team Logo"/>
                                         }
                                         else
                                         {
-                                            <img width="100" style="transform: scale(1);padding-bottom: 0px;margin-bottom: 12px;" src="@_logoUrl" name="Logo" />
+                                            <img class="pb-0" width="100" src="@_team.LogoUrl" alt="Team Logo"/>
                                         }
                                     </div>
-                                    <div class="mb-2"> <InputText type="url" @bind-Value="_team.LogoUrl" /> </div>
-                                    <div class="d-xxl-flex justify-content-xxl-center"><button class="btn btn-primary" type="submit">Create</button></div>
+                                    <div class="mb-2">
+                                        <label class="form-label w-100" for="logo">Logo</label>
+                                        <InputText id="logo" type="url" @bind-Value="_team.LogoUrl"/>
+                                    </div>
+                                    <div class="d-flex justify-content-center"><button class="btn btn-primary" type="submit">Create</button></div>
                                 </EditForm>
                             </div>
                         </div>
@@ -44,14 +51,11 @@
                 </div>
             </div>
         </div>
-        <div class="text-center d-lg-flex d-xl-flex justify-content-lg-center justify-content-xl-start" style="text-align: center;"></div>
     </div>
 </div>
 
 @code {
     private TeamModel _team = TeamModel.Empty;
-    private string? _teamName = null;
-    private string? _logoUrl;
     private UserModel? _currentUser;
 
     private async void HandleValidSubmit()

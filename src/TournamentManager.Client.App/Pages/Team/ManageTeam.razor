@@ -1,5 +1,4 @@
 ﻿@page "/Team/Manage/{Id}"
-@using TournamentManager.Common.Models
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
 @using TournamentManager.Client.App.Shared.ModalComponents
@@ -12,11 +11,7 @@
 
 @if(_team is null || _currentUser is null)
 {
-    <p class="text-center fw-bold">Loading ...</p>
-}
-else if(_currentUser.Id != _team.LeaderId && !_currentUser.IsAdministrator)
-{
-    <p class="text-center fw-bold">401 Unauthorized</p>
+    <p class="text-center fw-bold">Loading...</p>
 }
 else
 {
@@ -30,7 +25,7 @@ else
             <div class="col d-flex align-items-center">
                 @if (_team.LogoUrl is not null)
                 {
-                    <img class="me-2" src="@_team.LogoUrl" height="100" />
+                    <img class="rounded-circle me-2" src="@_team.LogoUrl" height="60" width="60" alt="Team logo"/>
                 }
                 <h3 class="text-dark mb-0">@_team.Name</h3>
             </div>
@@ -41,7 +36,7 @@ else
             <div class="col">
                 <div class="card shadow">
                     <div class="card-header">
-                        <h4 class="mb-0">Edit Team</h4>
+                        <h6 class="text-primary mb-0">Edit Team</h6>
                     </div>
                     <div class="card-body">
                         <form>
@@ -50,9 +45,17 @@ else
                                     <EditForm Model="@_team" OnValidSubmit="@HandleValidSubmit">
                                         <DataAnnotationsValidator/>
                                         <ValidationSummary/>
-                                        <div><label class="form-label w-100">Team Name<InputText class="form-control" type="text" @bind-Value="_team.Name" id="name" name="name" /></label></div>
-                                        <div><label class="form-label w-100">Team Logo (optional)<InputText class="form-control" type="url" @bind-Value="_team.LogoUrl" id="logourl" /></label></div>
-                                        <div class="text-end"><button class="btn btn-primary" type="submit" style="margin-left: 10px;">Save Changes</button></div>
+                                        <div class="mb-2">
+                                            <label class="form-label w-100">Team Name</label>
+                                            <InputText class="form-control" type="text" @bind-Value="_team.Name" id="name" name="name"/>
+                                        </div>
+                                        <div class="mb-2">
+                                            <label class="form-label w-100">Team Logo (optional)</label>
+                                            <InputText class="form-control" type="url" @bind-Value="_team.LogoUrl" id="logoUrl"/>
+                                        </div>
+                                        <div class="text-end">
+                                            <button class="btn btn-primary" type="submit">Save Changes</button>
+                                        </div>
                                     </EditForm>
                                  </div>
                             </div>
@@ -65,7 +68,7 @@ else
             <div class="col">
                 <div class="card shadow">
                     <div class="card-header">
-                        <h4 class="mb-0">Members</h4>
+                        <h6 class="text-primary mb-0">Members</h6>
                     </div>
                     <div class="card-body" id="membersList">
                         @if(_members is null)
@@ -197,7 +200,7 @@ else
             <div class="col">
                 <div class="card shadow">
                     <div class="card-header">
-                        <h4 class="mb-0">Join requests</h4>
+                        <h6 class="text-primary mb-0">Join requests</h6>
                     </div>
                     <div class="card-body" id="requestsList">
                         @if (_requestedMembers is null)
@@ -233,7 +236,7 @@ else
                                     </div>
                                 </div>
                             </div>
-                            @if (requestsFiltered.Count == 0)
+                            @if (RequestsFiltered.Count == 0)
                             {
                                 <p class="text-center fw-bold">No join requests found.</p>
                             }
@@ -252,7 +255,7 @@ else
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            @foreach (var requestMember in requestsFilteredPages[_requestsSelectedPageIndex])
+                                            @foreach (var requestMember in RequestsFilteredPages[_requestsSelectedPageIndex])
                                             {
                                                 <tr>
                                                     <td class="mb-0">
@@ -278,10 +281,10 @@ else
                                             Showing @(
                                         1 + _requestsSelectedPageIndex * _requestsShowCount
                                         ) to @(
-                                           (_requestsShowCount + _requestsSelectedPageIndex * _requestsShowCount) < requestsFiltered.Count ?
-                                           (_requestsShowCount + _requestsSelectedPageIndex * _requestsShowCount) : requestsFiltered.Count
+                                           (_requestsShowCount + _requestsSelectedPageIndex * _requestsShowCount) < RequestsFiltered.Count ?
+                                           (_requestsShowCount + _requestsSelectedPageIndex * _requestsShowCount) : RequestsFiltered.Count
                                            ) of @(
-                                           requestsFiltered.Count
+                                           RequestsFiltered.Count
                                            )
                                         </p>
                                     </div>
@@ -296,14 +299,14 @@ else
                                                     var num = i;
                                                     if (_requestsSelectedPageIndex == 0)
                                                         num = i + 1; // So user cant go to page -1
-                                                    else if (_requestsSelectedPageIndex >= requestsFilteredPages.Count - 1)
+                                                    else if (_requestsSelectedPageIndex >= RequestsFilteredPages.Count - 1)
                                                         num = i - 1; // So user cant go to a page that is too high
 
-                                                    if (num > requestsFilteredPages.Count - 1)
+                                                    if (num > RequestsFilteredPages.Count - 1)
                                                     {
                                                         break; // If there are fewer than 3 pages total
                                                     }
-                                                    else if (_requestsSelectedPageIndex == 1 && requestsFilteredPages.Count == 2 && i == 0)
+                                                    else if (_requestsSelectedPageIndex == 1 && RequestsFilteredPages.Count == 2 && i == 0)
                                                     {
                                                         // If only 2 pages are available, clicking the second one would make page 0 appear
                                                         // which is obviously not possible
@@ -318,7 +321,7 @@ else
                                                         </a>
                                                     </li>
                                                 }
-                                                <li class="page-item @(_requestsSelectedPageIndex >= @requestsFilteredPages.Count - 1 ? "disabled" : "")">
+                                                <li class="page-item @(_requestsSelectedPageIndex >= RequestsFilteredPages.Count - 1 ? "disabled" : "")">
                                                     <a class="page-link" aria-label="Next" @onclick="() => _requestsSelectedPageIndex++" role="button"><span class="user-select-none" aria-hidden="true">»</span></a>
                                                 </li>
                                             </ul>
@@ -360,20 +363,18 @@ else
             _team = await Http.GetFromJsonAsync<TeamModel>($"/api/Team/{Id}");
             if (_team is not null)
             {
-                foreach (UserIsInTeamModel userIsInTeam in _team.Members)
+                foreach (var userIsInTeam in _team.Members)
                 {
-                    UserModel? member = await Http.GetFromJsonAsync<UserModel>($"/api/User/{userIsInTeam.UserId}");
-                    if(member is not null)
+                    var member = await Http.GetFromJsonAsync<UserModel>($"/api/User/{userIsInTeam.UserId}");
+                    if (member is null)
+                        continue;
+                    if (userIsInTeam.IsApproved)
                     {
-                        if (userIsInTeam.IsApproved == true)
-                        {
-                            _members.Add(member);
-                        }
-                        else
-                        {
-                            _requestedMembers.Add(member);
-                        }
-
+                        _members.Add(member);
+                    }
+                    else
+                    {
+                        _requestedMembers.Add(member);
                     }
                 }
 
@@ -445,7 +446,7 @@ else
 
     private async void RemoveMember(Guid id)
     {
-        UserModel? member = await Http.GetFromJsonAsync<UserModel>($"api/User/current");
+        var member = await Http.GetFromJsonAsync<UserModel>($"api/User/current");
         if(member is null)
         {
             _showError = true;
@@ -458,22 +459,25 @@ else
         if (result.Cancelled)
             return;
 
-        UserIsInTeamModel? membership = _team?.Members.Where(m => m.UserId == member.Id).FirstOrDefault();
+        if (_team?.Members is null)
+            return;
+        
+        var membership = _team.Members.FirstOrDefault(m => m.UserId == member.Id);
         if(membership is null)
         {
             _showError = true;
             _errorMessage = "Internal database error. User is not member of this team.";
             return;
         }
-        if (result.Confirmed)
-        {
-            await Http.DeleteAsync($"api/UserIsInTeam/{membership.Id}");
-            if(_members is not null)
-            {
-                _members.RemoveAll(x => x.Id == member.Id);
-                StateHasChanged();
-            }
-        }
+        if (!result.Confirmed)
+            return;
+        
+        await Http.DeleteAsync($"api/UserIsInTeam/{membership.Id}");
+        if (_members is null)
+            return;
+        
+        _members.RemoveAll(x => x.Id == member.Id);
+        StateHasChanged();
     }
 
     // Join requests pagination 
@@ -494,7 +498,7 @@ else
         _requestsShowCount = int.Parse(e.Value?.ToString() ?? "10");
     }
 
-    private List<UserModel> requestsFiltered => _requestedMembers?
+    private List<UserModel> RequestsFiltered => _requestedMembers?
         .Where(x =>
         {
             var firstName = x.FirstName is not null && x.FirstName.ToLower().Contains(_membersSearch.ToLower());
@@ -504,7 +508,7 @@ else
         }).ToList()
         ?? new(); // Filtration
 
-    private List<List<UserModel>> requestsFilteredPages => requestsFiltered.Select((x, i) => new  // Splits the one big list into smaller lists
+    private List<List<UserModel>> RequestsFilteredPages => RequestsFiltered.Select((x, i) => new  // Splits the one big list into smaller lists
     {
         Index = i,
         Value = x
@@ -514,15 +518,18 @@ else
 
     private async void AcceptRequest(UserModel requestedMember)
     {
-        UserIsInTeamModel? membership = _team?.Members.Where(m => m.UserId == requestedMember.Id).FirstOrDefault();
-        if (membership is null)
+        if (_team != null)
         {
-            _showError = true;
-            _errorMessage = "Membership is null";
-            return;
+            var membership = (_team.Members).FirstOrDefault(m => m.UserId == requestedMember.Id);
+            if (membership is null)
+            {
+                _showError = true;
+                _errorMessage = "Membership is null";
+                return;
+            }
+            membership.IsApproved = true;
+            await Http.PutAsJsonAsync($"/api/UserIsInTeam", membership);
         }
-        membership.IsApproved = true;
-        var response = await Http.PutAsJsonAsync<UserIsInTeamModel>($"/api/UserIsInTeam", membership);
         _requestedMembers?.Remove(requestedMember);
         _members?.Add(requestedMember);
         StateHasChanged();
@@ -530,23 +537,26 @@ else
 
     private async void RemoveRequest(UserModel requestedMember)
     {
-        UserIsInTeamModel? membership = _team?.Members.Where(m => m.UserId == requestedMember.Id).FirstOrDefault();
-        if (membership is null) return;
-        await Http.DeleteAsync($"/api/UserIsInTeam/{membership.Id}");
+        if (_team?.Members != null)
+        {
+            var membership = (_team.Members).FirstOrDefault(m => m.UserId == requestedMember.Id);
+            if (membership is null) return;
+            await Http.DeleteAsync($"/api/UserIsInTeam/{membership.Id}");
+        }
         _requestedMembers?.Remove(requestedMember);
         StateHasChanged();
     }
 
     private async void DeleteTeam()
     {
-        var result = await Modal.Show<Confirmation>($"Do you want to delete {_team?.Name}? This operation is permament!").Result;
+        var result = await Modal.Show<Confirmation>($"Do you want to delete {_team?.Name}? This operation is permanent!").Result;
 
-        if (result.Confirmed)
-        {
-            var response = await Http.DeleteAsync($"/api/Team/{_team?.Id}");
-            // TODO : handle response
-            NavigationManager.NavigateTo("/Team/List");
-        }
-
+        if (!result.Confirmed)
+            return;
+        
+        var response = await Http.DeleteAsync($"/api/Team/{_team?.Id}");
+        // TODO : handle response
+        
+        NavigationManager.NavigateTo("/Team/List");
     }
 }

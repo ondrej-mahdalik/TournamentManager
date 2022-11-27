@@ -34,7 +34,7 @@ public static class ApplicationUserSeeds
     public static readonly ApplicationUser RexWalsh = new()
     {
         Id = Guid.Parse("F808427F-92DC-4FEE-B76D-1B1F3F7FD88D").ToString(),
-        UserName = "RRRRExy",
+        UserName = "rex@walsh.com",
         FirstName = "Rex",
         LastName = "Walsh",
         Email = "rex@walsh.com",
