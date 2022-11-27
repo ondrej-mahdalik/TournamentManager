@@ -1,3 +1,4 @@
+using AutoMapper.Extensions.ExpressionMapping;
 using TournamentManager.Server.DAL;
 using TournamentManager.Server.DAL.Entities;
 
@@ -22,7 +23,7 @@ public static class TournamentSeeds
 
     public static readonly TournamentEntity NY2024 = new(
         "New Year's tournament",
-        DateTime.Parse("1.1.2023 19:00"),
+        DateTime.Parse("1/1/2023 12:00"),
         "2023",
         true,
         true,
@@ -35,10 +36,44 @@ public static class TournamentSeeds
         SportId = SportSeeds.Basketball.Id
     };
 
+    public static readonly TournamentEntity GoldenPuck = new(
+        "Golden Puck",
+        DateTime.Parse("5/16/2023 16:30"),
+        "",
+        false,
+        false,
+        false,
+        false,
+        20
+        )
+    {
+        Id = Guid.Parse("8A36925B-2431-422D-B6EA-2DE6D2CB1772"),
+        CreatorId = UserSeeds.Admin.Id,
+        SportId = SportSeeds.IceHockey.Id
+    };
+
+    public static readonly TournamentEntity EffortBall = new(
+        "Effort ball",
+        DateTime.Parse("11/11/2024"),
+        "Very much effort",
+        true,
+        true,
+        false,
+        true,
+        20
+        )
+    {
+        Id = Guid.Parse("F5006C84-4C9F-48F4-B5AC-E2C0730415E1"),
+        CreatorId = UserSeeds.Admin.Id,
+        SportId = SportSeeds.TableTennis.Id
+    };
+
 
     public static void Seed(TournamentManagerDbContext dbContext)
     {
         dbContext.Tournaments.Add(Tournament1);
         dbContext.Tournaments.Add(NY2024);
+        dbContext.Tournaments.Add(GoldenPuck);
+        dbContext.Tournaments.Add(EffortBall);
     }
 }

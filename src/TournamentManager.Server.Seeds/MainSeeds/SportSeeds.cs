@@ -30,6 +30,10 @@ public static class SportSeeds
         Id = Guid.Parse("5E01DE8C-0740-4FCF-B20B-9ABEE01B42A3")
     };
 
+    public static readonly SportEntity Chess = new("Chess")
+    {
+        Id = Guid.Parse("DD8C1414-5230-4182-8C61-B42CD47B3B29")
+    };
 
     public static void Seed(TournamentManagerDbContext dbContext)
     {
@@ -38,6 +42,7 @@ public static class SportSeeds
         dbContext.Sports.Add(IceHockey);
         dbContext.Sports.Add(TableTennis);
         dbContext.Sports.Add(Tennis);
+        dbContext.Sports.Add(Chess);
 
     }
 }

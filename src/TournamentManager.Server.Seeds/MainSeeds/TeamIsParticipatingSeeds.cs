@@ -48,6 +48,13 @@ public static class TeamIsParticipatingSeeds
         TeamId = TeamSeeds.JohnsTeam.Id
     };
 
+    public static readonly TeamIsParticipatingEntity JohnsInGoldenPuck = new(true,
+        DateTime.Now - TimeSpan.FromDays(69))
+    {
+        TournamentId = TournamentSeeds.GoldenPuck.Id,
+        TeamId = TeamSeeds.JohnsTeam.Id
+    };
+
 
     public static void Seed(TournamentManagerDbContext dbContext)
     {
@@ -57,6 +64,8 @@ public static class TeamIsParticipatingSeeds
         dbContext.Participatings.Add(Team4InAwesomeTournament);
         dbContext.Participatings.Add(Team5InAwesomeTournament);
         dbContext.Participatings.Add(Team6InAwesomeTournament);
+        dbContext.Participatings.Add(JohsInNYTournament);
+        dbContext.Participatings.Add(JohnsInGoldenPuck);
     }
 
 }
