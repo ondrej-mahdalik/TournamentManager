@@ -1,0 +1,63 @@
+﻿@using TournamentManager.Common.Enums
+@inject HttpClient Http
+
+@if (Participants.Count > 0)
+{
+    <div class="row mb-2">
+        <div class="col">
+            @if (!_resultOk)
+            {
+                <MessageBox MessageType="MessageType.Error" Title="Error" Message="Select the winner first" ShowCloseButton="false"></MessageBox>
+            }
+            <div class="mb-2"><label class="form-label" for="winner">Select a winner</label>
+                <select @bind="_selectedParticipantId" class="form-select" id="winner" name="winner">
+                    @foreach (var p in Participants)
+                    {
+                        <option value="@p.TeamId">@p.Team?.Name</option>
+                    }
+                </select>
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <MessageBox MessageType="MessageType.Warning" Title="Warning" Message="You are not leading any teams" ShowCloseButton="true"></MessageBox>
+}
+<div class="d-flex justify-content-end">
+    <button class="btn btn-danger text-end d-flex me-1" @onclick="CancelAsync">Cancel</button>
+    @if (Participants.Count != 0)
+    {
+        <button class="btn btn-primary text-end d-flex" @onclick="WinAsync">Choose</button>
+    }
+</div>
+
+@code {
+    [CascadingParameter]
+    BlazoredModalInstance BlazoredModal { get; set; } = default!;
+
+    [Parameter]
+    public List<TeamIsParticipatingModel> Participants { get; set; } = default!;
+
+    private Guid? _selectedParticipantId;
+    private bool _resultOk = true;
+    
+
+    private async Task WinAsync()
+    {
+        if (_selectedParticipantId is null)
+        {
+            _resultOk = false;
+        }
+        else
+        {
+            _resultOk = true;
+            await BlazoredModal.CloseAsync(ModalResult.Ok(_selectedParticipantId));
+        }
+    }
+    
+    private async Task CancelAsync()
+    {
+        await BlazoredModal.CloseAsync(ModalResult.Cancel());
+    }
+}

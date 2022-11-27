@@ -61,4 +61,26 @@ public class MatchFacade : CRUDFacade<MatchEntity, MatchModel>
             return false;
         }
     }
+    
+    public async Task<bool> InsertOrUpdateManyAsync(List<MatchModel> matches)
+    {
+        await using var uow = UnitOfWorkFactory.Create();
+        var repository = uow
+            .GetRepository<MatchEntity>();
+
+        try
+        {
+            foreach (var match in matches)
+            {
+                await repository.InsertOrUpdateAsync(match, Mapper).ConfigureAwait(false);
+            }
+
+            await uow.CommitAsync();
+            return true;
+        }
+        catch
+        {
+            return false;
+        }
+    }
 }

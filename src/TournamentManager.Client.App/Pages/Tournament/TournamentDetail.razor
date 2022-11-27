@@ -32,8 +32,8 @@
                 
             }
             <div class="row mb-3">
-                <div class="col text-center d-xl-flex d-flex align-items-center">
-                    <h3 class="text-dark d-xl-flex">@_tournament.Name</h3>
+                <div class="col text-center d-flex align-items-center">
+                    <h3 class="text-dark d-flex">@_tournament.Name</h3>
                 </div>
                 <div class="col col-auto"><a href="/Tournament/list"><button class="btn btn-light" type="button">Back to All Tournaments</button></a></div>
                 @if (_tournament.Participatings.Count < _tournament.MaxAttendees && !_tournament.InProgress)
@@ -53,15 +53,16 @@
                     {
                         <AuthorizeView>
                             <Authorized>
-                                <div class="col col-auto"><a class="btn btn-danger" @onclick="LeaveTournament">Leave Tournament</a></div>
+                                <div class="col col-auto"><a class="btn btn-danger" @onclick="LeaveTournament">@(_participantApproved ? "Leave Tournament" : "Delete Request")</a></div>
                             </Authorized>
                             <NotAuthorized>
-                                <div class="col col-auto"><a class="btn btn-danger" href="authentication/login">Leave Tournament</a></div>
+                                <div class="col col-auto"><a class="btn btn-danger" href="authentication/login">@(_participantApproved ? "Leave Tournament" : "Delete Request")</a></div>
                             </NotAuthorized>
                         </AuthorizeView>
+
                     }
                 }
-                @if (_loggedUser?.Id == _tournament.CreatorId)
+                @if (_loggedUser?.Id == _tournament.CreatorId || (bool) _loggedUser?.IsAdministrator)
                 {
                     <div class="col col-auto"><a href="/Tournament/Manage/@_tournament.Id"><button class="btn btn-primary" type="button">Manage Tournament</button></a></div>
                 }
@@ -120,10 +121,14 @@
                             <div class="card shadow mb-4">
                                 <div class="card-body">
                                     <div class="row">
-                                        <div class="col-6">
+                                        @if (_tournament != null && match.Round == _tournament.NumOfRounds)
+                                         {
+                                             <h6 class="text-primary fw-bold">Final</h6>
+                                         }
+                                         else
+                                         {
                                             <h6 class="text-primary">Round @match.Round</h6>
-                                        </div>
-                                        
+                                         }
                                     </div>
                                     <div class="row border-bottom mb-2">
                                         <div class="col">
@@ -178,6 +183,7 @@
     private int _numberOfParticipants;
     private bool _resultOk = true;
     private Guid _teamParticipatingId;
+    private bool _participantApproved;
     private string _errorMessage = "";
 
     protected override async Task OnInitializedAsync()
@@ -197,6 +203,7 @@
                         var teamParticipating = _tournament.Participatings.FirstOrDefault(x => x.TeamId == userAsLeaderTeam.Id);
                         if (teamParticipating is not null)
                         {
+                            _participantApproved = teamParticipating.Approved;
                             _teamParticipatingId = teamParticipating.Id;
                         }
                         
@@ -234,6 +241,7 @@
                 _resultOk = true;
                 _errorMessage = "";
                 _teamParticipatingId = Guid.Empty;
+                await OnInitializedAsync();
             }
         }
         catch (AccessTokenNotAvailableException exception)

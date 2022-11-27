@@ -63,6 +63,21 @@ public class MatchController : AuthorizedControllerBase
 
         return Ok();
     }
+    [HttpPut("generate")]
+    public async Task<ActionResult> InsertOrUpdateMultiple([FromBody] List<MatchModel>? matches)
+    {
+        if (matches is null || matches.Count == 0)
+            return BadRequest();
+
+        var user = await GetLoggedUser();
+        if (user is null || (!user.IsAdministrator && matches.Any(x => user.Tournaments.All(y => y.Id != x.TournamentId))))
+            return Forbid();
+
+        if (!await _matchFacade.InsertOrUpdateManyAsync(matches))
+            return UnprocessableEntity();
+
+        return Ok();
+    }
 
     [HttpPut]
     public async Task<ActionResult> InsertOrUpdate([FromBody] MatchModel? match)

@@ -3,6 +3,7 @@
 @using Microsoft.AspNetCore.Authorization
 @using TournamentManager.Client.App.Shared.ModalComponents
 @using TournamentManager.Common.Enums
+@using System.Text.RegularExpressions
 @attribute [Authorize]
 @inject HttpClient Http
 @inject NavigationManager Navigation
@@ -24,8 +25,8 @@
  else
  {
      <div class="row mb-3">
-         <div class="col d-xl-flex d-flex align-items-center">
-             <h3 class="text-dark d-xl-flex">@_tournament?.Name</h3>
+         <div class="col d-flex align-items-center">
+             <h3 class="text-dark d-flex">@_tournament?.Name</h3>
          </div>
          <div class="col col-auto"><a href="/Tournament/Detail/@_tournament?.Id"><button class="btn btn-light" type="button">Back to the Tournament Detail</button></a></div>
          @if (_loggedUser is not null && _loggedUser.Id == _tournament?.CreatorId)
@@ -67,30 +68,33 @@
                                  <ValidationSummary/>
                                  <div class="mb-2"><label class="form-label" for="name">Name</label><InputText id="name" name="name" class="form-control" type="text" @bind-Value="_model.Name"/></div>
                                  <div class="mb-2"><label class="form-label" for="description">Description (optional)</label><InputTextArea id="description" name="description" @bind-Value="_model.Description" class="form-control"/></div>
-                                 <div class="mb-2"><label class="form-label" for="date">Date of beginning</label><InputDate TValue="DateTime" id="date" name="date" class="form-control" @bind-Value="_model.Date" Type="InputDateType.Date"></InputDate></div>
-                                 <div class="mb-2"><label class="form-label" for="sport">Sport</label>
-                                     <InputSelect TValue="Guid?" id="sport" name="sport" class="form-select" @bind-Value="_model.SportId">
-                                         @if (_sports != null)
-                                         {
-                                             foreach (var sport in _sports)
+                                 @if (_tournament != null && !_tournament.InProgress)
+                                 {
+                                     <div class="mb-2"><label class="form-label" for="date">Date of beginning</label><InputDate TValue="DateTime" id="date" name="date" class="form-control" @bind-Value="_model.Date" Type="InputDateType.Date"></InputDate></div>
+                                     <div class="mb-2"><label class="form-label" for="sport">Sport</label>
+                                         <InputSelect TValue="Guid?" id="sport" name="sport" class="form-select" @bind-Value="_model.SportId">
+                                             @if (_sports != null)
                                              {
-                                                 <option value="@sport.Id">@sport.Name</option>
+                                                 foreach (var sport in _sports)
+                                                 {
+                                                     <option value="@sport.Id">@sport.Name</option>
+                                                 }
                                              }
-                                         }
-                                         <option value="">Other</option>
-                                     </InputSelect>
-                                 </div>
-                                 <div class="mb-2"><label class="form-label" for="signup-type">Play mode</label>
-                                     <select id="signup-type" name="signup-type" class="form-select">
-                                         <option value="12" selected>Individual</option>
-                                         <option value="13">Teams</option>
-                                     </select>
-                                 </div>
-                                 <div class="mb-2"><label class="form-label" for="max-players">Maximum number of players</label><InputNumber TValue="int" id="max-players" name="max-players" @bind-Value="_model.MaxAttendees" class="form-control" min="1" type="number" style="width: 30%;"></InputNumber></div>
-                                 <div class="mb-2">
-                                     <div class="form-check form-switch"><label class="form-check-label" for="formCheck-1">Public</label><InputCheckbox class="form-check-input" type="checkbox" id="formCheck-1" @bind-Value="_model.IsPublic"></InputCheckbox></div>
-                                 </div>
-                                 <div class="d-xl-flex justify-content-xl-end"><button class="btn btn-primary text-end d-xl-flex" type="submit">Edit</button></div>
+                                             <option value="">Other</option>
+                                         </InputSelect>
+                                     </div>
+                                     <div class="mb-2"><label class="form-label" for="signup-type">Play mode</label>
+                                         <select id="signup-type" name="signup-type" class="form-select">
+                                             <option value="12" selected>Individual</option>
+                                             <option value="13">Teams</option>
+                                         </select>
+                                     </div>
+                                     <div class="mb-2"><label class="form-label" for="max-players">Maximum number of players</label><InputNumber TValue="int" id="max-players" name="max-players" @bind-Value="_model.MaxAttendees" class="form-control" min="1" type="number" style="width: 30%;"></InputNumber></div>
+                                     <div class="mb-2">
+                                         <div class="form-check form-switch"><label class="form-check-label" for="formCheck-1">Public</label><InputCheckbox class="form-check-input" type="checkbox" id="formCheck-1" @bind-Value="_model.IsPublic"></InputCheckbox></div>
+                                     </div>
+                                 }
+                                 <div class="d-xl-flex justify-content-xl-end"><button class="btn btn-primary text-end d-xl-flex" type="submit">Save Changes</button></div>
                              </EditForm>
                          </div>
                      </div>
@@ -330,6 +334,14 @@
          <div class="col">
              <h4 class="text-center text-primary"><span style="color: rgba(var(--bs-primary-rgb), var(--bs-text-opacity)) ;">Tournament Matches</span><br></h4>
          </div>
+        @if (_generateMoreMatches)
+        {
+            <div class="row mb-3">
+                <div class="col d-flex justify-content-end">
+                    <button class="btn btn-primary text-center d-flex" @onclick="GenerateMoreMatches">Generate More Matches</button>
+                </div>
+            </div>
+        }
      </div>
      @if (_teamIsInMultipleMatches)
      {
@@ -352,7 +364,7 @@
          {
              <p class="text-center fw-bold">Loading...</p>
          }
-         else if (_matches.Count == 0)
+         else if (_matches.Count == 0 || _generatingMoreMatches)
          {
             <p class="text-center fw-bold">@_message</p>
          }
@@ -364,8 +376,15 @@
                      <div class="card mb-4 shadow">
                          <div class="card-body">
                              <div class="row">
-                                <div class="col-6">
-                                     <h6 class="text-primary">Round @match.Round</h6>
+                                 <div class="col-6">
+                                     @if (_tournament != null && match.Round == _tournament.NumOfRounds)
+                                     {
+                                         <h6 class="text-primary fw-bold">Final</h6>
+                                     }
+                                     else
+                                     {
+                                        <h6 class="text-primary">Round @match.Round</h6>
+                                     }
                                  </div>
 
                                 
@@ -373,7 +392,7 @@
                              <div class="row">
                                  <div class="col">
                                      <p>
-                                         @if (match.Team1 is not null && (match.Team1?.LogoUrl is not null || match.Team1?.LogoUrl != ""))
+                                         @if (match.Team1 is not null && (match.Team1?.LogoUrl is not null && match.Team1?.LogoUrl != ""))
                                          {
                                              <img alt="team1-image" class="img-fluid" width="60" height="60" src="@match.Team1?.LogoUrl">
                                          }
@@ -387,7 +406,7 @@
                              <div class="row">
                                  <div class="col">
                                      <p>
-                                         @if (match.Team2 is not null && (match.Team2?.LogoUrl is not null || match.Team2?.LogoUrl != ""))
+                                         @if (match.Team2 is not null && (match.Team2?.LogoUrl is not null && match.Team2?.LogoUrl != ""))
                                          {
                                              <img alt="team2-image" class="img-fluid" width="60" height="60" src="@match.Team2?.LogoUrl">
                                          }
@@ -398,11 +417,19 @@
                                      <p class="lead text-center">@match.Score2</p>
                                  </div>
                              </div>
-                             <div class="row justify-content-end">
-                                 <div class="col col-auto">
-                                     <button class="btn btn-primary" type="button" @onclick="() => ManageTournamentAsync(match)">Manage</button>
+                                 <div class="row justify-content-end">
+                                     <div class="col col-auto">
+                                         @if (!match.IsLocked)
+                                         {
+                                             <button class="btn btn-primary me-1" type="button" @onclick="() => ManageTournamentAsync(match)">Manage</button>
+                                         }
+                                         @if (_tournament != null && _showWinner && match.Round == _tournament.NumOfRounds)
+                                         {
+                                             <button class="btn btn-success me-1" type="button" @onclick="() => ChooseWinner(match, false)">Choose Winner Automatically</button>
+                                             <button class="btn btn-danger me-1" type="button" @onclick="() => ChooseWinner(match, true)">Choose Winner Manually</button>
+                                         }
+                                     </div>
                                  </div>
-                             </div>
                          </div>
                      </div>
                  </div>
@@ -431,6 +458,7 @@
     private List<UserModel>? _teamLeaders;
     private List<SportModel>? _sports;
     private TournamentModel _model = TournamentModel.Empty;
+    private List<MatchModel> _editedMatches = new();
 
     private bool _isLoading;
     private int _showCount = 10;
@@ -441,7 +469,10 @@
     private string _searchPending = "";
     private string _searchApproved = "";
     private bool _allTeamsHaveMatch = true;
-    
+    private bool _generateMoreMatches;
+    private bool _generatingMoreMatches;
+    private bool _showWinner;
+
     private bool _resultOk = true;
     private string _errorMessage = string.Empty;
 
@@ -483,7 +514,7 @@
         {
             _isLoading = true;
             _tournament = await Http.GetFromJsonAsync<TournamentModel>($"/api/Tournament/{Id}");
-            _matches = _tournament?.Matches.OrderBy(x => x.Round).ThenBy(x => x.Order).ToList() ?? new();
+            _matches = _tournament?.Matches.OrderBy(x => !x.IsLocked).ThenBy(x => x.Round).ThenBy(x => x.Order).ToList() ?? new();
             var allParticipants = await Http.GetFromJsonAsync<List<TeamIsParticipatingModel>>("/api/TeamIsParticipating") ?? new();
             _approvedParticipants = allParticipants.Where(x => x.TournamentId == _tournament?.Id && x.Approved).ToList();
             _pendingParticipants = allParticipants.Where(x => x.TournamentId == _tournament?.Id && !x.Approved).OrderBy(x => x.CreatedOn).ToList();
@@ -627,9 +658,10 @@
 
     private async Task StartTournament()
     {
-        if (_tournament is not null)
+        if (_tournament is not null && _approvedParticipants is not null)
         {
             _tournament.InProgress= true;
+            _tournament.NumOfRounds = (int) Math.Ceiling(Math.Log2(_approvedParticipants.Count));
             var result = await Http.PutAsJsonAsync("/api/Tournament", _tournament);
             if (!result.IsSuccessStatusCode)
             {
@@ -666,7 +698,7 @@
         {
             for (var i = 0; i < randomOrderParticipants.Count; i += 2)
             {
-                var match = new MatchModel(_tournament.Id, 0, 0, 1, order++)
+                var match = new MatchModel(_tournament.Id, 0, 0, 1, order++, false)
                 {
                     Team1Id = randomOrderParticipants[i].TeamId,
                     Team2Id = randomOrderParticipants[i+1].TeamId
@@ -679,7 +711,7 @@
             var i = 0;
             for (; i < matchesInFirstRound * 2; i += 2)
             {
-                var match = new MatchModel(_tournament.Id, 0, 0, 1, order++)
+                var match = new MatchModel(_tournament.Id, 0, 0, 1, order++, false)
                 {
                     Team1Id = randomOrderParticipants[i].TeamId,
                     Team2Id = randomOrderParticipants[i + 1].TeamId
@@ -690,10 +722,10 @@
                     return;
                 }
             }
-            order = 1;
+            order = (order / 2) + 1;
             for (; i < randomOrderParticipants.Count; i += 2)
             {
-                var match = new MatchModel(_tournament.Id, 0, 0, 2, order++)
+                var match = new MatchModel(_tournament.Id, 0, 0, 2, order--, false)
                 {
                     Team1Id = randomOrderParticipants[i].TeamId,
                     Team2Id = i + 1 < randomOrderParticipants.Count ? randomOrderParticipants[i+1].TeamId : null
@@ -782,6 +814,63 @@
         {
             _matches = null;
             await OnInitializedAsync();
+            if (!_editedMatches.Any(x => x.Id == match.Id))
+            {
+                _editedMatches.Add(match);
+            }
+            if (_tournament != null && _tournament.NumOfRounds != match.Round)
+                _generateMoreMatches = true;
+            else
+                _showWinner = true;
+        }
+    }
+
+    private async Task GenerateMoreMatches()
+    {
+        var message = new ModalParameters().Add(nameof(Confirmation.Message), "Are you sure you want to generate more matches? You won't be able to edit the previous ones.");
+        var result = await Modal.Show<Confirmation>("Generate More Matches", message).Result;
+        if (result.Confirmed && _matches is not null && _tournament is not null)
+        {
+            _generateMoreMatches = false;
+            _generatingMoreMatches = true;
+            StateHasChanged();
+            List<MatchModel> lockedMatches = new();
+            foreach (var match in _editedMatches)
+            {
+                match.IsLocked = true;
+                lockedMatches.Add(match);
+                
+                var subsequentOrder = (int) (match.Order / 2.0 + 0.5);
+                var subsequentMatch = _matches.FirstOrDefault(x => x.Round == match.Round + 1 && x.Order == subsequentOrder);
+                var matchWinner = match.Score1 >= match.Score2 ? match.Team1Id : match.Team2Id;
+                if (subsequentMatch is null)
+                {
+                    subsequentMatch = new MatchModel(_tournament.Id, 0, 0, match.Round + 1, subsequentOrder, false)
+                    {
+                        Team1Id = matchWinner,
+                        Team2Id = null
+                    };
+                }
+                else
+                {
+                    subsequentMatch.Team2Id = matchWinner;
+                }
+                var response = await Http.PutAsJsonAsync("/api/Match", subsequentMatch);
+                if (response.IsSuccessStatusCode)
+                {
+                    _tournament = await Http.GetFromJsonAsync<TournamentModel>($"/api/Tournament/{Id}");
+                    _matches = _tournament?.Matches.OrderBy(x => !x.IsLocked).ThenBy(x => x.Round).ThenBy(x => x.Order).ToList() ?? new();
+                }
+            }
+            var res = await Http.PutAsJsonAsync("/api/Match/generate", lockedMatches);
+            if (res.IsSuccessStatusCode)
+            {
+                _generatingMoreMatches = false;
+                _generateMoreMatches = false;
+                await OnInitializedAsync();
+            }
+            
+            _editedMatches = new();
         }
     }
 
@@ -795,10 +884,43 @@
 
         _teamIsInMultipleMatches = _matches.Any(
             match => _matches
-                .Where(x => x.Round == match.Round)
-                .Any(x => x.TournamentId != match.Id && (x.Team1Id == match.Team1Id || x.Team2Id == match.Team1Id || x.Team1Id == match.Team2Id || x.Team2Id == match.Team2Id))
+                .Where(x => x.Round == match.Round && x.Id != match.Id)
+                .Any(x => x.Team1Id == match.Team1Id || x.Team2Id == match.Team1Id || x.Team1Id == match.Team2Id || x.Team2Id == match.Team2Id)
             );
     }
-
     private bool _teamIsInMultipleMatches;
+
+    private async Task ChooseWinner(MatchModel match, bool showModal)
+    {
+        if (_tournament != null)
+        {
+            if (showModal)
+            {
+                var parameters = new ModalParameters()
+                    .Add(nameof(ChooseWinnerModal.Participants), _approvedParticipants);
+        
+                var res = await Modal.Show<ChooseWinnerModal>("Choose a winner", parameters).Result;
+                if (res.Confirmed)
+                {
+                    var winnerId = res.Data as Guid?;
+                    _tournament.WinnerTeamId = winnerId;
+                    
+                }
+            }
+            else
+            {
+                _tournament.WinnerTeamId = match.Score1 >= match.Score2 ? match.Team1Id : match.Team2Id;
+            }
+            var result = await Http.PutAsJsonAsync("/api/Tournament", _tournament);
+            if (!result.IsSuccessStatusCode)
+            {
+                _resultOk = false;
+                _errorMessage = "Unable to choose the winner";
+            }
+            else
+            {
+                Navigation.NavigateTo("/Tournament/List");
+            }
+        }
+    }
 }

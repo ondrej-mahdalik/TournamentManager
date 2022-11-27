@@ -7,7 +7,8 @@ public record TournamentEntity(string Name,
     bool IsApproved,
     bool InProgress,
     bool IsIndividual,
-    int MaxAttendees) : EntityBase
+    int MaxAttendees,
+    int NumOfRounds) : EntityBase
 {
     public Guid? CreatorId { get; init; }
     public UserEntity? Creator { get; init; }

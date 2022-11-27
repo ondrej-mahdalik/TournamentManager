@@ -74,7 +74,9 @@ public class TournamentFacade : CRUDFacade<TournamentEntity, TournamentModel>
         await using var uow = UnitOfWorkFactory.Create();
         var query = uow
             .GetRepository<TournamentEntity>()
-            .Get().Include(x => x.Participatings);
+            .Get()
+            .Include(x => x.Participatings)
+            .Include(x => x.WinnerTeam);
 
         return await Mapper.ProjectTo<TournamentModel>(query).ToArrayAsync().ConfigureAwait(false);
     }
