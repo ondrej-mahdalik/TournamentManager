@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace TournamentManager.Common.Models;
 
@@ -7,10 +8,13 @@ public class TeamModel : ModelBase
     public TeamModel(string name,
         string? logoUrl, bool isPersonal)
     {
-        this.Name = name;
-        this.LogoUrl = logoUrl;
-        this.IsPersonal = isPersonal;
+        Name = name;
+        LogoUrl = logoUrl;
+        IsPersonal = isPersonal;
     }
+    [Required]
+    [MinLength(2)]
+    [MaxLength(100)]
     public string Name { get; set; }
     public string? LogoUrl { get; set; }
     public bool IsPersonal { get; set; }

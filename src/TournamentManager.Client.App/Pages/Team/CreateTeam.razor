@@ -5,14 +5,13 @@
 @attribute [Authorize]
 @inject HttpClient Http
 @inject NavigationManager NavigationManager;
-@inject IJSRuntime JsRuntime;
 
 
 <div id="content">
     <div class="container-fluid">
         <div class="row mb-3">
-            <div class="col d-xl-flex d-flex align-items-center">
-                <h3 class="text-dark d-xl-flex">New Team</h3>
+            <div class="col d-flex align-items-center">
+                <h3 class="text-primary">New Team</h3>
             </div>
             <div class="col col-auto"><a href="Team/List" class="btn btn-light">Back to All Teams</a></div>
         </div>
@@ -22,64 +21,45 @@
                     <div class="card-body">
                         <div class="row">
                             <div class="col">
-                                <form class="d-xl-flex flex-column justify-content-center w-100" method="post">
-                                    <div class="mb-2"><label class="form-label w-100" for="Name">Name<input class="form-control" type="text" @bind-value="_teamName" name="Name" /></label></div>
-                                    <div class="mb-2"><label class="form-label w-100" for="Logo">Logo</label>
-                                        @if (_logoUrl is null)
+                                <EditForm Model="@_team" OnValidSubmit="@HandleValidSubmit">
+                                    <DataAnnotationsValidator/>
+                                    <ValidationSummary/>
+                                    <div class="mb-2">
+                                        <label class="form-label w-100" for="teamName">Name</label>
+                                        <InputText id="teamName" class="form-control" type="text" @bind-Value="_team.Name" />
+                                    </div>
+                                    <div class="mb-2">
+                                        
+                                        @if (_team.LogoUrl is null)
                                         {
-                                            <img width="100" style="transform: scale(1);padding-bottom: 0px;margin-bottom: 12px;" src="/assets/img/logo_placeholder.jpg"  name="Logo" />
+                                            <img class="pb-0" width="100" src="/assets/img/logo_placeholder.jpg" alt="Team Logo"/>
                                         }
                                         else
                                         {
-                                            <img width="100" style="transform: scale(1);padding-bottom: 0px;margin-bottom: 12px;" src="@_logoUrl" name="Logo" />
+                                            <img class="pb-0" width="100" src="@_team.LogoUrl" alt="Team Logo"/>
                                         }
                                     </div>
-                                    <div class="mb-2"> <input type="url" placeholder="logo url" @onchange="OnLogoUrlChanged"/> </div>
-                                    <div class="d-xxl-flex justify-content-xxl-center"><button class="btn btn-primary" @onclick="HandleSubmit" type="button">Create</button></div>
-                                </form>
+                                    <div class="mb-2">
+                                        <label class="form-label w-100" for="logo">Logo</label>
+                                        <InputText id="logo" type="url" @bind-Value="_team.LogoUrl"/>
+                                    </div>
+                                    <div class="d-flex justify-content-center"><button class="btn btn-primary" type="submit">Create</button></div>
+                                </EditForm>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="text-center d-lg-flex d-xl-flex justify-content-lg-center justify-content-xl-start" style="text-align: center;"></div>
     </div>
 </div>
 
 @code {
     private TeamModel _team = TeamModel.Empty;
-    private string? _teamName = null;
-    private string? _logoUrl;
     private UserModel? _currentUser;
 
-
-    private void OnLogoUrlChanged(ChangeEventArgs e)
+    private async void HandleValidSubmit()
     {
-        string[] allowedFormats = { "jpg", "jpeg", "gif", "png", "apng", "svg", "bmp" };
-        if (e is not null && e.Value is not null)
-        {
-            string value = (string)e.Value;
-            string format = value.Split('.').Last();
-            if (allowedFormats.Contains(format))
-            {
-                _logoUrl = (string)e.Value;
-            }
-            else
-            {
-                _logoUrl = null;
-            }
-        }
-    }
-
-    private async void HandleSubmit()
-    {
-        if (_teamName is null || _teamName == string.Empty)
-        {
-            await JsRuntime.InvokeVoidAsync("alert", "Name is required."); // Alert
-            return;
-        }
-
         try
         {
             _currentUser = await Http.GetFromJsonAsync<UserModel>("api/User/current");
@@ -89,17 +69,15 @@
             exception.Redirect();
         }
 
-        if(_currentUser is null)
+        if (_currentUser is null)
         {
             NavigationManager.NavigateToLogin("/authentication/login");
             return;
         }
-
-        _team.Name = _teamName;
-        _team.LogoUrl = _logoUrl;
         _team.LeaderId = _currentUser.Id;
         var response = await Http.PutAsJsonAsync<TeamModel>("/api/Team", _team);
         //TODO : handle response
         NavigationManager.NavigateTo($"/Team/Detail/{_team.Id}");
+        
     }
 }

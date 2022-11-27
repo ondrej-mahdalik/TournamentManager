@@ -19,7 +19,7 @@
             <div class="col d-xl-flex d-flex align-items-center">
                 @if (_team.LogoUrl is not null)
                 {
-                    <img class="me-2" height="100" src="@_team.LogoUrl" alt="Team logo"/>
+                    <img class="rounded-circle me-2" height="60" width="60" src="@_team.LogoUrl" alt="Team logo"/>
                 }
                 <h3 class="text-dark mb-0">@_team?.Name</h3>
             </div>
@@ -162,14 +162,10 @@
                                 <div class="row mb-4">
                                     <div class="col-md-6 align-self-center">
                                         <p id="dataTable_info" class="dataTables_info" role="status" aria-live="polite">
-                                            Showing @(
-    1 + _membersSelectedPageIndex * _membersShowCount
-                                                        ) to @(
+                                            Showing @(1 + _membersSelectedPageIndex * _membersShowCount) to @(
     (_membersShowCount + _membersSelectedPageIndex * _membersShowCount) < MembersFiltered.Count ?
         (_membersShowCount + _membersSelectedPageIndex * _membersShowCount) : MembersFiltered.Count
-                                                                 ) of @(
-    MembersFiltered.Count
-                                                                          )
+                                                                                                                ) of @(MembersFiltered.Count)
                                         </p>
                                     </div>
                                     <div class="col-md-6">
@@ -413,7 +409,7 @@
             return;
         }
 
-        var response = await PublicHttp.Client.PutAsJsonAsync($"/api/UserIsInTeam", new UserIsInTeamModel(_currentUser.Id, _team.Id));
+        var response = await Http.PutAsJsonAsync($"/api/UserIsInTeam", new UserIsInTeamModel(_currentUser.Id, _team.Id));
         // TODO handle response
 
         _team = await PublicHttp.Client.GetFromJsonAsync<TeamModel>($"/api/Team/{Id}");
@@ -424,9 +420,9 @@
         if (_team is null || _currentUser is null)
             return;
 
-        var response = await PublicHttp.Client.DeleteAsync($"/api/UserIsInTeam/{_team.Members.First(x => x.UserId == _currentUser.Id).Id}");
+        var response = await Http.DeleteAsync($"/api/UserIsInTeam/{_team.Members.First(x => x.UserId == _currentUser.Id).Id}");
         // TODO handle response
-
+        
         _team = await PublicHttp.Client.GetFromJsonAsync<TeamModel>($"/api/Team/{Id}");
     }
 

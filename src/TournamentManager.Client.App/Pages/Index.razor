@@ -406,40 +406,55 @@
                                     <div class="col">
                                         <h4 class="mb-0">Best players</h4>
                                     </div>
-                                    <div class="col text-end"><a href="/Tournament/List" class="btn btn-primary btn-sm">Show all</a></div>
+                                    <!-- <div class="col text-end"><a href="/User/List" class="btn btn-primary btn-sm">Show all users</a></div> -->
                                 </div>
                             </div>
                             <div class="card-body">
-                                <div class="row">
-                                    <div class="col">
-                                        <div id="dataTable-2" class="table-responsive table mt-2" role="grid" aria-describedby="dataTable_info">
-                                            <table id="dataTable" class="table my-0">
-                                                <thead>
-                                                    <tr>
-                                                        <th>Name</th>
-                                                        <th>email</th>
-                                                        <th></th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    <tr>
-                                                        <td><img class="rounded-circle me-2" width="30" height="30" src="avatars/avatar1.jpeg" />Airi Satou</td>
-                                                        <td>airi@example.com</td>
-                                                        <td class="text-end"><a href="../Profile/detail.html"><button class="btn btn-primary btn-sm" type="button">Detail</button></a></td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td><img class="rounded-circle me-2" width="30" height="30" src="avatars/avatar2.jpeg" />Angelica Ramos</td>
-                                                        <td>ramosan@email.com</td>
-                                                        <td class="text-end"><a href="../Profile/detail.html"><button class="btn btn-primary btn-sm" type="button">Detail</button></a></td>
-                                                    </tr>
-                                                </tbody>
-                                                <tfoot>
-                                                    <tr></tr>
-                                                </tfoot>
-                                            </table>
+                                @if(_bestPlayers == null)
+                                {
+                                    <p class="text-center fw-bold">Loading...</p>
+                                }else if(_bestPlayers.Count == 0)
+                                {
+                                    <p class="text-center fw-bold">No players found.</p>
+                                }
+                                else{
+                                    <div class="row">
+                                        <div class="col">
+                                            <div id="dataTable-2" class="table-responsive table mt-2" role="grid" aria-describedby="dataTable_info">
+                                                <table id="dataTable" class="table my-0">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Name</th>
+                                                            <th>email</th>
+                                                            <th></th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    @for(int i = 0; i < _bestPlayers.Count && i < 5; i++)
+                                                    {
+                                                        UserModel player = _bestPlayers[i];
+                                                        <tr>
+                                                            <td class="mb-0">
+                                                                    @if (player.ProfilePictureUrl is not null)
+                                                                {
+                                                                        <img alt="Profile picture" class="rounded-circle me-2" width="30" height="30" src="@player.ProfilePictureUrl" />
+                                                                }
+                                                                    @player.FirstName @player.LastName
+                                                            </td>
+                                                        
+                                                            <td class="mb-0">@player.Email</td>
+                                                            <td class="text-end"><a href="/Profile/Detail/@player.Id" class="btn btn-primary">Detail</a></td>
+                                                        </tr>
+                                                    }
+                                                    </tbody>
+                                                    <tfoot>
+                                                        <tr></tr>
+                                                    </tfoot>
+                                                </table>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
+                                }
                             </div>
                         </div>
                     </div>
@@ -469,7 +484,7 @@
     private List<TournamentModel>? _tournamentsFinished;
     private Dictionary<Guid, int> _numberOfParticipantsFinished = new();
 
-    private List<UserModel>? bestPlayers;
+    private List<UserModel>? _bestPlayers;
 
 
     protected override async Task OnInitializedAsync()
@@ -499,8 +514,17 @@
 
         if (_currentUser is null) // Not logged in
         {
-
-
+            List<UserModel>? users = await PublicHttp.Client.GetFromJsonAsync<List<UserModel>>("/api/User/");
+            List<UserIsInTeamModel>? memberships = await PublicHttp.Client.GetFromJsonAsync<List<UserIsInTeamModel>>("/api/UserIsInTeam/");
+            if (users is null || memberships is null) return;
+            Dictionary<Guid, int> usersPoints = new();
+            foreach(UserModel user in users) // get points for all the users
+            {
+                List<Guid> usersTeamsIds = memberships.Where(m => m.UserId == user.Id).Select(m => m.TeamId).ToList();
+                int points = _tournaments.Where(t => t.InProgress == false && usersTeamsIds.Contains(t.WinnerTeamId??Guid.Empty)).Count();
+                usersPoints.Add(user.Id, points);
+            }
+            _bestPlayers = users.OrderBy(u => usersPoints[u.Id]).ToList();
         }
         else // Logged user
         {
