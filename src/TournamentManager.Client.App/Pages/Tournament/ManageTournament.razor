@@ -34,7 +34,7 @@
              <div class="col col-auto d-flex align-items-center"><button class="btn btn-danger" @onclick="DeleteTournament" type="button">Delete Tournament</button></div>
          }
 
-         @if (_tournament is not null && _tournament.IsApproved && _loggedUser?.Id == _tournament?.CreatorId &&
+         @if (_loggedUser != null && _tournament is not null && _tournament.IsApproved && (_loggedUser?.Id == _tournament?.CreatorId || _loggedUser.IsAdministrator) &&
               !_tournament!.InProgress && _approvedParticipants?.Count > 1)
          {
              <div class="col col-auto d-flex align-items-center"><button class="btn btn-success" @onclick="StartTournament" type="button">Start Tournament</button></div>
