@@ -41,18 +41,18 @@ else
                                 <div class="row">
                                     <div class="col">
                                         <div>
-                                            <h6 class="text-primary">Tournaments attended</h6><span>@_user.Tournaments.Count</span>
+                                            <h6 class="text-primary">Tournaments attended</h6><span>@(_playedTournaments ?? 0)</span>
                                         </div>
                                         <div>
-                                            <h6 class="text-primary">Matches played</h6><span>28</span>
+                                            <h6 class="text-primary">Matches played</h6><span>@(_playedMatches ?? 0)</span>
                                         </div>
                                     </div>
                                     <div class="col">
                                         <div>
-                                            <h6 class="text-primary">Tournaments won</h6><span>2</span>
+                                            <h6 class="text-primary">Tournaments won</h6><span>@(_wonTournaments ?? 0)</span>
                                         </div>
                                         <div>
-                                            <h6 class="text-primary">Matches won</h6><span>19</span>
+                                            <h6 class="text-primary">Matches won</h6><span>@(_wonMatches ?? 0)</span>
                                         </div>
                                     </div>
                                 </div>
@@ -70,9 +70,19 @@ else
     public Guid Id { get; set; }
 
     private UserModel? _user;
+    
+    private int? _playedMatches;
+    private int? _wonMatches;
+    private int? _playedTournaments;
+    private int? _wonTournaments;
 
     protected override async Task OnInitializedAsync()
     {
         _user = await  PublicHttp.Client.GetFromJsonAsync<UserModel>($"api/User/{Id}");
+        
+        _playedMatches = await PublicHttp.Client.GetFromJsonAsync<int>($"api/Stats/User/Matches/Played/{Id}");
+        _wonMatches = await PublicHttp.Client.GetFromJsonAsync<int>($"api/Stats/User/Matches/Won/{Id}");
+        _playedTournaments = await PublicHttp.Client.GetFromJsonAsync<int>($"api/Stats/User/Tournaments/Played/{Id}");
+        _wonTournaments = await PublicHttp.Client.GetFromJsonAsync<int>($"api/Stats/User/Tournaments/Won/{Id}");
     }
 }

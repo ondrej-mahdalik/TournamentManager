@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 
 namespace TournamentManager.Common.Models;
 
@@ -46,15 +47,20 @@ public class TournamentModel : ModelBase, IValidatableObject
     public string? Description { get; set; }
 
     public Guid? CreatorId { get; set; }
+    [ValidateNever]
     public UserModel? Creator { get; set; }
     
     public Guid? WinnerTeamId { get; set; }
+    [ValidateNever]
     public TeamModel? WinnerTeam { get; set; }
     
     public Guid? SportId { get; set; }
+    [ValidateNever]
     public SportModel? Sport { get; set; }
     
+    [ValidateNever]
     public IList<TeamIsParticipatingModel> Participatings { get; set; } = new List<TeamIsParticipatingModel>();
+    [ValidateNever]
     public IList<MatchModel> Matches { get; set; } = new List<MatchModel>();
     
     public static TournamentModel Empty => new(string.Empty, DateTime.Now, false, false, false, false, 2, 0);

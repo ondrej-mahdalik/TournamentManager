@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 
 namespace TournamentManager.Common.Models;
 
@@ -13,8 +14,11 @@ public class UserModel : ModelBase
     public DateTime RegisteredAt { get; set; }
     public string? ApplicationUserId { get; set; }
     
+    [ValidateNever]
     public IList<TournamentModel> Tournaments { get; set; } = new List<TournamentModel>();
+    [ValidateNever]
     public IList<TeamModel> TeamsAsLeader { get; set; } = new List<TeamModel>();
+    [ValidateNever]
     public IList<UserIsInTeamModel> TeamsAsMember { get; set; } = new List<UserIsInTeamModel>();
 
     public UserModel() : this(string.Empty) {}

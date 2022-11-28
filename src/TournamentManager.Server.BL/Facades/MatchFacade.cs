@@ -96,4 +96,18 @@ public class MatchFacade : CRUDFacade<MatchEntity, MatchModel>
             return false;
         }
     }
+    public async Task<List<MatchModel>> GetByUserIdAsync(Guid userId)
+    {
+        await using var uow = UnitOfWorkFactory.Create();
+        var query = uow
+            .GetRepository<MatchEntity>()
+            .Get()
+            .Include(x => x.Team1)
+            .Include(x => x.Team2)
+            .Include(x => x.Tournament)
+            .Where(x => x.Team2 != null && x.Team1 != null && (x.Team1.LeaderId == userId || x.Team1.Members.Any(y => y.Id == userId)
+                    || x.Team2.LeaderId == userId || x.Team2.Members.Any(y => y.Id == userId)));
+
+        return await Mapper.ProjectTo<MatchModel>(query).ToListAsync().ConfigureAwait(false);
+    }
 }
