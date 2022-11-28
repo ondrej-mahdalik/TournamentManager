@@ -34,14 +34,12 @@ public class TournamentController : AuthorizedControllerBase
         var tournaments = await _tournamentFacade.GetAsync();
         
         var user = await GetLoggedUser();
-        var _teamMembershipsEnumerable = await _userIsInTeamFacade.GetAsync();
-        List<UserIsInTeamModel>? _teamMemberships = _teamMembershipsEnumerable.ToList();
-        List<Guid> _currentUserTeamIds = _teamMemberships?.Where(m => m.UserId == user?.Id).Select(m => m.TeamId).ToList() ?? new();
-        var _participatingsEnumerable = await _teamIsParticipatingFacade.GetAsync();
-        List<TeamIsParticipatingModel> _participatings = _participatingsEnumerable.ToList();
+        var teamMemberships = await _userIsInTeamFacade.GetAsync();
+        var currentUserTeamIds = teamMemberships.Where(m => m.UserId == user?.Id).Select(m => m.TeamId);
+        var participatings = await _teamIsParticipatingFacade.GetAsync();
 
         return Ok(user?.IsAdministrator ?? false ? tournaments : tournaments.Where(x => x.IsPublic || x.CreatorId == user?.Id ||
-        _participatings.Any(p => p.TournamentId == x.Id && _currentUserTeamIds.Contains(p.TeamId)) ));
+        participatings.Any(p => p.TournamentId == x.Id && currentUserTeamIds.Contains(p.TeamId)) ));
 
     }
 
