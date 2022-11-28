@@ -66,11 +66,44 @@ public static class ApplicationUserSeeds
 
     public static readonly ApplicationUser DarthVader = new()
     {
-        Id = Guid.Parse("7BBE3851-A3DD-4C27-9999-EC14E20829FB"),
+        Id = Guid.Parse("7BBE3851-A3DD-4C27-9999-EC14E20829FB").ToString(),
         UserName = "darth@vader.com",
         FirstName = "Darth",
         LastName = "Vader",
         Email = "darth@vader.com",
+        EmailConfirmed = true,
+        SecurityStamp = Guid.NewGuid().ToString("D")
+    };
+
+    public static readonly ApplicationUser StormTrooper1 = new()
+    {
+        Id = Guid.Parse("33202F85-DE17-422D-BDC2-DDA8805641C5").ToString(),
+        UserName = "stormtrooper1@vader.com",
+        FirstName = "Storm",
+        LastName = "Trooper",
+        Email = "stormtrooper1@vader.com",
+        EmailConfirmed = true,
+        SecurityStamp = Guid.NewGuid().ToString("D")
+    };
+
+    public static readonly ApplicationUser StormTrooper2 = new()
+    {
+        Id = Guid.Parse("2BB80853-826D-4BC9-AD91-DD3221CDED2F").ToString(),
+        UserName = "stormtrooper2@vader.com",
+        FirstName = "Storm",
+        LastName = "Trooper",
+        Email = "stormtrooper2@vader.com",
+        EmailConfirmed = true,
+        SecurityStamp = Guid.NewGuid().ToString("D")
+    };
+
+    public static readonly ApplicationUser StormTrooper3 = new()
+    {
+        Id = Guid.Parse("85C95FB1-E6E2-468B-98C5-7A141020F012").ToString(),
+        UserName = "stormtrooper3@vader.com",
+        FirstName = "Storm",
+        LastName = "Trooper",
+        Email = "stormtrooper3@vader.com",
         EmailConfirmed = true,
         SecurityStamp = Guid.NewGuid().ToString("D")
     };
@@ -85,5 +118,8 @@ public static class ApplicationUserSeeds
         await userManager.CreateAsync(AlenaVaf, "Pass123$");
         await userManager.CreateAsync(PavelWolf, "Pass123$");
         await userManager.CreateAsync(DarthVader, "Pass123$");
+        await userManager.CreateAsync(StormTrooper1, "Pass123$");
+        await userManager.CreateAsync(StormTrooper2, "Pass123$");
+        await userManager.CreateAsync(StormTrooper3, "Pass123$");
     }
 }

@@ -48,7 +48,25 @@ public static class UserSeeds
     {
         Id = Guid.Parse("C7D583E3-9CE7-4F86-AF22-427DC3B64E8F")
     };
-    // TODO User seeds
+
+    public static readonly UserEntity StormTrooper1 = new(
+        DateTime.Parse("3/28/1977"),
+        ApplicationUserSeeds.StormTrooper1.Id)
+    {
+        Id = Guid.Parse("79AD8A7B-2067-4BD4-55BD-0AD0B54A3E64")
+    };
+    public static readonly UserEntity StormTrooper2 = new(
+        DateTime.Parse("3/28/1977"),
+        ApplicationUserSeeds.StormTrooper2.Id)
+    {
+        Id = Guid.Parse("69DD8A7B-2067-4BD4-8FBD-0AD0B54A3E44")
+    };
+    public static readonly UserEntity StormTrooper3 = new(
+        DateTime.Parse("3/28/1977"),
+        ApplicationUserSeeds.StormTrooper3.Id)
+    {
+        Id = Guid.Parse("44AD8A77-2222-4BD4-8FBD-0AD0B54E3E65")
+    };
 
     public static void Seed(TournamentManagerDbContext dbContext)
     {
@@ -58,5 +76,8 @@ public static class UserSeeds
         dbContext.Users.Add(AlenaVaf);
         dbContext.Users.Add(PavelWolf);
         dbContext.Users.Add(DarthVader);
+        dbContext.Users.Add(StormTrooper1);
+        dbContext.Users.Add(StormTrooper2);
+        dbContext.Users.Add(StormTrooper3);
     }
 }

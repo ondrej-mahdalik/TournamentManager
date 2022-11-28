@@ -210,9 +210,10 @@ async Task SetupDatabase(WebApplication application)
         TournamentSeeds.Seed(mainDbContext);
         SportSeeds.Seed(mainDbContext);
         TeamSeeds.Seed(mainDbContext);
+        UserIsInTeamSeeds.Seed(mainDbContext);
         TeamIsParticipatingSeeds.Seed(mainDbContext);
+        //MatchSeeds.Seed(mainDbContext);
         await mainDbContext.SaveChangesAsync();
-        // TODO Seed other models
 
         await ApplicationUserSeeds.SeedAsync(scope.ServiceProvider);
     }
