@@ -193,7 +193,7 @@
     private int _numberOfParticipants;
     private bool _resultOk = true;
     private Guid _teamParticipatingId;
-    private List<TeamIsParticipatingModel> _approvedParticipants;
+    private List<TeamIsParticipatingModel>? _approvedParticipants;
     private bool _participantApproved;
     private string _errorMessage = "";
 
@@ -240,8 +240,8 @@
     {
         try
         {
-            var message = new ModalParameters().Add(nameof(Confirmation.Message), "Are you sure you want to leave the tournament?");
-            var result = await Modal.Show<Confirmation>("Leave the Tournament", message).Result;
+            var message = new ModalParameters().Add(nameof(ConfirmationModal.Message), "Are you sure you want to leave the tournament?");
+            var result = await Modal.Show<ConfirmationModal>("Leave the Tournament", message).Result;
             if (result.Confirmed)
             {
                 var response = await Http.DeleteAsync($"/api/TeamIsParticipating/{_teamParticipatingId}");
@@ -336,8 +336,8 @@
         else
         {
             var parameters = new ModalParameters()
-                .Add(nameof(ParticipateAsTeam.CurrentUser), _loggedUser);
-            var result = await Modal.Show<ParticipateAsTeam>("Team Selection", parameters).Result;
+                .Add(nameof(ParticipateAsTeamModal.CurrentUser), _loggedUser);
+            var result = await Modal.Show<ParticipateAsTeamModal>("Team Selection", parameters).Result;
             if (result.Confirmed)
             {
                 var team = result.Data as TeamModel;

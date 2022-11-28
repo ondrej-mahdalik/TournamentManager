@@ -1,6 +1,7 @@
 ﻿@page "/Team/Create"
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@using TournamentManager.Common.Enums
 @attribute [Authorize]
 @inject HttpClient Http
 @inject NavigationManager NavigationManager;
@@ -14,6 +15,14 @@
             </div>
             <div class="col col-auto"><a href="Team/List" class="btn btn-light">Back to All Teams</a></div>
         </div>
+        @if (_displayError)
+        {
+            <div class="row">
+                <div class="col">
+                    <MessageBox MessageType="MessageType.Error" Title="An error has occured" Message="@_errorMessage"/>
+                </div>
+            </div>
+        }
         <div class="row">
             <div class="col">
                 <div class="card">
@@ -25,10 +34,10 @@
                                     <ValidationSummary/>
                                     <div class="mb-2">
                                         <label class="form-label w-100" for="teamName">Name</label>
-                                        <InputText id="teamName" class="form-control" type="text" @bind-Value="_team.Name" />
+                                        <InputText id="teamName" class="form-control" type="text" @bind-Value="_team.Name"/>
                                     </div>
                                     <div class="mb-2">
-                                        
+
                                         @if (_team.LogoUrl is null)
                                         {
                                             <img class="pb-0" width="100" src="/assets/img/logo_placeholder.jpg" alt="Team Logo"/>
@@ -56,6 +65,9 @@
 @code {
     private TeamModel _team = TeamModel.Empty;
     private UserModel? _currentUser;
+    
+    private bool _displayError;
+    private string _errorMessage = string.Empty;
 
     private async void HandleValidSubmit()
     {
@@ -75,8 +87,15 @@
         }
         _team.LeaderId = _currentUser.Id;
         var response = await Http.PutAsJsonAsync<TeamModel>("/api/Team", _team);
-        //TODO : handle response
-        NavigationManager.NavigateTo($"/Team/Detail/{_team.Id}");
-        
+        if (!response.IsSuccessStatusCode)
+        {
+            _errorMessage = await response.Content.ReadAsStringAsync();
+            _displayError = true;
+        }
+        else
+        {
+            NavigationManager.NavigateTo("/Team/List");
+        }
+
     }
 }

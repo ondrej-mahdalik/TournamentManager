@@ -1,11 +1,14 @@
 ﻿@using TournamentManager.Common.Enums
 
-<MessageBox Message="All personal data will be deleted. This action cannot be undone."
+<MessageBox Message="This action cannot be undone."
+            MessageType="MessageType.Warning"/>
+<MessageBox Message="All personal data will be deleted."
+            MessageType="MessageType.Warning"/>
+<MessageBox Message="Teams led by this user will be deleted."
             MessageType="MessageType.Warning"/>
 <MessageBox Message="Tournaments created by this user will remain, but will not be linked to any user."
             MessageType="MessageType.Info"/>
-<MessageBox Message="Teams led by this user will remain, but will not be linked to any user."
-            MessageType="MessageType.Info"/>
+
 <div class="d-inline-flex gap-2">
     <button class="btn btn-danger" @onclick="DeleteUserAsync">Delete User</button>
     <button class="btn btn-secondary" @onclick="CancelAsync">Cancel</button>
