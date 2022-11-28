@@ -62,7 +62,7 @@
                                     <tr>
                                         <td>@user.FirstName @user.LastName</td>
                                         <td>@user.RegisteredAt.ToShortDateString()</td>
-                                        <td>@user.TeamsAsLeader.Count</td>
+                                        <td>@_countOfTeamsUserIsLeaderOf[user.Id]</td>
                                         <td>@user.Tournaments.Count(x => x.CreatorId == user.Id)</td>
                                         <td class="text-end"><a data-bs-target="/Profile/Detail/@user.Id" href="/Profile/Detail/@user.Id"><button class="btn btn-primary" type="button">Detail</button></a></td>
                                     </tr>
@@ -124,11 +124,13 @@
 {
     [CascadingParameter]
     public IModalService Modal { get; set; } = default!;
-    
+
     private string _search = "";
     private int _showCount = 10;
     private int _selectedPageIndex;
     private List<UserModel>? _users;
+    private Dictionary<Guid, int> _countOfTeamsUserIsLeaderOf = new();
+
     private List<UserModel> UsersFiltered => _users?
         .Where(x =>
         {
@@ -140,7 +142,7 @@
             return firstName || lastName || email || phoneNumber;
         }).ToList()
         ?? new();
-    
+
     private List<List<UserModel>> UsersFilteredPages => UsersFiltered.Select((x, i) => new  // Splits the one big list into smaller lists of size _showCount
     {
         Index = i,
@@ -148,10 +150,15 @@
     }).GroupBy(x => x.Index / _showCount)
         .Select(x => x.Select(v => v.Value).ToList())
         .ToList();
-    
+
     protected override async Task OnInitializedAsync()
     {
         _users = await PublicHttp.Client.GetFromJsonAsync<List<UserModel>>("api/User") ?? new List<UserModel>();
+        var teams = await PublicHttp.Client.GetFromJsonAsync<List<TeamModel>>("api/Team") ?? new List<TeamModel>();
+        foreach(var user in _users)
+        {
+            _countOfTeamsUserIsLeaderOf.Add(user.Id, teams.Where(t => t.LeaderId == user.Id).Count());
+        }
     }
 
     private void OnItemsOnPageChanged(ChangeEventArgs e)

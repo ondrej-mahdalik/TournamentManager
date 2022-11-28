@@ -1,4 +1,5 @@
-﻿using TournamentManager.Server.DAL;
+﻿using System.Globalization;
+using TournamentManager.Server.DAL;
 using TournamentManager.Server.DAL.Entities;
 namespace TournamentManager.Server.Seeds.MainSeeds;
 
@@ -43,9 +44,37 @@ public static class TeamIsParticipatingSeeds
     };
 
     public static readonly TeamIsParticipatingEntity JohsInNYTournament = new(true,
-        DateTime.Parse("25 October 2022 15:40"))
+        DateTime.Parse("10/25/2022 15:40", CultureInfo.InvariantCulture))
     {
-        TournamentId = TournamentSeeds.NY2024.Id,
+        TournamentId = TournamentSeeds.NY2023.Id,
+        TeamId = TeamSeeds.JohnsTeam.Id
+    };
+
+    public static readonly TeamIsParticipatingEntity JohnsInGoldenPuck = new(true,
+        DateTime.Now - TimeSpan.FromDays(69))
+    {
+        TournamentId = TournamentSeeds.GoldenPuck.Id,
+        TeamId = TeamSeeds.JohnsTeam.Id
+    };
+
+    public static readonly TeamIsParticipatingEntity JohnsInNY2021 = new(true,
+        DateTime.Parse("12/21/2020 12:21", CultureInfo.InvariantCulture))
+    {
+        TournamentId = TournamentSeeds.NY2021.Id,
+        TeamId = TeamSeeds.JohnsTeam.Id
+    };
+
+    public static readonly TeamIsParticipatingEntity CardWarriorsInNY2021 = new(true,
+        DateTime.Parse("12/6/2020 4:21", CultureInfo.InvariantCulture))
+    {
+        TournamentId = TournamentSeeds.NY2021.Id,
+        TeamId = TeamSeeds.CardWarriors.Id
+    };
+
+    public static readonly TeamIsParticipatingEntity JohnsInActive = new(true,
+        DateTime.Now - TimeSpan.FromMinutes(25))
+    {
+        TournamentId = TournamentSeeds.Active.Id,
         TeamId = TeamSeeds.JohnsTeam.Id
     };
 
@@ -57,6 +86,11 @@ public static class TeamIsParticipatingSeeds
         dbContext.Participatings.Add(Team4InAwesomeTournament);
         dbContext.Participatings.Add(Team5InAwesomeTournament);
         dbContext.Participatings.Add(Team6InAwesomeTournament);
+        dbContext.Participatings.Add(JohsInNYTournament);
+        dbContext.Participatings.Add(JohnsInGoldenPuck);
+        dbContext.Participatings.Add(JohnsInNY2021);
+        dbContext.Participatings.Add(CardWarriorsInNY2021);
+        dbContext.Participatings.Add(JohnsInActive);
     }
 
 }

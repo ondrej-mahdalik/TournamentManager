@@ -17,7 +17,7 @@ else
 {
     @if (_showError)
     {
-        <MessageBox MessageType="Common.Enums.MessageType.Error" Title="Error" Message="_errorMessage" ShowCloseButton="true"/>
+        <MessageBox MessageType="Common.Enums.MessageType.Error" Title="Error" Message="@_errorMessage" ShowCloseButton="true"/>
     }
 
     <div class="container-fluid">
@@ -461,7 +461,7 @@ else
 
         if (_team?.Members is null)
             return;
-        
+
         var membership = _team.Members.FirstOrDefault(m => m.UserId == member.Id);
         if(membership is null)
         {
@@ -471,11 +471,11 @@ else
         }
         if (!result.Confirmed)
             return;
-        
+
         await Http.DeleteAsync($"api/UserIsInTeam/{membership.Id}");
         if (_members is null)
             return;
-        
+
         _members.RemoveAll(x => x.Id == member.Id);
         StateHasChanged();
     }
@@ -553,10 +553,14 @@ else
 
         if (!result.Confirmed)
             return;
-        
+
         var response = await Http.DeleteAsync($"/api/Team/{_team?.Id}");
-        // TODO : handle response
-        
+        if (!response.IsSuccessStatusCode)
+        {
+            _showError = true;
+            _errorMessage = "Could not delete the team.";
+        }
+
         NavigationManager.NavigateTo("/Team/List");
     }
 }

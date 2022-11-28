@@ -93,17 +93,18 @@ void ConfigureDependencies(IServiceCollection serviceCollection)
 {
     switch (dalType)
     {
-        case "SQLServer":
-            serviceCollection.AddDbContext<AuthorizationDbContext>(options =>
-                options.UseSqlServer(authConnectionString));
-            serviceCollection.AddInstaller<DALSQLServerInstaller>(mainConnectionString);
-            break;
-        
-        default:
         case "SQLite":
             serviceCollection.AddDbContext<AuthorizationDbContext>(options =>
                 options.UseSqlite(authConnectionString));
             serviceCollection.AddInstaller<DALSQLiteInstaller>(mainConnectionString);
+            break;
+        
+        
+        case "SQLServer":
+        default:
+            serviceCollection.AddDbContext<AuthorizationDbContext>(options =>
+                options.UseSqlServer(authConnectionString));
+            serviceCollection.AddInstaller<DALSQLServerInstaller>(mainConnectionString);
             break;
     }
     
@@ -210,9 +211,10 @@ async Task SetupDatabase(WebApplication application)
         TournamentSeeds.Seed(mainDbContext);
         SportSeeds.Seed(mainDbContext);
         TeamSeeds.Seed(mainDbContext);
+        UserIsInTeamSeeds.Seed(mainDbContext);
         TeamIsParticipatingSeeds.Seed(mainDbContext);
+        //MatchSeeds.Seed(mainDbContext);
         await mainDbContext.SaveChangesAsync();
-        // TODO Seed other models
 
         await ApplicationUserSeeds.SeedAsync(scope.ServiceProvider);
     }

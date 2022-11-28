@@ -42,7 +42,13 @@ public static class TeamSeeds
         "Team5", null, false)
     {
         Id = Guid.Parse("5526A9A5-2A53-47F1-8DD9-87846AD2C366"),
-        LeaderId = UserSeeds.Admin.Id
+        LeaderId = UserSeeds.Admin.Id,
+    };
+    public static readonly TeamEntity CardWarriors = new(
+        "Card warriors", "https://static.wikia.nocookie.net/aliceinwonderland/images/7/7d/March-of-the-cards-3.jpg/revision/latest?cb=20100315140119", false)
+    {
+        Id = Guid.Parse("F0301306-2679-4995-9B89-4EBBD561F6CC"),
+        LeaderId = UserSeeds.AlenaVaf.Id
     };
     
     
@@ -53,6 +59,13 @@ public static class TeamSeeds
         LeaderId = UserSeeds.JohnDoe.Id,
     };
 
+    public static readonly TeamEntity GalacticTroopers = new(
+        "Galactic troopers", "https://m.media-amazon.com/images/I/81YNIGDPx7L._AC_SL1500_.jpg", false)
+    {
+        Id = Guid.Parse("AB340192-238D-4180-B14D-F5743ECE0B49"),
+        LeaderId = UserSeeds.DarthVader.Id
+    };
+    
     public static void Seed(TournamentManagerDbContext dbContext)
     {
         dbContext.Teams.Add(JohnsTeam);
@@ -61,5 +74,7 @@ public static class TeamSeeds
         dbContext.Teams.Add(Team3);
         dbContext.Teams.Add(Team4);
         dbContext.Teams.Add(Team5);
+        dbContext.Teams.Add(CardWarriors);
+        dbContext.Teams.Add(GalacticTroopers);
     }
 }
