@@ -45,7 +45,7 @@ public static class TeamIsParticipatingSeeds
     public static readonly TeamIsParticipatingEntity JohsInNYTournament = new(true,
         DateTime.Parse("10/25/2022 15:40", CultureInfo.InvariantCulture))
     {
-        TournamentId = TournamentSeeds.NY2024.Id,
+        TournamentId = TournamentSeeds.NY2023.Id,
         TeamId = TeamSeeds.JohnsTeam.Id
     };
 
@@ -70,6 +70,13 @@ public static class TeamIsParticipatingSeeds
         TeamId = TeamSeeds.CardWarriors.Id
     };
 
+    public static readonly TeamIsParticipatingEntity JohnsInActive = new(true,
+        DateTime.Now - TimeSpan.FromMinutes(25))
+    {
+        TournamentId = TournamentSeeds.Active.Id,
+        TeamId = TeamSeeds.JohnsTeam.Id
+    };
+
 
     public static void Seed(TournamentManagerDbContext dbContext)
     {
@@ -83,6 +90,7 @@ public static class TeamIsParticipatingSeeds
         dbContext.Participatings.Add(JohnsInGoldenPuck);
         dbContext.Participatings.Add(JohnsInNY2021);
         dbContext.Participatings.Add(CardWarriorsInNY2021);
+        dbContext.Participatings.Add(JohnsInActive);
     }
 
 }

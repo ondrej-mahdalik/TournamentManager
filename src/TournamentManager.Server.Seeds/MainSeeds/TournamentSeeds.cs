@@ -22,7 +22,7 @@ public static class TournamentSeeds
         SportId = SportSeeds.Football.Id
     };
 
-    public static readonly TournamentEntity NY2024 = new(
+    public static readonly TournamentEntity NY2023 = new(
         "New Year's tournament",
         DateTime.Parse("1/1/2023 12:00", CultureInfo.InvariantCulture),
         "2023",
@@ -85,13 +85,29 @@ public static class TournamentSeeds
         WinnerTeamId = TeamSeeds.JohnsTeam.Id
     };
 
+    public static readonly TournamentEntity Active = new(
+        "Active",
+        DateTime.Now - TimeSpan.FromHours(1),
+        "",
+        true,
+        true,
+        true,
+        false,
+        20)
+    {
+        Id = Guid.Parse("CA46F6A6-D57C-48F5-9322-CCD8B0B93E20"),
+        CreatorId = UserSeeds.Admin.Id,
+        SportId = SportSeeds.Football.Id
+    };
+
 
     public static void Seed(TournamentManagerDbContext dbContext)
     {
         dbContext.Tournaments.Add(Tournament1);
-        dbContext.Tournaments.Add(NY2024);
+        dbContext.Tournaments.Add(NY2023);
         dbContext.Tournaments.Add(GoldenPuck);
         dbContext.Tournaments.Add(EffortBall);
         dbContext.Tournaments.Add(NY2021);
+        dbContext.Tournaments.Add(Active);
     }
 }
