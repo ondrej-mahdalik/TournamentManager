@@ -391,7 +391,7 @@
                              </div>
                              <div class="row">
                                  <div class="col">
-                                     <p>
+                                     <p> @match.Order
                                          @if (match.Team1 is not null && (match.Team1?.LogoUrl is not null && match.Team1?.LogoUrl != ""))
                                          {
                                              <img alt="team1-image" class="rounded-circle me-2" width="30" height="30" src="@match.Team1?.LogoUrl">
@@ -726,7 +726,8 @@
                     return;
                 }
             }
-            order = (order / 2) + 1;
+            order = (int) (Math.Pow(2, Math.Floor(Math.Log2(randomOrderParticipants.Count))) / 2);
+            Console.WriteLine(order);
             for (; i < randomOrderParticipants.Count; i += 2)
             {
                 var match = new MatchModel(_tournament.Id, 0, 0, 2, order--, false)
