@@ -519,8 +519,10 @@
             var teamMemberships = await Http.GetFromJsonAsync<List<UserIsInTeamModel>>("/api/UserIsInTeam/");
             _currentUserTeamIds = teamMemberships?.Where(m => m.UserId == _currentUser?.Id).Select(m => m.TeamId).ToList();
             var _allTeams = await Http.GetFromJsonAsync<List<TeamModel>>("api/Team");
-            if (_currentUser is null || _currentUserTeamIds is null) return;
-            _currentUserTeamIds.AddRange(_allTeams.Where(x => x.LeaderId == _currentUser.Id).Select(x => x.Id));
+            if (_currentUser is not null && _currentUserTeamIds is not null && _allTeams is not null)
+            {
+                _currentUserTeamIds.AddRange(_allTeams.Where(x => x.LeaderId == _currentUser.Id).Select(x => x.Id));
+            }
         }
         catch
         {
