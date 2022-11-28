@@ -47,7 +47,8 @@ public static class TournamentSeeds
         false,
         false,
         false,
-        20
+        20,
+        0
         )
     {
         Id = Guid.Parse("8A36925B-2431-422D-B6EA-2DE6D2CB1772"),
@@ -63,7 +64,8 @@ public static class TournamentSeeds
         true,
         false,
         true,
-        20
+        20,
+        0
         )
     {
         Id = Guid.Parse("F5006C84-4C9F-48F4-B5AC-E2C0730415E1"),
@@ -79,7 +81,8 @@ public static class TournamentSeeds
         true,
         false,
         false,
-        54)
+        54,
+        0)
     {
         Id = Guid.Parse("11410468-759F-45D2-8DB1-EE03B9A9D8CF"),
         CreatorId = UserSeeds.RexWalsh.Id,
@@ -95,7 +98,8 @@ public static class TournamentSeeds
         true,
         true,
         false,
-        20)
+        20,
+        0)
     {
         Id = Guid.Parse("CA46F6A6-D57C-48F5-9322-CCD8B0B93E20"),
         CreatorId = UserSeeds.Admin.Id,
