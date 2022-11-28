@@ -229,7 +229,7 @@
                 tournament.Creator = _users?.FirstOrDefault(x => x.Id == tournament.CreatorId);
                 if (tournament.WinnerTeamId is not null)
                 {
-                    var team = await PublicHttp.Client.GetFromJsonAsync<TeamModel>($"api/Team/{tournament.WinnerTeamId}");
+                    var team = await Http.GetFromJsonAsync<TeamModel>($"api/Team/{tournament.WinnerTeamId}");
                     if (team is not null)
                     {
                         _winners.Add(tournament.Id, team.Name);
