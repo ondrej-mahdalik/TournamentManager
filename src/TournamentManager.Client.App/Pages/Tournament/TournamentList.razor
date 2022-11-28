@@ -87,6 +87,12 @@
                                         <td>@(tournament.IsIndividual ? "Individual" : "Teams")</td>
                                         <td>@(tournament.Creator?.FirstName is not null ? $"{tournament.Creator.FirstName} {tournament.Creator.LastName}" : "Deleted user")</td>
                                         <td>@_numberOfParticipants[tournament.Id] / @tournament.MaxAttendees</td>
+                                        <td>
+                                                @if(tournament.WinnerTeamId is not null)
+                                                {
+                                                    @_winners[tournament.Id]
+                                                }
+                                        </td>
                                         <td class="text-end">
                                             <a data-bs-target="/Tournament/@tournament.Id" href="/Tournament/Detail/@tournament.Id">
                                                 <button class="btn btn-primary" type="button">Detail</button>
@@ -161,6 +167,7 @@
     private bool _showPastTournaments;
     private bool _isLoading = true;
     private readonly Dictionary<Guid, int> _numberOfParticipants = new();
+    private Dictionary<Guid, string> _winners = new();
     private List<TournamentModel>? _tournaments = new();
     private List<UserModel>? _users = new();
 
@@ -218,6 +225,14 @@
             {
                 _numberOfParticipants.Add(tournament.Id, participants.Count(x => x.Approved && x.TournamentId == tournament.Id));
                 tournament.Creator = _users?.FirstOrDefault(x => x.Id == tournament.CreatorId);
+                if(tournament.WinnerTeamId is not null)
+                {
+                    var team = await PublicHttp.Client.GetFromJsonAsync<TeamModel>($"api/Team/{tournament.WinnerTeamId}");
+                    if (team is not null)
+                    {
+                        _winners.Add(tournament.Id, team.Name);
+                    }
+                }
             }
         }
 
