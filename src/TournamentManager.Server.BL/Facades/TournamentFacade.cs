@@ -77,4 +77,17 @@ public class TournamentFacade : CRUDFacade<TournamentEntity, TournamentModel>
 
         return await Mapper.ProjectTo<TournamentModel>(query).ToArrayAsync().ConfigureAwait(false);
     }
+
+    public async Task<IEnumerable<TournamentModel>> GetManyAsync(IEnumerable<Guid> ids)
+    {
+        await using var uow = UnitOfWorkFactory.Create();
+        var query = uow
+            .GetRepository<TournamentEntity>()
+            .Get()
+            .Include(x => x.Participatings)
+            .Include(x => x.WinnerTeam)
+            .Where(x => ids.Contains(x.Id));
+
+        return await Mapper.ProjectTo<TournamentModel>(query).ToArrayAsync().ConfigureAwait(false);
+    }
 }

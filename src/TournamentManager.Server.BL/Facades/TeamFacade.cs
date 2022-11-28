@@ -13,12 +13,22 @@ public class TeamFacade : CRUDFacade<TeamEntity, TeamModel>
 
     }
 
-    public async Task<IEnumerable<TeamModel>> GetByUserAsync(Guid id)
+    public async Task<IEnumerable<TeamModel>> GetByLeaderAsync(Guid id)
     {
         await using var uow = UnitOfWorkFactory.Create();
         var query = uow.GetRepository<TeamEntity>()
             .Get()
             .Where(x => x.LeaderId == id);
+        
+        return await Mapper.ProjectTo<TeamModel>(query).ToArrayAsync().ConfigureAwait(false);
+    }
+    
+    public async Task<IEnumerable<TeamModel>> GetByUserAsync(Guid id)
+    {
+        await using var uow = UnitOfWorkFactory.Create();
+        var query = uow.GetRepository<TeamEntity>()
+            .Get()
+            .Where(x => x.LeaderId == id || x.Members.Any(m => m.UserId == id));
         
         return await Mapper.ProjectTo<TeamModel>(query).ToArrayAsync().ConfigureAwait(false);
     }

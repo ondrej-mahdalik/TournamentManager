@@ -43,9 +43,9 @@ else
             </div>
         </div>
         
-        <div class="d-flex justify-content-end">
-            <button class="btn text-end d-flex me-1 btn-danger" type="reset" @onclick="CancelAsync">Cancel</button>
-            <button class="btn text-end d-flex me-1 btn-primary" type="submit">Save Changes</button>
+        <div class="d-flex justify-content-end gap-2">
+            <a class="btn btn-danger" @onclick="CancelAsync">Cancel</a>
+            <button class="btn btn-primary" type="submit">Save Changes</button>
         </div>
     </EditForm>
 }
@@ -86,7 +86,7 @@ else
         }
         else
         {
-            await BlazoredModal.CloseAsync(ModalResult.Ok());
+            await BlazoredModal.CloseAsync(ModalResult.Ok(Match));
         }
     }
 
