@@ -1,7 +1,7 @@
 ﻿@page "/Tournament/Detail/{Id}"
+@using TournamentManager.Common.Enums
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
 @using TournamentManager.Client.App.Shared.ModalComponents
-@using TournamentManager.Common.Enums
 @inject HttpClient Http
 @inject PublicHttpClient PublicHttp
 @inject AuthenticationStateProvider AuthenticationStateProvider
@@ -9,166 +9,186 @@
 <PageTitle>Tournament Detail</PageTitle>
 
 <div id="wrapper">
-<div class="d-flex flex-column" id="content-wrapper">
-<div id="content">
-    <div class="container-fluid">
-        @if (_tournament is null)
-        {
-            <div class="card shadow">
-                <div class="card-body">
-                    <p class="text-center fw-bold">Loading...</p>
-                </div>
-            </div>
-        }
-        else
-        {
-            @if (!_resultOk)
-            {
-                <div class="row">
-                        <div class="col">
-                            <MessageBox MessageType="MessageType.Error" Title="Error" Message="@_errorMessage" ShowCloseButton="true"></MessageBox>
-                        </div>
-                    </div>
-                
-            }
-            <div class="row mb-3">
-                <div class="col text-center d-xl-flex d-flex align-items-center">
-                    <h3 class="text-dark d-xl-flex">@_tournament.Name</h3>
-                </div>
-                <div class="col col-auto"><a href="/Tournament/list"><button class="btn btn-light" type="button">Back to All Tournaments</button></a></div>
-                @if (_tournament.Participatings.Count < _tournament.MaxAttendees && !_tournament.InProgress)
+    <div class="d-flex flex-column" id="content-wrapper">
+        <div id="content">
+            <div class="container-fluid">
+                @if (_tournament is null)
                 {
-                    if (_teamParticipatingId == Guid.Empty)
-                    {
-                        <AuthorizeView>
-                            <Authorized>
-                                <div class="col col-auto"><a class="btn btn-primary" @onclick="ParticipateAsync">Participate</a></div>
-                            </Authorized>
-                            <NotAuthorized>
-                                <div class="col col-auto"><a class="btn btn-primary" href="authentication/login">Participate</a></div>
-                            </NotAuthorized>
-                        </AuthorizeView>
-                    }
-                    else
-                    {
-                        <AuthorizeView>
-                            <Authorized>
-                                <div class="col col-auto"><a class="btn btn-danger" @onclick="LeaveTournament">Leave Tournament</a></div>
-                            </Authorized>
-                            <NotAuthorized>
-                                <div class="col col-auto"><a class="btn btn-danger" href="authentication/login">Leave Tournament</a></div>
-                            </NotAuthorized>
-                        </AuthorizeView>
-                    }
-                }
-                @if (_loggedUser?.Id == _tournament.CreatorId)
-                {
-                    <div class="col col-auto"><a href="/Tournament/Manage/@_tournament.Id"><button class="btn btn-primary" type="button">Manage Tournament</button></a></div>
-                }
-            </div>
-            <div class="row mb-4">
-                <div class="col">
                     <div class="card shadow">
                         <div class="card-body">
-
-                            <div class="row mb-3">
-                                <div class="col">
-                                    <div>
-                                        <h6 class="text-primary">Date</h6><span>@_tournament.Date.ToString("dd. MM. yyyy")</span>
-                                    </div>
-                                </div>
-                                <div class="col">
-                                    <div>
-                                        <h6 class="text-primary">Players participating</h6><span>@_numberOfParticipants/@_tournament.MaxAttendees</span>
-                                    </div>
-                                </div>
+                            <p class="text-center fw-bold">Loading...</p>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    @if (!_resultOk)
+                    {
+                        <div class="row">
+                            <div class="col">
+                                <MessageBox MessageType="MessageType.Error" Title="Error" Message="@_errorMessage" ShowCloseButton="true"></MessageBox>
                             </div>
-                            <div class="row">
-                                <div class="col">
-                                    <div>
-                                        <h6 class="text-primary">Description</h6>
-                                        <p>@_tournament.Description<br></p>
+                        </div>
+                    }
+                    <div class="row mb-3">
+                        <div class="col text-center d-xl-flex d-flex align-items-center">
+                            <h3 class="text-dark d-xl-flex">@_tournament.Name</h3>
+                        </div>
+                        <div class="col col-auto">
+                            <a href="/Tournament/list">
+                                <button class="btn btn-light" type="button">Back to All Tournaments</button>
+                            </a>
+                        </div>
+                        @if (_tournament.Participatings.Count < _tournament.MaxAttendees && !_tournament.InProgress)
+                        {
+                            if (_teamParticipatingId == Guid.Empty)
+                            {
+                                <AuthorizeView>
+                                    <Authorized>
+                                        <div class="col col-auto">
+                                            <a class="btn btn-primary" @onclick="ParticipateAsync">Participate</a>
+                                        </div>
+                                    </Authorized>
+                                    <NotAuthorized>
+                                        <div class="col col-auto">
+                                            <a class="btn btn-primary" href="authentication/login">Participate</a>
+                                        </div>
+                                    </NotAuthorized>
+                                </AuthorizeView>
+                            }
+                            else
+                            {
+                                <AuthorizeView>
+                                    <Authorized>
+                                        <div class="col col-auto">
+                                            <a class="btn btn-danger" @onclick="LeaveTournament">Leave Tournament</a>
+                                        </div>
+                                    </Authorized>
+                                    <NotAuthorized>
+                                        <div class="col col-auto">
+                                            <a class="btn btn-danger" href="authentication/login">Leave Tournament</a>
+                                        </div>
+                                    </NotAuthorized>
+                                </AuthorizeView>
+                            }
+                        }
+                        @if (_loggedUser?.Id == _tournament.CreatorId)
+                        {
+                            <div class="col col-auto">
+                                <a href="/Tournament/Manage/@_tournament.Id">
+                                    <button class="btn btn-primary" type="button">Manage Tournament</button>
+                                </a>
+                            </div>
+                        }
+                    </div>
+                    <div class="row mb-4">
+                        <div class="col">
+                            <div class="card shadow">
+                                <div class="card-body">
+
+                                    <div class="row mb-3">
+                                        <div class="col">
+                                            <div>
+                                                <h6 class="text-primary">Date</h6><span>@_tournament.Date.ToString("dd. MM. yyyy")</span>
+                                            </div>
+                                        </div>
+                                        <div class="col">
+                                            <div>
+                                                <h6 class="text-primary">Players participating</h6><span>@_numberOfParticipants/@_tournament.MaxAttendees</span>
+                                            </div>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="col">
-                                    <div>
-                                        <h6 class="text-primary">Sport</h6>
-                                        <p>@(_tournament.Sport is not null ? _tournament.Sport.Name : "Other")<br></p>
+                                    <div class="row">
+                                        <div class="col">
+                                            <div>
+                                                <h6 class="text-primary">Description</h6>
+                                                <p>
+                                                    @_tournament.Description<br>
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <div class="col">
+                                            <div>
+                                                <h6 class="text-primary">Sport</h6>
+                                                <p>
+                                                    @(_tournament.Sport is not null ? _tournament.Sport.Name : "Other")<br>
+                                                </p>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col">
-                    <h4 class="text-center text-primary">Tournament Matches</h4>
-                </div>
-            </div>
+                    <div class="row">
+                        <div class="col">
+                            <h4 class="text-center text-primary">Tournament Matches</h4>
+                        </div>
+                    </div>
 
-            <div class="row">
-                @if (_matches is not null)
-                {
-                    @if (_matches.Count == 0)
-                    {
-                        <p class="text-center fw-bold">Tournament has no matches</p>
-                    }
-                    foreach (var match in _matches)
-                    {
-                        <div class="col-4">
-                            <div class="card shadow mb-4">
-                                <div class="card-body">
-                                    <div class="row">
-                                        <div class="col-6">
-                                            <h6 class="text-primary">Round @match.Round</h6>
-                                        </div>
-                                        
-                                    </div>
-                                    <div class="row border-bottom mb-2">
-                                        <div class="col">
-                                            <p>
-                                                @if (!string.IsNullOrWhiteSpace(match.Team1?.LogoUrl))
-                                                {
-                                                    <img alt="team1-image" class="img-fluid" width="60" height="60" src="@match.Team1?.LogoUrl">
-                                                }
-                                                @match.Team1?.Name
-                                            </p>
-                                        </div>
-                                        <div class="col align-self-center">
-                                            <p class="lead text-center">@match.Score1</p>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col">
-                                            <p>
-                                                @if (!string.IsNullOrWhiteSpace(match.Team2?.LogoUrl))
-                                                {
-                                                    <img alt="team2-image" class="img-fluid" width="60" height="60" src="@match.Team2?.LogoUrl">
-                                                }
-                                                @match.Team2?.Name
-                                            </p>
-                                        </div>
-                                        <div class="col align-self-center">
-                                            <p class="lead text-center">@match.Score2</p>
+                    <div class="row">
+                        @if (_matches is not null)
+                        {
+                            @if (_matches.Count == 0)
+                            {
+                                <p class="text-center fw-bold">Tournament has no matches</p>
+                            }
+                            foreach (var match in _matches)
+                            {
+                                <div class="col-4">
+                                    <div class="card shadow mb-4">
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <div class="col-6">
+                                                    <h6 class="text-primary">Round @match.Round</h6>
+                                                </div>
+
+                                            </div>
+                                            <div class="row border-bottom mb-2">
+                                                <div class="col">
+                                                    <p>
+                                                        @if (!string.IsNullOrWhiteSpace(match.Team1?.LogoUrl))
+                                                        {
+                                                            <img alt="team1-image" class="img-fluid" width="60" height="60" src="@match.Team1?.LogoUrl">
+                                                        }
+                                                        @match.Team1?.Name
+                                                    </p>
+                                                </div>
+                                                <div class="col align-self-center">
+                                                    <p class="lead text-center">@match.Score1</p>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col">
+                                                    <p>
+                                                        @if (!string.IsNullOrWhiteSpace(match.Team2?.LogoUrl))
+                                                        {
+                                                            <img alt="team2-image" class="img-fluid" width="60" height="60" src="@match.Team2?.LogoUrl">
+                                                        }
+                                                        @match.Team2?.Name
+                                                    </p>
+                                                </div>
+                                                <div class="col align-self-center">
+                                                    <p class="lead text-center">@match.Score2</p>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                        </div>
-                    }
+                            }
+                        }
+                    </div>
                 }
             </div>
-        }
+        </div>
     </div>
-</div>
-</div>
 </div>
 
 @code {
+
     [Parameter]
     public string? Id { get; set; }
-    
+
     [CascadingParameter]
     IModalService Modal { get; set; } = default!;
 
@@ -199,11 +219,8 @@
                         {
                             _teamParticipatingId = teamParticipating.Id;
                         }
-                        
                     }
-                    
                 }
-
             }
             catch (AccessTokenNotAvailableException exception)
             {
@@ -241,19 +258,19 @@
             exception.Redirect();
         }
     }
-    
+
     private async Task ParticipateAsync()
     {
         if (_loggedUser is null || _tournament is null)
             return;
-        
+
         if (_tournament.IsIndividual)
         {
             var personalUserTeams = await Http.GetFromJsonAsync<List<TeamModel>>($"api/Team/ByUser/{_loggedUser.Id}");
             TeamModel newUserTeam;
             if (personalUserTeams is null || personalUserTeams.Count == 0)
             {
-                newUserTeam = new TeamModel($"{_loggedUser.FirstName} {_loggedUser.LastName}", null, true)
+                newUserTeam = new($"{_loggedUser.FirstName} {_loggedUser.LastName}", null, true)
                 {
                     LeaderId = _loggedUser.Id
                 };
@@ -274,7 +291,7 @@
                 var personalUserTeam = personalUserTeams.FirstOrDefault(x => x.IsPersonal);
                 if (personalUserTeam is null)
                 {
-                    newUserTeam = new TeamModel($"{_loggedUser.FirstName} {_loggedUser.LastName}", null, true)
+                    newUserTeam = new($"{_loggedUser.FirstName} {_loggedUser.LastName}", null, true)
                     {
                         LeaderId = _loggedUser.Id
                     };
@@ -292,14 +309,13 @@
                 }
                 else
                 {
-                    newUserTeam = (TeamModel) personalUserTeam.Clone();
+                    newUserTeam = (TeamModel)personalUserTeam.Clone();
                 }
             }
             var teamToParticipate = new TeamIsParticipatingModel(false, DateTime.Now, newUserTeam.Id, _tournament.Id);
             var result2 = await Http.PutAsJsonAsync("api/TeamIsParticipating", teamToParticipate);
             if (!result2.IsSuccessStatusCode)
             {
-               
                 _resultOk = false;
                 _errorMessage = "Unable to participate";
             }
@@ -337,4 +353,5 @@
             }
         }
     }
+
 }

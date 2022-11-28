@@ -1,7 +1,5 @@
 ﻿@page "/Tournament/List"
-@using TournamentManager.Common.Models
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
-@using TournamentManager.Client.App.Extensions
 @inject HttpClient Http
 @inject PublicHttpClient PublicHttp
 @inject AuthenticationStateProvider AuthenticationStateProvider
@@ -14,7 +12,11 @@
             <div class="col d-xl-flex d-flex align-items-center">
                 <h3 class="text-dark d-xl-flex">Tournaments</h3>
             </div>
-            <div class="col col-auto d-flex align-items-center"><a href="Tournament/Create"><button class="btn btn-primary" type="button">Create New</button></a></div>
+            <div class="col col-auto d-flex align-items-center">
+                <a href="Tournament/Create">
+                    <button class="btn btn-primary" type="button">Create New</button>
+                </a>
+            </div>
         </div>
         <div class="card shadow">
             <div class="card-body">
@@ -26,18 +28,25 @@
                 {
                     <div class="row">
                         <div class="col-md-6 text-nowrap">
-                            
+
                             <div class="row d-xxl-flex justify-content-start align-items-center">
                                 <div class="col-xxl-3">
-                                    <div id="dataTable_length" class="dataTables_length" aria-controls="dataTable"><label class="form-label">Show&nbsp;<select @onchange="OnItemsOnPageChanged" class="d-inline-block form-select form-select-sm">
+                                    <div id="dataTable_length" class="dataTables_length" aria-controls="dataTable">
+                                        <label class="form-label">
+                                            Show&nbsp;
+                                            <select @onchange="OnItemsOnPageChanged" class="d-inline-block form-select form-select-sm">
                                                 <option value="10" selected>10</option>
                                                 <option value="25">25</option>
                                                 <option value="50">50</option>
                                                 <option value="100">100</option>
-                                            </select></label></div>
+                                            </select>
+                                        </label>
+                                    </div>
                                 </div>
                                 <div class="col-xxl-3">
-                                    <div class="form-check form-switch"><input @bind="_showPastTournaments" id="formCheck-1" class="form-check-input" type="checkbox" /><label class="form-check-label" for="formCheck-1">Show past tournaments</label></div>
+                                    <div class="form-check form-switch">
+                                        <input @bind="_showPastTournaments" id="formCheck-1" class="form-check-input" type="checkbox"/><label class="form-check-label" for="formCheck-1">Show past tournaments</label>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -71,15 +80,18 @@
                                 <tbody>
                                 @foreach (var tournament in TournamentsFilteredPages[_selectedPageIndex])
                                 {
-                                
                                     <tr>
                                         <td>@(tournament.Sport?.Name ?? "Other")</td>
                                         <td>@tournament.Name</td>
                                         <td>@tournament.Date.ToString("dd. MM. yyyy")</td>
                                         <td>@(tournament.IsIndividual ? "Individual" : "Teams")</td>
                                         <td>@(tournament.Creator?.FirstName is not null ? $"{tournament.Creator.FirstName} {tournament.Creator.LastName}" : "Deleted user")</td>
-                                        <td>@_numberOfParticipants[@tournament.Id] / @tournament.MaxAttendees</td>
-                                        <td class="text-end"><a data-bs-target="/Tournament/@tournament.Id" href="/Tournament/Detail/@tournament.Id"><button class="btn btn-primary" type="button">Detail</button></a></td>
+                                        <td>@_numberOfParticipants[tournament.Id] / @tournament.MaxAttendees</td>
+                                        <td class="text-end">
+                                            <a data-bs-target="/Tournament/@tournament.Id" href="/Tournament/Detail/@tournament.Id">
+                                                <button class="btn btn-primary" type="button">Detail</button>
+                                            </a>
+                                        </td>
                                     </tr>
                                 }
                                 </tbody>
@@ -90,13 +102,17 @@
                         @if (TournamentsFiltered.Count > 0)
                         {
                             <div class="col-md-6 align-self-center">
-                                <p id="dataTable_info" class="dataTables_info" role="status" aria-live="polite">Showing @(1 + _selectedPageIndex * _showCount) to @((_showCount + _selectedPageIndex * _showCount) < TournamentsFiltered.Count ? (_showCount + _selectedPageIndex * _showCount) : TournamentsFiltered.Count) of @(TournamentsFiltered.Count)</p>
+                                <p id="dataTable_info" class="dataTables_info" role="status" aria-live="polite">Showing @(1 + _selectedPageIndex * _showCount) to @(_showCount + _selectedPageIndex * _showCount < TournamentsFiltered.Count ? _showCount + _selectedPageIndex * _showCount : TournamentsFiltered.Count) of @(TournamentsFiltered.Count)</p>
                             </div>
 
                             <div class="col-md-6">
                                 <nav class="d-lg-flex justify-content-lg-end dataTables_paginate paging_simple_numbers">
                                     <ul class="pagination">
-                                        <li class="page-item @(_selectedPageIndex <= 0 ? "disabled" : "")"><a role="button" class="page-link" aria-label="Previous" @onclick="() => _selectedPageIndex--"><span class="user-select-none" aria-hidden="true">«</span></a></li>
+                                        <li class="page-item @(_selectedPageIndex <= 0 ? "disabled" : "")">
+                                            <a role="button" class="page-link" aria-label="Previous" @onclick="() => _selectedPageIndex--">
+                                                <span class="user-select-none" aria-hidden="true">«</span>
+                                            </a>
+                                        </li>
                                         @for (var i = _selectedPageIndex - 1; i <= _selectedPageIndex + 1; i++)
                                         {
                                             var num = i;
@@ -121,8 +137,10 @@
                                                 <a class="page-link" @onclick="() => _selectedPageIndex = num" role="button">@(num + 1)</a>
                                             </li>
                                         }
-                                        <li class="page-item @(_selectedPageIndex >= @TournamentsFilteredPages.Count - 1 ? "disabled" : "")">
-                                            <a class="page-link" aria-label="Next" @onclick="() => _selectedPageIndex++" role="button"><span class="user-select-none" aria-hidden="true">»</span></a>
+                                        <li class="page-item @(_selectedPageIndex >= TournamentsFilteredPages.Count - 1 ? "disabled" : "")">
+                                            <a class="page-link" aria-label="Next" @onclick="() => _selectedPageIndex++" role="button">
+                                                <span class="user-select-none" aria-hidden="true">»</span>
+                                            </a>
                                         </li>
                                     </ul>
                                 </nav>
@@ -134,16 +152,18 @@
         </div>
     </div>
 </div>
+
 @code
 {
     private string _search = "";
     private int _showCount = 10;
     private int _selectedPageIndex;
-    private bool _showPastTournaments = false;
+    private bool _showPastTournaments;
     private bool _isLoading = true;
-    private Dictionary<Guid, int> _numberOfParticipants = new();
+    private readonly Dictionary<Guid, int> _numberOfParticipants = new();
     private List<TournamentModel>? _tournaments = new();
     private List<UserModel>? _users = new();
+
     private List<TournamentModel> TournamentsFiltered => _tournaments?
         .Where(x =>
         {
@@ -156,18 +176,18 @@
             {
                 return name || sport || date || creatorFirstName || creatorLastName;
             }
-            return (name || sport || date || creatorFirstName || creatorLastName) && (x.Date.Date >= DateTime.Now.Date);
+            return (name || sport || date || creatorFirstName || creatorLastName) && x.Date.Date >= DateTime.Now.Date;
         }).OrderBy(x => x.Date).ToList()
-        ?? new();
-    
-    private List<List<TournamentModel>> TournamentsFilteredPages => TournamentsFiltered.Select((x, i) => new  // Splits the one big list into smaller lists of size _showCount
+                                                         ?? new();
+
+    private List<List<TournamentModel>> TournamentsFilteredPages => TournamentsFiltered.Select((x, i) => new // Splits the one big list into smaller lists of size _showCount
     {
         Index = i,
         Value = x
     }).GroupBy(x => x.Index / _showCount)
         .Select(x => x.Select(v => v.Value).ToList())
         .ToList();
-    
+
     protected override async Task OnInitializedAsync()
     {
         var state = await AuthenticationStateProvider.GetAuthenticationStateAsync();
@@ -200,7 +220,7 @@
                 tournament.Creator = _users?.FirstOrDefault(x => x.Id == tournament.CreatorId);
             }
         }
-        
+
         _isLoading = false;
     }
 

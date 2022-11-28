@@ -20,7 +20,7 @@ public static class SportSeeds
         Id = Guid.Parse("B9F10E84-77C6-4D4F-82A7-99E124DE3D47")
     };
 
-    public static readonly SportEntity TableTennis = new("TableTennis")
+    public static readonly SportEntity TableTennis = new("Table Tennis")
     {
         Id = Guid.Parse("D57407FC-D490-4B50-B1BF-F390A34467FB")
     };

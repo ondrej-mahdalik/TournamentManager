@@ -1,3 +1,4 @@
+using System.Globalization;
 using TournamentManager.Server.Auth.Seeds;
 using TournamentManager.Server.DAL;
 using TournamentManager.Server.DAL.Entities;
@@ -22,28 +23,28 @@ public static class UserSeeds
     };
 
     public static readonly UserEntity RexWalsh = new(
-        DateTime.Parse("12.12.2020 15:21"),
+        DateTime.Parse("12/22/2020 15:21", CultureInfo.InvariantCulture),
         ApplicationUserSeeds.RexWalsh.Id)
     {
         Id = Guid.Parse("70969DD5-5074-461F-8540-3F7F75E7F79F")
     };
 
     public static readonly UserEntity AlenaVaf = new(
-        DateTime.Parse("2/2/2020 04:45"),
+        DateTime.Parse("2/2/2020 04:45", CultureInfo.InvariantCulture),
         ApplicationUserSeeds.AlenaVaf.Id)
     {
         Id = Guid.Parse("C98561BA-A899-41A8-82D0-9A11332CC3D2")
     };
 
     public static readonly UserEntity PavelWolf = new(
-        DateTime.Parse("4/2/2021 6:32"),
+        DateTime.Parse("4/2/2021 6:32", CultureInfo.InvariantCulture),
         ApplicationUserSeeds.PavelWolf.Id)
     {
         Id = Guid.Parse("A2132D0D-458C-4D55-BC07-C3E997A1830D")
     };
 
     public static readonly UserEntity DarthVader = new(
-        DateTime.Parse("3/28/1977"),
+        DateTime.Parse("3/28/1977", CultureInfo.InvariantCulture),
         ApplicationUserSeeds.DarthVader.Id)
     {
         Id = Guid.Parse("C7D583E3-9CE7-4F86-AF22-427DC3B64E8F")

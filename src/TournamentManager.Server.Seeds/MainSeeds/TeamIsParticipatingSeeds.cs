@@ -1,4 +1,5 @@
-﻿using TournamentManager.Server.DAL;
+﻿using System.Globalization;
+using TournamentManager.Server.DAL;
 using TournamentManager.Server.DAL.Entities;
 namespace TournamentManager.Server.Seeds.MainSeeds;
 
@@ -42,7 +43,7 @@ public static class TeamIsParticipatingSeeds
         TeamId = TeamSeeds.Team5.Id
     };
     public static readonly TeamIsParticipatingEntity JohsInNYTournament = new(true,
-        DateTime.Parse("25 October 2022 15:40"))
+        DateTime.Parse("10/25/2022 15:40", CultureInfo.InvariantCulture))
     {
         TournamentId = TournamentSeeds.NY2024.Id,
         TeamId = TeamSeeds.JohnsTeam.Id
@@ -56,14 +57,14 @@ public static class TeamIsParticipatingSeeds
     };
 
     public static readonly TeamIsParticipatingEntity JohnsInNY2021 = new(true,
-        DateTime.Parse("12/21/2020 12:21"))
+        DateTime.Parse("12/21/2020 12:21", CultureInfo.InvariantCulture))
     {
         TournamentId = TournamentSeeds.NY2021.Id,
         TeamId = TeamSeeds.JohnsTeam.Id
     };
 
     public static readonly TeamIsParticipatingEntity CardWarriorsInNY2021 = new(true,
-        DateTime.Parse("12/6/2020 4:21"))
+        DateTime.Parse("12/6/2020 4:21", CultureInfo.InvariantCulture))
     {
         TournamentId = TournamentSeeds.NY2021.Id,
         TeamId = TeamSeeds.CardWarriors.Id

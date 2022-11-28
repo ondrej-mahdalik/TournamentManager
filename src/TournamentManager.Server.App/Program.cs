@@ -93,17 +93,18 @@ void ConfigureDependencies(IServiceCollection serviceCollection)
 {
     switch (dalType)
     {
-        case "SQLServer":
-            serviceCollection.AddDbContext<AuthorizationDbContext>(options =>
-                options.UseSqlServer(authConnectionString));
-            serviceCollection.AddInstaller<DALSQLServerInstaller>(mainConnectionString);
-            break;
-        
-        default:
         case "SQLite":
             serviceCollection.AddDbContext<AuthorizationDbContext>(options =>
                 options.UseSqlite(authConnectionString));
             serviceCollection.AddInstaller<DALSQLiteInstaller>(mainConnectionString);
+            break;
+        
+        
+        case "SQLServer":
+        default:
+            serviceCollection.AddDbContext<AuthorizationDbContext>(options =>
+                options.UseSqlServer(authConnectionString));
+            serviceCollection.AddInstaller<DALSQLServerInstaller>(mainConnectionString);
             break;
     }
     

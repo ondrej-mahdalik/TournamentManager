@@ -1,5 +1,4 @@
 ﻿@page "/Tournament/Create"
-@using TournamentManager.Common.Models
 @using Microsoft.AspNetCore.Authorization
 @using TournamentManager.Common.Enums
 @attribute [Authorize]
@@ -9,12 +8,15 @@
 <PageTitle>Create Tournament</PageTitle>
 
 
-
 <div class="row mb-3">
     <div class="col d-xl-flex d-flex align-items-center">
         <h3 class="text-dark d-xl-flex">New Tournament</h3>
     </div>
-    <div class="col col-auto"><a href="/Tournament/List"><button class="btn btn-light" type="button">Back to All Tournaments</button></a></div>
+    <div class="col col-auto">
+        <a href="/Tournament/List">
+            <button class="btn btn-light" type="button">Back to All Tournaments</button>
+        </a>
+    </div>
 </div>
 @if (!_sendOk)
 {
@@ -33,10 +35,17 @@
                         <EditForm Model="@_model" OnValidSubmit="@HandleValidSubmit">
                             <DataAnnotationsValidator/>
                             <ValidationSummary/>
-                            <div class="mb-2"><label class="form-label" for="name">Name</label><InputText id="name" name="name" class="form-control" type="text" @bind-Value="_model.Name"/></div>
-                            <div class="mb-2"><label class="form-label" for="description">Description (optional)</label><InputTextArea id="description" name="description" @bind-Value="_model.Description" class="form-control"/></div>
-                            <div class="mb-2"><label class="form-label" for="date">Date of beginning</label><InputDate TValue="DateTime" id="date" name="date" class="form-control" @bind-Value="_model.Date" Type="InputDateType.Date"></InputDate></div>
-                            <div class="mb-2"><label class="form-label" for="sport">Sport</label>
+                            <div class="mb-2">
+                                <label class="form-label" for="name">Name</label><InputText id="name" name="name" class="form-control" type="text" @bind-Value="_model.Name"/>
+                            </div>
+                            <div class="mb-2">
+                                <label class="form-label" for="description">Description (optional)</label><InputTextArea id="description" name="description" @bind-Value="_model.Description" class="form-control"/>
+                            </div>
+                            <div class="mb-2">
+                                <label class="form-label" for="date">Date of beginning</label><InputDate TValue="DateTime" id="date" name="date" class="form-control" @bind-Value="_model.Date" Type="InputDateType.Date"></InputDate>
+                            </div>
+                            <div class="mb-2">
+                                <label class="form-label" for="sport">Sport</label>
                                 <InputSelect TValue="Guid?" id="sport" name="sport" class="form-select" @bind-Value="_model.SportId">
                                     @foreach (var sport in _sports)
                                     {
@@ -45,17 +54,24 @@
                                     <option value="" selected>Other</option>
                                 </InputSelect>
                             </div>
-                            <div class="mb-2"><label class="form-label" for="signup-type">Play mode</label>
+                            <div class="mb-2">
+                                <label class="form-label" for="signup-type">Play mode</label>
                                 <select id="signup-type" name="signup-type" class="form-select" @bind="_tournamentMode">
                                     <option value="Individual">Individual</option>
                                     <option value="Teams">Teams</option>
                                 </select>
                             </div>
-                            <div class="mb-2"><label class="form-label" for="max-players">Maximum number of players</label><InputNumber TValue="int" id="max-players" name="max-players" @bind-Value="_model.MaxAttendees" class="form-control" min="2" type="number" style="width: 30%;"></InputNumber></div>
                             <div class="mb-2">
-                                <div class="form-check form-switch"><label class="form-check-label" for="formCheck-1">Public</label><InputCheckbox class="form-check-input" type="checkbox" id="formCheck-1" @bind-Value="_model.IsPublic"></InputCheckbox></div>
+                                <label class="form-label" for="max-players">Maximum number of players</label><InputNumber TValue="int" id="max-players" name="max-players" @bind-Value="_model.MaxAttendees" class="form-control" min="2" type="number" style="width: 30%;"></InputNumber>
                             </div>
-                            <div class="d-xl-flex justify-content-xl-end"><button class="btn btn-primary text-end d-xl-flex" type="submit">Create</button></div>
+                            <div class="mb-2">
+                                <div class="form-check form-switch">
+                                    <label class="form-check-label" for="formCheck-1">Public</label><InputCheckbox class="form-check-input" type="checkbox" id="formCheck-1" @bind-Value="_model.IsPublic"></InputCheckbox>
+                                </div>
+                            </div>
+                            <div class="d-xl-flex justify-content-xl-end">
+                                <button class="btn btn-primary text-end d-xl-flex" type="submit">Create</button>
+                            </div>
                         </EditForm>
                     </div>
                 </div>
@@ -67,7 +83,7 @@
 @code
 {
     private List<SportModel> _sports = new();
-    private TournamentModel _model = TournamentModel.Empty;
+    private readonly TournamentModel _model = TournamentModel.Empty;
     private bool _sendOk = true;
     private string _tournamentMode = "Individual";
 
@@ -83,7 +99,7 @@
         else
         {
             _sendOk = true;
-            Navigation.NavigateTo("/Tournament/List");   
+            Navigation.NavigateTo("/Tournament/List");
         }
     }
 

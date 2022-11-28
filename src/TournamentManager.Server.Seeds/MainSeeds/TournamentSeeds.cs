@@ -1,3 +1,4 @@
+using System.Globalization;
 using AutoMapper.Extensions.ExpressionMapping;
 using TournamentManager.Server.DAL;
 using TournamentManager.Server.DAL.Entities;
@@ -23,7 +24,7 @@ public static class TournamentSeeds
 
     public static readonly TournamentEntity NY2024 = new(
         "New Year's tournament",
-        DateTime.Parse("1/1/2023 12:00"),
+        DateTime.Parse("1/1/2023 12:00", CultureInfo.InvariantCulture),
         "2023",
         true,
         true,
@@ -38,7 +39,7 @@ public static class TournamentSeeds
 
     public static readonly TournamentEntity GoldenPuck = new(
         "Golden Puck",
-        DateTime.Parse("5/16/2023 16:30"),
+        DateTime.Parse("5/16/2023 16:30", CultureInfo.InvariantCulture),
         "",
         false,
         false,
@@ -54,7 +55,7 @@ public static class TournamentSeeds
 
     public static readonly TournamentEntity EffortBall = new(
         "Effort ball",
-        DateTime.Parse("11/11/2024"),
+        DateTime.Parse("11/11/2024", CultureInfo.InvariantCulture),
         "Very much effort",
         true,
         true,
@@ -70,7 +71,7 @@ public static class TournamentSeeds
 
     public static readonly TournamentEntity NY2021 = new(
         "New years tournament",
-        DateTime.Parse("1/1/2021"),
+        DateTime.Parse("1/1/2021", CultureInfo.InvariantCulture),
         "2021",
         true,
         true,
