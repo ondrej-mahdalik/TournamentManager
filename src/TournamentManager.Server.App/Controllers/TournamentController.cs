@@ -16,18 +16,21 @@ public class TournamentController : AuthorizedControllerBase
     private readonly TournamentFacade _tournamentFacade;
     private readonly UserIsInTeamFacade _userIsInTeamFacade;
     private readonly TeamIsParticipatingFacade _teamIsParticipatingFacade;
+    private readonly TeamFacade _teamFacade;
 
     public TournamentController(TournamentFacade tournamentFacade,
         UserFacade userFacade,
         UserManager<ApplicationUser> userManager,
         UserIsInTeamFacade userIsInTeamFacade,
-        TeamIsParticipatingFacade teamIsParticipatingFacade) : base(userFacade, userManager)
+        TeamIsParticipatingFacade teamIsParticipatingFacade,
+        TeamFacade teamFacade) : base(userFacade, userManager)
     {
         _tournamentFacade = tournamentFacade;
         _userIsInTeamFacade = userIsInTeamFacade;
         _teamIsParticipatingFacade = teamIsParticipatingFacade;
+        _teamFacade = teamFacade;
     }
-    
+
     [HttpGet]
     public async Task<ActionResult<List<TournamentModel>>> Get()
     {
@@ -35,7 +38,11 @@ public class TournamentController : AuthorizedControllerBase
         
         var user = await GetLoggedUser();
         var teamMemberships = await _userIsInTeamFacade.GetAsync();
-        var currentUserTeamIds = teamMemberships.Where(m => m.UserId == user?.Id).Select(m => m.TeamId);
+        var currentUserTeamIds = teamMemberships.Where(m => m.UserId == user?.Id).Select(m => m.TeamId).ToList();
+        var teams = await _teamFacade.GetAsync();
+        var usersTeamsAsLeader = teams.Where(t => t.LeaderId == user?.Id).ToList();
+        currentUserTeamIds.AddRange(usersTeamsAsLeader.Select(x => x.Id));
+
         var participatings = await _teamIsParticipatingFacade.GetAsync();
 
         return Ok(user?.IsAdministrator ?? false ? tournaments : tournaments.Where(x => x.IsPublic || x.CreatorId == user?.Id ||
