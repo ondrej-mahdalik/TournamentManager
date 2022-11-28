@@ -80,7 +80,7 @@
                                             <td class="mb-0">@team.Leader?.FirstName @team.Leader?.LastName</td>
                                             <td class="mb-0">@(team.Members.Count + 1) @(team.Members.Count + 1 == 1 ? "member" : "members")</td>
                                             <td class="text-end"><a data-bs-target="/Team/@team.Id" href="/Team/Manage/@team.Id" class="btn btn-primary">Manage</a></td>
-                                            <td class="text-end"><a data-bs-target="/Team/@team.Id" href="/Team/Manage/@team.Id" class="btn btn-danger" @onclick="@(() => DeleteTeam(team.Id) )">Delete</a></td>
+                                            <td class="text-end"><a data-bs-target="/Team/@team.Id" class="btn btn-danger" @onclick="@(() => DeleteTeam(team) )">Delete</a></td>
                                         </tr>
                                     }
                                 </tbody>
@@ -174,9 +174,11 @@
             team.Leader = await Http.GetFromJsonAsync<UserModel>($"api/User/{team.LeaderId}"); // Only users loaded directly from UserController have First and Last name (API limitation)
     }
 
-    private async void DeleteTeam(Guid teamId)
+    private async void DeleteTeam(TeamModel team)
     {
-        await Http.DeleteAsync($"/api/Team/{teamId}");
+        await Http.DeleteAsync($"/api/Team/{team.Id}");
+        _teams?.Remove(team);
+        StateHasChanged();
     }
 
     private void OnSearchQueryChanged(ChangeEventArgs e)
