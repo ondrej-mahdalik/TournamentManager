@@ -751,7 +751,7 @@
         }
 
         _matches = (await Http.GetFromJsonAsync<TournamentModel>($"/api/Tournament/{_tournament.Id}"))?.Matches.OrderBy(x => x.Round).ThenBy(x => x.Order).ToList() ?? new();
-        StateHasChanged();
+        // StateHasChanged();
     }
 
     private async Task DeletePendingParticipants()

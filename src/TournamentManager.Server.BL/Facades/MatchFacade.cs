@@ -19,8 +19,7 @@ public class MatchFacade : CRUDFacade<MatchEntity, MatchModel>
             .GetRepository<MatchEntity>()
             .Get()
             .Include(x => x.Team1)
-            .Include(x => x.Team2)
-            .Include(x => x.Tournament);
+            .Include(x => x.Team2);
 
         return await Mapper.ProjectTo<MatchModel>(query).ToArrayAsync().ConfigureAwait(false);
     }
