@@ -516,6 +516,9 @@
             _currentUser = await Http.GetFromJsonAsync<UserModel>("api/User/current");
             var teamMemberships = await Http.GetFromJsonAsync<List<UserIsInTeamModel>>("/api/UserIsInTeam/");
             _currentUserTeamIds = teamMemberships?.Where(m => m.UserId == _currentUser?.Id).Select(m => m.TeamId).ToList();
+            var _allTeams = await Http.GetFromJsonAsync<List<TeamModel>>("api/Team");
+            if (_currentUser is null || _currentUserTeamIds is null) return;
+            _currentUserTeamIds.AddRange(_allTeams.Where(x => x.LeaderId == _currentUser.Id).Select(x => x.Id));
         }
         catch
         {
@@ -526,7 +529,6 @@
         if (_currentUser is null) // Not logged in
         {
             _tournaments = await PublicHttp.Client.GetFromJsonAsync<List<TournamentModel>>("api/Tournament") ?? new List<TournamentModel>();
-    // _tournamentsPublic = _tournamentsPublic.Where(x => x.IsPublic).ToList(); // Should not be needed, should be handled by controller
             _participants = await PublicHttp.Client.GetFromJsonAsync<List<TeamIsParticipatingModel>>("/api/TeamIsParticipating") ?? new();
             _tournamentsUpcoming = _tournaments.Where(x => x.Date >= DateTime.Today).ToList();
             foreach (var tournament in _tournamentsUpcoming)
@@ -544,12 +546,11 @@
                 var points = _tournaments.Where(t => t.InProgress == false && usersTeamsIds.Contains(t.WinnerTeamId ?? Guid.Empty)).Count();
                 usersPoints.Add(user.Id, points);
             }
-            _bestPlayers = users.OrderBy(u => usersPoints[u.Id]).ToList();
+            _bestPlayers = users.OrderByDescending(u => usersPoints[u.Id]).ToList();
         }
         else // Logged user
         {
             _tournaments = await Http.GetFromJsonAsync<List<TournamentModel>>("api/Tournament") ?? new List<TournamentModel>();
-    // _tournamentsPublic = _tournamentsPublic.Where(x => x.IsPublic).ToList(); // Should not be needed, should be handled by controller
             _participants = await Http.GetFromJsonAsync<List<TeamIsParticipatingModel>>("/api/TeamIsParticipating") ?? new();
             _tournamentsUpcoming = _tournaments.Where(x => x.Date >= DateTime.Today).ToList();
             foreach (var tournament in _tournamentsUpcoming)
