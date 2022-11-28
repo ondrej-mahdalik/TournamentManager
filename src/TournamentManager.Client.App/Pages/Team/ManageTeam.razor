@@ -455,7 +455,7 @@ else
         }
 
 
-        var result = await Modal.Show<Confirmation>($"Do you really want to remove {member.FirstName} {member.LastName} from {_team?.Name}? This operation is permanent !").Result;
+        var result = await Modal.Show<ConfirmationModal>($"Do you really want to remove {member.FirstName} {member.LastName} from {_team?.Name}? This operation is permanent !").Result;
         if (result.Cancelled)
             return;
 
@@ -549,7 +549,7 @@ else
 
     private async void DeleteTeam()
     {
-        var result = await Modal.Show<Confirmation>($"Do you want to delete {_team?.Name}? This operation is permanent!").Result;
+        var result = await Modal.Show<ConfirmationModal>($"Do you want to delete {_team?.Name}? This operation is permanent!").Result;
 
         if (!result.Confirmed)
             return;

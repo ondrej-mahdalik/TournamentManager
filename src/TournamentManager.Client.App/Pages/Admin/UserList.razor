@@ -185,7 +185,7 @@
 
     private async Task DeleteUserAsync(UserModel user)
     {
-        var result = await Modal.Show<AdminUserDeletion>($"Do you really want to delete user {user.FirstName} {user.LastName}?").Result;
+        var result = await Modal.Show<AdminUserDeletionModal>($"Do you really want to delete user {user.FirstName} {user.LastName}?").Result;
         if (result.Cancelled)
             return;
         
