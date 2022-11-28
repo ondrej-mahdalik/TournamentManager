@@ -106,6 +106,22 @@ public static class TournamentSeeds
         SportId = SportSeeds.Football.Id
     };
 
+    public static readonly TournamentEntity UnapprovedTournament = new(
+        "Unapproved",
+        DateTime.Now,
+        "Unapproved Tournament",
+        true,
+        false,
+        false,
+        true,
+        20,
+        0)
+    {
+        Id = Guid.Parse("4ADD73F2-2726-44D7-B79B-13A69883B649"),
+        CreatorId = UserSeeds.JohnDoe.Id,
+        SportId = SportSeeds.Chess.Id
+    };
+
 
     public static void Seed(TournamentManagerDbContext dbContext)
     {
@@ -115,5 +131,6 @@ public static class TournamentSeeds
         dbContext.Tournaments.Add(EffortBall);
         dbContext.Tournaments.Add(NY2021);
         dbContext.Tournaments.Add(Active);
+        dbContext.Tournaments.Add(UnapprovedTournament);
     }
 }
