@@ -29,6 +29,11 @@ public class MatchController : AuthorizedControllerBase
     {
         return Ok(await _matchFacade.GetAsync());
     }
+    [HttpGet("ByTournament/{id:guid}")]
+    public async Task<ActionResult<List<MatchModel>>> GetAll(Guid id)
+    {
+        return Ok(await _matchFacade.GetByTournamentIdAsync(id));
+    }
 
     [HttpGet("{id:guid}")]
     public async Task<ActionResult<MatchModel>> GetById(Guid id)

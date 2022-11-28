@@ -42,9 +42,10 @@ else
                 <InputNumber id="team2score" class="form-control" TValue="int" @bind-Value="Match.Score2"/>
             </div>
         </div>
-        <div class="d-xl-flex justify-content-xl-end">
-            <button class="btn btn-secondary" type="reset" @onclick="CancelAsync">Cancel</button>
-            <button class="btn btn-primary" type="submit">Save Changes</button>
+        
+        <div class="d-flex justify-content-end">
+            <button class="btn text-end d-flex me-1 btn-danger" type="reset" @onclick="CancelAsync">Cancel</button>
+            <button class="btn text-end d-flex me-1 btn-primary" type="submit">Save Changes</button>
         </div>
     </EditForm>
 }

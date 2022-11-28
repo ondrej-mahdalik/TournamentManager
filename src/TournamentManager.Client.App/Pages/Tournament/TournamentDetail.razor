@@ -130,15 +130,20 @@
                                             <h6 class="text-primary">Round @match.Round</h6>
                                          }
                                     </div>
-                                    <div class="row border-bottom mb-2">
+                                    <div class="row">
                                         <div class="col">
-                                            <p>
-                                                @if (!string.IsNullOrWhiteSpace(match.Team1?.LogoUrl))
-                                                {
-                                                    <img alt="team1-image" class="rounded-circle me-2" width="30" height="30" src="@match.Team1?.LogoUrl">
-                                                }
-                                                @match.Team1?.Name
-                                            </p>
+                                            @if (_approvedParticipants is not null)
+                                             {
+                                                 var teamInfo = _approvedParticipants.FirstOrDefault(x => x.TeamId == match.Team1Id);
+                                                 <p>
+                                                     @if (teamInfo is not null && (teamInfo.Team?.LogoUrl is not null && teamInfo.Team?.LogoUrl != ""))
+                                                     {
+                                                         <img alt="team2-image" class="rounded-circle me-2" width="30" height="30" src="@teamInfo.Team?.LogoUrl">
+                                                     }
+                                                     
+                                                     @teamInfo?.Team?.Name
+                                                 </p>
+                                             }
                                         </div>
                                         <div class="col align-self-center">
                                             <p class="lead text-center">@match.Score1</p>
@@ -146,13 +151,18 @@
                                     </div>
                                     <div class="row">
                                         <div class="col">
-                                            <p>
-                                                @if (!string.IsNullOrWhiteSpace(match.Team2?.LogoUrl))
-                                                {
-                                                    <img alt="team2-image" class="rounded-circle me-2" width="30" height="30" src="@match.Team2?.LogoUrl">
-                                                }
-                                                @match.Team2?.Name
-                                            </p>
+                                           @if (_approvedParticipants is not null)
+                                            {
+                                                var teamInfo = _approvedParticipants.FirstOrDefault(x => x.TeamId == match.Team2Id);
+                                                <p>
+                                                    @if (teamInfo is not null && (teamInfo.Team?.LogoUrl is not null && teamInfo.Team?.LogoUrl != ""))
+                                                    {
+                                                        <img alt="team2-image" class="rounded-circle me-2" width="30" height="30" src="@teamInfo.Team?.LogoUrl">
+                                                    }
+                                                    
+                                                    @teamInfo?.Team?.Name
+                                                </p>
+                                            }
                                         </div>
                                         <div class="col align-self-center">
                                             <p class="lead text-center">@match.Score2</p>
@@ -183,6 +193,7 @@
     private int _numberOfParticipants;
     private bool _resultOk = true;
     private Guid _teamParticipatingId;
+    private List<TeamIsParticipatingModel> _approvedParticipants;
     private bool _participantApproved;
     private string _errorMessage = "";
 
@@ -195,6 +206,8 @@
             {
                 _tournament = await Http.GetFromJsonAsync<TournamentModel>($"/api/Tournament/{Id}");
                 _loggedUser = await Http.GetFromJsonAsync<UserModel>("/api/User/current");
+                var allParticipants = await Http.GetFromJsonAsync<List<TeamIsParticipatingModel>>("/api/TeamIsParticipating") ?? new();
+                _approvedParticipants = allParticipants.Where(x => x.TournamentId == _tournament?.Id && x.Approved).ToList();
                 if (_loggedUser is not null && _tournament is not null)
                 {
                     var userAsLeaderTeams = await Http.GetFromJsonAsync<List<TeamModel>>($"/api/Team/ByUser/{_loggedUser.Id}") ?? new();
@@ -206,11 +219,8 @@
                             _participantApproved = teamParticipating.Approved;
                             _teamParticipatingId = teamParticipating.Id;
                         }
-                        
                     }
-                    
                 }
-
             }
             catch (AccessTokenNotAvailableException exception)
             {

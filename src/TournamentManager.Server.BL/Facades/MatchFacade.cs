@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using System.Text.RegularExpressions;
+using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using TournamentManager.Server.DAL.Entities;
 using TournamentManager.Server.DAL.UnitOfWork;
@@ -35,6 +36,19 @@ public class MatchFacade : CRUDFacade<MatchEntity, MatchModel>
             .Include(x => x.Tournament).FirstOrDefaultAsync(x => x.Id == id);
 
         return Mapper.Map<MatchModel?>(entity);
+    }
+
+    public async Task<IEnumerable<MatchModel>> GetByTournamentIdAsync(Guid id)
+    {
+        await using var uow = UnitOfWorkFactory.Create();
+        var query = uow
+            .GetRepository<MatchEntity>()
+            .Get()
+            .Include(x => x.Team1)
+            .Include(x => x.Team2)
+            .Where(x => x.TournamentId == id);
+
+        return await Mapper.ProjectTo<MatchModel>(query).ToArrayAsync().ConfigureAwait(false);
     }
 
     public async Task<bool> InsertManyAsync(List<MatchModel> matches)

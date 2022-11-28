@@ -53,39 +53,6 @@ public static class TeamSeeds
         LeaderId = UserSeeds.JohnDoe.Id,
     };
 
-    public static readonly TeamEntity Team6 = new(
-        "UTI2", null, false)
-    {
-        Id = Guid.Parse("6C26A9A3-2A53-47F1-9BA9-87846AD2C3B6"),
-        LeaderId = UserSeeds.Admin.Id
-    };
-
-    public static readonly TeamEntity Team7 = new(
-        "TTTT2", null, false)
-    {
-        Id = Guid.Parse("6B26A9A4-2ABC-47F1-8AA9-87846AD2C3B6"),
-        LeaderId = UserSeeds.Admin.Id
-    };
-
-    public static readonly TeamEntity Team8 = new(
-        "Team6", null, false)
-    {
-        Id = Guid.Parse("5526B9A5-2A53-47F1-8BB9-87846AD2C367"),
-        LeaderId = UserSeeds.Admin.Id
-    };
-    public static readonly TeamEntity Team9 = new(
-        "Team7", null, false)
-    {
-        Id = Guid.Parse("6726A9A5-2A53-47F1-8BD9-87846AD2C366"),
-        LeaderId = UserSeeds.Admin.Id
-    };
-    public static readonly TeamEntity Team10 = new(
-        "Team8", null, false)
-    {
-        Id = Guid.Parse("5526A9A5-2A53-47F1-8DD9-87526AD2C366"),
-        LeaderId = UserSeeds.Admin.Id
-    };
-
     public static void Seed(TournamentManagerDbContext dbContext)
     {
         dbContext.Teams.Add(JohnsTeam);
@@ -94,11 +61,5 @@ public static class TeamSeeds
         dbContext.Teams.Add(Team3);
         dbContext.Teams.Add(Team4);
         dbContext.Teams.Add(Team5);
-        dbContext.Teams.Add(JohnsTeam2);
-        dbContext.Teams.Add(Team6);
-        dbContext.Teams.Add(Team7);
-        dbContext.Teams.Add(Team8);
-        dbContext.Teams.Add(Team9);
-        dbContext.Teams.Add(Team10);
     }
 }

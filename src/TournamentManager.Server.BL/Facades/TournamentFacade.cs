@@ -61,9 +61,6 @@ public class TournamentFacade : CRUDFacade<TournamentEntity, TournamentModel>
             .GetRepository<TournamentEntity>()
             .Get()
             .Include(x => x.Matches)
-            .ThenInclude(x => x.Team1)
-            .Include(x => x.Matches)
-            .ThenInclude(x => x.Team2)
             .FirstOrDefaultAsync(x => x.Id == id);
 
         return Mapper.Map<TournamentModel?>(entity);
