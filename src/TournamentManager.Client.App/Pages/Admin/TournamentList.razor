@@ -7,6 +7,8 @@
 @inject NavigationManager NavigationManager;
 @attribute [Authorize]
 
+<PageTitle>Manage Tournaments</PageTitle>
+
 <div id="content">
     <div class="container-fluid">
     <div class="row mb-3">
@@ -26,8 +28,8 @@
             <MessageBox MessageType="MessageType.Error" Title="An error has occured" Message="@_errorMessage"/>
         </div>
         </div>
-    }
-    <div class="row">
+    }   
+    <div class="row mb-3">
         <div class="col">
             <div class="card shadow">
                 <div class="card-header">
@@ -160,12 +162,10 @@
                                                     }
                                                 </td>
                                                 <td class="text-end">
-                                                    <a data-bs-target="/Tournament/@tournament.Id" href="/Tournament/Manage/@tournament.Id" class="btn btn-primary">
+                                                    <a href="/Tournament/Manage/@tournament.Id" class="btn btn-primary">
                                                         Manage
                                                     </a>
-                                                </td>
-                                                <td class="text-end">
-                                                    <a data-bs-target="/Tournament/@tournament.Id" @onclick="@(() => DeleteTournamentAsync(tournament))" class="btn btn-danger">
+                                                    <a @onclick="@(() => DeleteTournamentAsync(tournament))" class="btn btn-danger">
                                                         Remove
                                                     </a>
                                                 </td>
@@ -187,7 +187,7 @@
                                             <ul class="pagination">
                                                 <li class="page-item @(_selectedPageIndex <= 0 ? "disabled" : "")">
                                                     <a role="button" class="page-link" aria-label="Previous" @onclick="() => _selectedPageIndex--">
-                                                        <span class="user-select-none" aria-hidden="true">«</span>
+                                                        <span class="user-select-none" aria-hidden="true">Â«</span>
                                                     </a>
                                                 </li>
                                                 @for (var i = _selectedPageIndex - 1; i <= _selectedPageIndex + 1; i++)
@@ -216,7 +216,7 @@
                                                 }
                                                 <li class="page-item @(_selectedPageIndex >= TournamentsFilteredPages.Count - 1 ? "disabled" : "")">
                                                     <a class="page-link" aria-label="Next" @onclick="() => _selectedPageIndex++" role="button">
-                                                        <span class="user-select-none" aria-hidden="true">»</span>
+                                                        <span class="user-select-none" aria-hidden="true">Â»</span>
                                                     </a>
                                                 </li>
                                             </ul>
@@ -279,8 +279,8 @@
     {
         _isLoading = true;
         List<TeamIsParticipatingModel> participants = new();
-        var _currentUser = await Http.GetFromJsonAsync<UserModel>("api/User/Current");
-        if (_currentUser is null || !_currentUser.IsAdministrator)
+        var currentUser = await Http.GetFromJsonAsync<UserModel>("api/User/Current");
+        if (currentUser is null || !currentUser.IsAdministrator)
         {
             NavigationManager.NavigateTo("/Tournament/List");
             return;
@@ -328,7 +328,7 @@
         var parameters = new ModalParameters()
             .Add(nameof(ConfirmationModal.Message), "The tournament will be permanently deleted. Are you sure you want to continue?");
 
-        var modalResult = await Modal.Show<ConfirmationModal>($"Do you really want to delete tournament {tournament.Name}?").Result;
+        var modalResult = await Modal.Show<ConfirmationModal>($"Do you really want to delete tournament {tournament.Name}?", parameters).Result;
         if (modalResult.Cancelled)
             return;
         

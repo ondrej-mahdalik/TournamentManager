@@ -1,12 +1,10 @@
 @page "/Admin/Teams"
-@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
 @using Microsoft.AspNetCore.Authorization
 @inject HttpClient Http
 @inject NavigationManager NavigationManager;
 @attribute [Authorize]
 
-
-<PageTitle>Manage teams</PageTitle>
+<PageTitle>Manage Teams</PageTitle>
 
 <div id="content">
     <div class="container-fluid">
@@ -77,8 +75,10 @@
                                             </td>
                                             <td class="mb-0">@team.Leader?.FirstName @team.Leader?.LastName</td>
                                             <td class="mb-0">@(team.Members.Count + 1) @(team.Members.Count + 1 == 1 ? "member" : "members")</td>
-                                            <td class="text-end"><a data-bs-target="/Team/@team.Id" href="/Team/Manage/@team.Id" class="btn btn-primary">Manage</a></td>
-                                            <td class="text-end"><a data-bs-target="/Team/@team.Id" class="btn btn-danger" @onclick="@(() => DeleteTeam(team) )">Delete</a></td>
+                                            <td class="text-end">
+                                                <a data-bs-target="/Team/@team.Id" href="/Team/Manage/@team.Id" class="btn btn-primary">Manage</a>
+                                                <a data-bs-target="/Team/@team.Id" class="btn btn-danger" @onclick="@(() => DeleteTeam(team) )">Delete</a>
+                                            </td>
                                         </tr>
                                     }
                                 </tbody>
@@ -94,7 +94,7 @@
                             <div class="col-md-6">
                                 <nav class="d-lg-flex justify-content-lg-end dataTables_paginate paging_simple_numbers">
                                     <ul class="pagination">
-                                        <li class="page-item @(_selectedPageIndex <= 0 ? "disabled" : "")"><a role="button" class="page-link" aria-label="Previous" @onclick="() => _selectedPageIndex--"><span class="user-select-none" aria-hidden="true">«</span></a></li>
+                                        <li class="page-item @(_selectedPageIndex <= 0 ? "disabled" : "")"><a role="button" class="page-link" aria-label="Previous" @onclick="() => _selectedPageIndex--"><span class="user-select-none" aria-hidden="true">Â«</span></a></li>
                                         @for (var i = _selectedPageIndex - 1; i <= _selectedPageIndex + 1; i++)
                                         {
                                             var num = i;
@@ -118,8 +118,8 @@
                                                 <a class="page-link" @onclick="() => _selectedPageIndex = num" role="button">@(num + 1)</a>
                                             </li>
                                         }
-                                        <li class="page-item @(_selectedPageIndex >= @TeamsFilteredPages.Count - 1 ? "disabled" : "")">
-                                            <a class="page-link" aria-label="Next" @onclick="() => _selectedPageIndex++" role="button"><span class="user-select-none" aria-hidden="true">»</span></a>
+                                        <li class="page-item @(_selectedPageIndex >= TeamsFilteredPages.Count - 1 ? "disabled" : "")">
+                                            <a class="page-link" aria-label="Next" @onclick="() => _selectedPageIndex++" role="button"><span class="user-select-none" aria-hidden="true">Â»</span></a>
                                         </li>
                                     </ul>
                                 </nav>

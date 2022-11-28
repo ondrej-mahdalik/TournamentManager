@@ -1,7 +1,9 @@
-﻿@page "/SportList"
+@page "/Admin/Sports"
+@using TournamentManager.Client.App.Shared.ModalComponents
+@using TournamentManager.Common.Enums
 @inject HttpClient Http
 
-<PageTitle>Sport List</PageTitle>
+<PageTitle>Manage Sports</PageTitle>
 
 <div id="content">
     <div class="container-fluid">
@@ -13,6 +15,14 @@
                 <a class="btn btn-primary" href="/Admin/Sport/Create">Add New Sport</a>
             </div>
         </div>
+        @if (_displayError)
+        {
+            <div class="row">
+                <div class="col">
+                    <MessageBox MessageType="MessageType.Error" Title="An error has occured" Message="_errorMessage"></MessageBox>
+                </div>
+            </div>
+        }
         <div class="card shadow">
             <div class="card-body shadow">
                 @if(_sports is null)
@@ -68,7 +78,7 @@
                                         <td>
                                             @sport.Tournaments.Count
                                         </td>
-                                        <td class="text-end d-inline-flex">
+                                        <td class="text-end">
                                             <a class="btn btn-primary" data-bs-target="/Admin/Sport/Edit/@sport.Id" href="/Admin/Sport/Edit/@sport.Id">Edit</a>
                                             <button class="btn btn-danger" @onclick="() => DeleteSportAsync(sport)">Edit</button>
                                         </td>
@@ -126,6 +136,12 @@
 </div>
 
 @code {
+    [CascadingParameter]
+    IModalService Modal { get; set; } = default!;
+
+    private bool _displayError;
+    private string _errorMessage = string.Empty;
+    
     private List<SportModel>? _sports;
     private string _search = "";
     private int _showCount = 10;
@@ -164,6 +180,18 @@
 
     private async Task DeleteSportAsync(SportModel sport)
     {
-        // TODO confirm and delete
+        var parameters = new ModalParameters()
+            .Add(nameof(ConfirmationModal.Message), $"The sport will be permanently deleted. Are you sure you want to delete {sport.Name}?");
+        
+        var result = await Modal.Show<ConfirmationModal>("Confirmation", parameters).Result;
+        if (result.Cancelled)
+            return;
+        
+        var response = await Http.DeleteAsync($"api/Sport/{sport.Id}");
+        if (!response.IsSuccessStatusCode)
+        {
+            _errorMessage = await response.Content.ReadAsStringAsync();
+            _displayError = true;
+        }
     }
 }
