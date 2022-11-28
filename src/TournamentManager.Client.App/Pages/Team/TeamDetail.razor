@@ -293,7 +293,7 @@ else
                                             <td>@tournament.Name</td>
                                             <td>@tournament.Date.ToString("dd. MM. yyyy")</td>
                                             <td>@(tournament.IsPublic ? "Public" : "Private")</td>
-                                            <td>@_numberOfParticipants[@tournament.Id] / @tournament.MaxAttendees</td>
+                                            <td>@_participatings.Where(p => p.TournamentId == tournament.Id).Count() / @tournament.MaxAttendees</td>
                                             <td class="text-end"><a data-bs-target="/Tournament/@tournament.Id" href="/Tournament/Detail/@tournament.Id" class="btn btn-primary">Detail</a></td>
                                         </tr>
                                     }
@@ -347,11 +347,6 @@ else
                                 </div>
                             }
                         </div>
-                        <div class="row">
-                            <div class="col">
-                                <p class="mb-0 text-secondary">Only public tournaments are displayed.</p>
-                            </div>
-                        </div>
                     }
                 </div>
             </div>
@@ -372,28 +367,32 @@ else
     private UserModel? _leader;
     private List<UserModel>? _members; 
     private UserModel? _currentUser;
+    private List<TournamentModel>? _tournaments;
+    private Dictionary<Guid, List<Guid>> _participantsInATournament = new();
+    List<TeamIsParticipatingModel> _participatings;
 
     protected override async Task OnInitializedAsync()
     {
         _members = new List<UserModel>();
         _team = await PublicHttp.Client.GetFromJsonAsync<TeamModel>($"/api/Team/{Id}");
-            if (_team is not null)
+        if (_team is not null)
+        {
+            _leader = await PublicHttp.Client.GetFromJsonAsync<UserModel>($"/api/User/{_team.LeaderId}");
+
+            foreach (UserIsInTeamModel userIsInTeam in _team.Members)
             {
-                _leader = await PublicHttp.Client.GetFromJsonAsync<UserModel>($"/api/User/{_team.LeaderId}");
-
-                foreach (UserIsInTeamModel userIsInTeam in _team.Members)
+                UserModel? member = await PublicHttp.Client.GetFromJsonAsync<UserModel>($"/api/User/{userIsInTeam.UserId}");
+                if(member is not null)
                 {
-                    UserModel? member = await PublicHttp.Client.GetFromJsonAsync<UserModel>($"/api/User/{userIsInTeam.UserId}");
-                    if(member is not null)
-                    {
-                        _members.Add(member);
-                    }
+                    _members.Add(member);
                 }
-
             }
 
-            _tournaments = await PublicHttp.Client.GetFromJsonAsync<List<TournamentModel>>("api/Tournament") ?? new List<TournamentModel>();
-            _tournaments = _tournaments.Where(x => x.Participatings.Any(p => p.TeamId == _team?.Id)).ToList() ;
+        }
+
+        _participatings = await PublicHttp.Client.GetFromJsonAsync<List<TeamIsParticipatingModel>>("/api/TeamIsParticipating") ?? new();
+        _tournaments = await PublicHttp.Client.GetFromJsonAsync<List<TournamentModel>>("api/Tournament") ?? new List<TournamentModel>();
+        _tournaments = _tournaments.Where(t => _participatings.Any(p => p.TournamentId == t.Id && p.TeamId == _team?.Id) ).ToList();
 
         try
         {
@@ -425,7 +424,6 @@ else
         }
 
         var response = await Http.PutAsJsonAsync($"/api/UserIsInTeam", new UserIsInTeamModel(_currentUser.Id, _team.Id));
-        // TODO handle response
 
         _team = await PublicHttp.Client.GetFromJsonAsync<TeamModel>($"/api/Team/{Id}");
     }
@@ -436,7 +434,6 @@ else
             return;
 
         var response = await Http.DeleteAsync($"/api/UserIsInTeam/{_team.Members.First(x => x.UserId == _currentUser.Id).Id}");
-        // TODO handle response
         
         _team = await PublicHttp.Client.GetFromJsonAsync<TeamModel>($"/api/Team/{Id}");
     }
@@ -448,7 +445,7 @@ else
         NavigationManager.NavigateTo($"/Team/Manage/{_team.Id}");
     }
 
-    // Memebrs list :
+    // Memebers list :
 
     private int _membersShowCount = 10;
     private int _membersSelectedPageIndex;
@@ -491,8 +488,6 @@ else
     private string _tournamentsSearch = "";
     private int _tournamentsShowCount = 10;
     private int _tournamentsSelectedPageIndex;
-    private Dictionary<Guid, int> _numberOfParticipants = new();
-    private List<TournamentModel>? _tournaments;
     private List<TournamentModel> TournamentsFiltered => _tournaments?
         .Where(x =>
         {
