@@ -41,7 +41,8 @@
                                 <label class="form-label">
                                     Show
                                     <select @onchange="OnItemsOnActivePageChanged" class="d-inline-block form-select form-select-sm">
-                                        <option value="10" selected="selected">10</option>
+                                        <option value="3" selected="selected">3</option>
+                                        <option value="10">10</option>
                                         <option value="25">25</option>
                                         <option value="50">50</option>
                                         <option value="100">100</option>
@@ -189,7 +190,7 @@
                                 </tr>
                                 </thead>
                                 <tbody>
-                                @for (var i = 0; i < 5 && i < _tournamentsUpcoming.Count; i++)
+                                @for (var i = 0; i < 3 && i < _tournamentsUpcoming.Count; i++)
                                 {
                                     var tournament = _tournamentsUpcoming[i];
                                     <tr>
@@ -238,7 +239,8 @@
                                 <label class="form-label">
                                     Show
                                     <select @onchange="OnItemsOnFinishedPageChanged" class="d-inline-block form-select form-select-sm">
-                                        <option value="10" selected="selected">10</option>
+                                        <option value="3" selected="selected">3</option>
+                                        <option value="10">10</option>
                                         <option value="25">25</option>
                                         <option value="50">50</option>
                                         <option value="100">100</option>
@@ -450,7 +452,7 @@
                                                 </tr>
                                                 </thead>
                                                 <tbody>
-                                                @for (var i = 0; i < _bestPlayers.Count && i < 5; i++)
+                                                @for (var i = 0; i < _bestPlayers.Count && i < 3; i++)
                                                 {
                                                     var player = _bestPlayers[i];
                                                     <tr>
@@ -575,14 +577,14 @@
             {
                 foreach (var tournament in _tournamentsActive)
                 {
-                    _numberOfParticipantsFinished.Add(tournament.Id, _participants.Count(x => x.TournamentId == tournament.Id && x.Approved));
+                    _numberOfParticipantsActive.Add(tournament.Id, _participants.Count(x => x.TournamentId == tournament.Id && x.Approved));
                 }
             }
         }
     }
 
     private string _finishedSearch = "";
-    private int _finishedShowCount = 10;
+    private int _finishedShowCount = 5;
     private int _finishedSelectedPageIndex;
 
     private List<TournamentModel> tournamentsFinishedFiltered => _tournamentsFinished?
@@ -621,7 +623,7 @@
     // Active 
 
     private string _activeSearch = "";
-    private int _activeShowCount = 10;
+    private int _activeShowCount = 5;
     private int _activeSelectedPageIndex;
 
     private List<TournamentModel> tournamentsActiveFiltered => _tournamentsActive?
