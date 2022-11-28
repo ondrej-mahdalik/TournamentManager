@@ -69,7 +69,7 @@
                                             }
                                             @team.Name
                                         </td>
-                                        <td class="mb-0">@team.Leader?.FirstName @team.Leader?.LastName</td>
+                                        <td class="mb-0"><a class="text-body text-decoration-none" href="/Profile/Detail/@team.LeaderId">@team.Leader?.FirstName @team.Leader?.LastName</a></td>
                                         <td class="mb-0">@(team.Members.Count + 1) @(team.Members.Count + 1 == 1 ? "member" : "members")</td>
                                         <td class="text-end"><a data-bs-target="/Team/@team.Id" href="/Team/Detail/@team.Id"><button class="btn btn-primary" type="button">Detail</button></a></td>
                                     </tr>
