@@ -174,7 +174,9 @@
                 return (name || sport || date || creatorFirstName || creatorLastName) && (x.Date.Date >= DateTime.Now.Date) && x.CreatorId == _loggedUser?.Id;
             
             return (name || sport || date || creatorFirstName || creatorLastName) && (x.Date.Date >= DateTime.Now.Date);
-        }).OrderBy(x => x.Date).ToList()
+        })
+        .Where(x => (x.IsApproved || (_loggedUser is not null && (x.CreatorId == _loggedUser.Id || _loggedUser.IsAdministrator))))
+        .OrderBy(x => x.Date).ToList()
         ?? new();
     
     private List<List<TournamentModel>> TournamentsFilteredPages => TournamentsFiltered.Select((x, i) => new  // Splits the one big list into smaller lists of size _showCount
