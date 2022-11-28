@@ -29,6 +29,11 @@ public class MatchController : AuthorizedControllerBase
     {
         return Ok(await _matchFacade.GetAsync());
     }
+    [HttpGet("ByTournament/{id:guid}")]
+    public async Task<ActionResult<List<MatchModel>>> GetAll(Guid id)
+    {
+        return Ok(await _matchFacade.GetByTournamentIdAsync(id));
+    }
 
     [HttpGet("{id:guid}")]
     public async Task<ActionResult<MatchModel>> GetById(Guid id)
@@ -59,6 +64,21 @@ public class MatchController : AuthorizedControllerBase
             return Forbid();
 
         if (!await _matchFacade.InsertManyAsync(matches))
+            return UnprocessableEntity();
+
+        return Ok();
+    }
+    [HttpPut("generate")]
+    public async Task<ActionResult> InsertOrUpdateMultiple([FromBody] List<MatchModel>? matches)
+    {
+        if (matches is null || matches.Count == 0)
+            return BadRequest();
+
+        var user = await GetLoggedUser();
+        if (user is null || (!user.IsAdministrator && matches.Any(x => user.Tournaments.All(y => y.Id != x.TournamentId))))
+            return Forbid();
+
+        if (!await _matchFacade.InsertOrUpdateManyAsync(matches))
             return UnprocessableEntity();
 
         return Ok();

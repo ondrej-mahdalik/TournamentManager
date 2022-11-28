@@ -9,18 +9,21 @@ public class MatchModel : ModelBase, IValidatableObject
         int score1,
         int score2,
         int round,
-        int order)
+        int order,
+        bool isLocked)
     {
         Score1 = score1;
         Score2 = score2;
         Round = round;
         Order = order;
+        IsLocked = isLocked;
         TournamentId = tournamentId;
     }
     public int Score1 { get; set; }
     public int Score2 { get; set; }
     public int Round { get; set; }
     public int Order { get; set; }
+    public bool IsLocked { get; set; }
     
     public Guid TournamentId { get; set; }
     public TournamentModel? Tournament { get; set; }

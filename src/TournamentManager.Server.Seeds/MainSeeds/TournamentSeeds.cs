@@ -13,7 +13,8 @@ public static class TournamentSeeds
         true,
         false,
         false,
-        20)
+        20,
+        0)
     {
         Id = Guid.Parse("83D0C8E4-E38B-43B2-8E64-3EBA5EC773FD"),
         CreatorId = UserSeeds.JohnDoe.Id,
@@ -28,7 +29,8 @@ public static class TournamentSeeds
         true,
         false,
         false,
-        54)
+        54,
+        0)
     {
         Id = Guid.Parse("C47AA197-EA47-4C5A-8347-5EB4D9CD8CFF"),
         CreatorId = UserSeeds.RexWalsh.Id,

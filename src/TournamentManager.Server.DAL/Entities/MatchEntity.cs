@@ -4,7 +4,8 @@ public record MatchEntity(
     int Score1,
     int Score2,
     int Round,
-    int Order) : EntityBase
+    int Order,
+    bool IsLocked) : EntityBase
 {
     public Guid TournamentId { get; init; }
     public TournamentEntity? Tournament { get; init; }

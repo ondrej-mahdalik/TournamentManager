@@ -44,6 +44,14 @@ public static class TeamSeeds
         Id = Guid.Parse("5526A9A5-2A53-47F1-8DD9-87846AD2C366"),
         LeaderId = UserSeeds.Admin.Id
     };
+    
+    
+    public static readonly TeamEntity JohnsTeam2 = new(
+        "John's team2", "https://i.ytimg.com/vi/QQNL83fhWJU/maxresdefault.jpg", false)
+    {
+        Id = Guid.Parse("B7327A1C-DECE-4251-9467-F6A99974E349"),
+        LeaderId = UserSeeds.JohnDoe.Id,
+    };
 
     public static void Seed(TournamentManagerDbContext dbContext)
     {

@@ -32,8 +32,8 @@
                 
             }
             <div class="row mb-3">
-                <div class="col text-center d-xl-flex d-flex align-items-center">
-                    <h3 class="text-dark d-xl-flex">@_tournament.Name</h3>
+                <div class="col text-center d-flex align-items-center">
+                    <h3 class="text-dark d-flex">@_tournament.Name</h3>
                 </div>
                 <div class="col col-auto"><a href="/Tournament/list"><button class="btn btn-light" type="button">Back to All Tournaments</button></a></div>
                 @if (_tournament.Participatings.Count < _tournament.MaxAttendees && !_tournament.InProgress)
@@ -53,15 +53,16 @@
                     {
                         <AuthorizeView>
                             <Authorized>
-                                <div class="col col-auto"><a class="btn btn-danger" @onclick="LeaveTournament">Leave Tournament</a></div>
+                                <div class="col col-auto"><a class="btn btn-danger" @onclick="LeaveTournament">@(_participantApproved ? "Leave Tournament" : "Delete Request")</a></div>
                             </Authorized>
                             <NotAuthorized>
-                                <div class="col col-auto"><a class="btn btn-danger" href="authentication/login">Leave Tournament</a></div>
+                                <div class="col col-auto"><a class="btn btn-danger" href="authentication/login">@(_participantApproved ? "Leave Tournament" : "Delete Request")</a></div>
                             </NotAuthorized>
                         </AuthorizeView>
+
                     }
                 }
-                @if (_loggedUser?.Id == _tournament.CreatorId)
+                @if (_loggedUser?.Id == _tournament.CreatorId ||  (_loggedUser?.IsAdministrator ?? false))
                 {
                     <div class="col col-auto"><a href="/Tournament/Manage/@_tournament.Id"><button class="btn btn-primary" type="button">Manage Tournament</button></a></div>
                 }
@@ -120,20 +121,29 @@
                             <div class="card shadow mb-4">
                                 <div class="card-body">
                                     <div class="row">
-                                        <div class="col-6">
+                                        @if (_tournament != null && match.Round == _tournament.NumOfRounds)
+                                         {
+                                             <h6 class="text-primary fw-bold">Final</h6>
+                                         }
+                                         else
+                                         {
                                             <h6 class="text-primary">Round @match.Round</h6>
-                                        </div>
-                                        
+                                         }
                                     </div>
-                                    <div class="row border-bottom mb-2">
+                                    <div class="row">
                                         <div class="col">
-                                            <p>
-                                                @if (!string.IsNullOrWhiteSpace(match.Team1?.LogoUrl))
-                                                {
-                                                    <img alt="team1-image" class="img-fluid" width="60" height="60" src="@match.Team1?.LogoUrl">
-                                                }
-                                                @match.Team1?.Name
-                                            </p>
+                                            @if (_approvedParticipants is not null)
+                                             {
+                                                 var teamInfo = _approvedParticipants.FirstOrDefault(x => x.TeamId == match.Team1Id);
+                                                 <p>
+                                                     @if (teamInfo is not null && (teamInfo.Team?.LogoUrl is not null && teamInfo.Team?.LogoUrl != ""))
+                                                     {
+                                                         <img alt="team2-image" class="rounded-circle me-2" width="30" height="30" src="@teamInfo.Team?.LogoUrl">
+                                                     }
+                                                     
+                                                     @teamInfo?.Team?.Name
+                                                 </p>
+                                             }
                                         </div>
                                         <div class="col align-self-center">
                                             <p class="lead text-center">@match.Score1</p>
@@ -141,13 +151,18 @@
                                     </div>
                                     <div class="row">
                                         <div class="col">
-                                            <p>
-                                                @if (!string.IsNullOrWhiteSpace(match.Team2?.LogoUrl))
-                                                {
-                                                    <img alt="team2-image" class="img-fluid" width="60" height="60" src="@match.Team2?.LogoUrl">
-                                                }
-                                                @match.Team2?.Name
-                                            </p>
+                                           @if (_approvedParticipants is not null)
+                                            {
+                                                var teamInfo = _approvedParticipants.FirstOrDefault(x => x.TeamId == match.Team2Id);
+                                                <p>
+                                                    @if (teamInfo is not null && (teamInfo.Team?.LogoUrl is not null && teamInfo.Team?.LogoUrl != ""))
+                                                    {
+                                                        <img alt="team2-image" class="rounded-circle me-2" width="30" height="30" src="@teamInfo.Team?.LogoUrl">
+                                                    }
+                                                    
+                                                    @teamInfo?.Team?.Name
+                                                </p>
+                                            }
                                         </div>
                                         <div class="col align-self-center">
                                             <p class="lead text-center">@match.Score2</p>
@@ -178,6 +193,8 @@
     private int _numberOfParticipants;
     private bool _resultOk = true;
     private Guid _teamParticipatingId;
+    private List<TeamIsParticipatingModel> _approvedParticipants;
+    private bool _participantApproved;
     private string _errorMessage = "";
 
     protected override async Task OnInitializedAsync()
@@ -189,6 +206,8 @@
             {
                 _tournament = await Http.GetFromJsonAsync<TournamentModel>($"/api/Tournament/{Id}");
                 _loggedUser = await Http.GetFromJsonAsync<UserModel>("/api/User/current");
+                var allParticipants = await Http.GetFromJsonAsync<List<TeamIsParticipatingModel>>("/api/TeamIsParticipating") ?? new();
+                _approvedParticipants = allParticipants.Where(x => x.TournamentId == _tournament?.Id && x.Approved).ToList();
                 if (_loggedUser is not null && _tournament is not null)
                 {
                     var userAsLeaderTeams = await Http.GetFromJsonAsync<List<TeamModel>>($"/api/Team/ByUser/{_loggedUser.Id}") ?? new();
@@ -197,13 +216,11 @@
                         var teamParticipating = _tournament.Participatings.FirstOrDefault(x => x.TeamId == userAsLeaderTeam.Id);
                         if (teamParticipating is not null)
                         {
+                            _participantApproved = teamParticipating.Approved;
                             _teamParticipatingId = teamParticipating.Id;
                         }
-                        
                     }
-                    
                 }
-
             }
             catch (AccessTokenNotAvailableException exception)
             {
@@ -223,17 +240,23 @@
     {
         try
         {
-            var result = await Http.DeleteAsync($"/api/TeamIsParticipating/{_teamParticipatingId}");
-            if (!result.IsSuccessStatusCode)
+            var message = new ModalParameters().Add(nameof(Confirmation.Message), "Are you sure you want to leave the tournament?");
+            var result = await Modal.Show<Confirmation>("Leave the Tournament", message).Result;
+            if (result.Confirmed)
             {
-                _resultOk = false;
-                _errorMessage = "Unable to leave the tournament";
-            }
-            else
-            {
-                _resultOk = true;
-                _errorMessage = "";
-                _teamParticipatingId = Guid.Empty;
+                var response = await Http.DeleteAsync($"/api/TeamIsParticipating/{_teamParticipatingId}");
+                if (!response.IsSuccessStatusCode)
+                {
+                    _resultOk = false;
+                    _errorMessage = "Unable to leave the tournament";
+                }
+                else
+                {
+                    _resultOk = true;
+                    _errorMessage = "";
+                    _teamParticipatingId = Guid.Empty;
+                    await OnInitializedAsync();
+                }
             }
         }
         catch (AccessTokenNotAvailableException exception)
