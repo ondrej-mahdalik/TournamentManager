@@ -207,6 +207,7 @@
         else
         {
             _tournaments = await PublicHttp.Client.GetFromJsonAsync<List<TournamentModel>>("api/Tournament") ?? new List<TournamentModel>();
+            _users = await PublicHttp.Client.GetFromJsonAsync<List<UserModel>>("api/User") ?? new List<UserModel>();
             _participants = await PublicHttp.Client.GetFromJsonAsync<List<TeamIsParticipatingModel>>("/api/TeamIsParticipating") ?? new();
             _loggedUser = null;
         }
