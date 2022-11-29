@@ -1,0 +1,251 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<DirectedGraph GraphDirection="LeftToRight" Layout="Sugiyama" ZoomLevel="-1" xmlns="http://schemas.microsoft.com/vs/2009/dgml">
+  <Nodes>
+    <Node Id="IModel" Category="Model" Annotations="BaseTypeDiscoveryConvention:DerivedTypes: System.Collections.Generic.Dictionary`2[System.Type,System.Collections.Generic.List`1[Microsoft.EntityFrameworkCore.Metadata.IConventionEntityType]] RelationshipDiscoveryConvention:InverseNavigationCandidates: System.Collections.Generic.Dictionary`2[System.Type,System.Collections.Generic.SortedSet`1[System.Type]]" Bounds="0,0,1939.43666666667,761.82" ChangeTrackingStrategy="ChangeTrackingStrategy.Snapshot" Group="Expanded" Label="TournamentManagerDbContext" ProductVersion="7.0.0" PropertyAccessMode="PropertyAccessMode.Default" />
+    <Node Id="MatchEntity" Category="EntityType" Annotations="Relational:TableName: Matches RelationshipDiscoveryConvention:AmbiguousNavigations: System.Collections.Immutable.ImmutableSortedDictionary`2[System.Reflection.MemberInfo,System.Type] RelationshipDiscoveryConvention:NavigationCandidates: System.Collections.Immutable.ImmutableSortedDictionary`2[System.Reflection.PropertyInfo,System.ValueTuple`2[System.Type,System.Nullable`1[System.Boolean]]]" BaseClass="" Bounds="20,433.02,409.89,253.84" ChangeTrackingStrategy="ChangeTrackingStrategy.Snapshot" Group="Expanded" IsAbstract="False" Label="MatchEntity" Name="MatchEntity" />
+    <Node Id="MatchEntity.Id" Category="Property Primary" AfterSaveBehavior="PropertySaveBehavior.Save" Annotations="" BeforeSaveBehavior="PropertySaveBehavior.Save" Bounds="280.496666666667,584.94,65.7833333333333,25.96" Field="" IsAlternateKey="False" IsConcurrencyToken="False" IsForeignKey="False" IsIndexed="False" IsPrimaryKey="True" IsRequired="True" IsShadow="False" IsUnicode="True" Label="Id (Guid)" MaxLength="None" Name="Id" PropertyAccessMode="PropertyAccessMode.Default" Type="Guid" ValueGenerated="ValueGenerated.OnAdd" />
+    <Node Id="MatchEntity.IsLocked" Category="Property Required" AfterSaveBehavior="PropertySaveBehavior.Save" Annotations="" BeforeSaveBehavior="PropertySaveBehavior.Save" Bounds="258.95,473.02,100.363333333333,25.96" Field="" IsAlternateKey="False" IsConcurrencyToken="False" IsForeignKey="False" IsIndexed="False" IsPrimaryKey="False" IsRequired="True" IsShadow="False" IsUnicode="True" Label="IsLocked (bool)" MaxLength="None" Name="IsLocked" PropertyAccessMode="PropertyAccessMode.Default" Type="bool" ValueGenerated="None" />
+    <Node Id="MatchEntity.Order" Category="Property Required" AfterSaveBehavior="PropertySaveBehavior.Save" Annotations="" BeforeSaveBehavior="PropertySaveBehavior.Save" Bounds="40,584.94,75.0266666666666,25.96" Field="" IsAlternateKey="False" IsConcurrencyToken="False" IsForeignKey="False" IsIndexed="False" IsPrimaryKey="False" IsRequired="True" IsShadow="False" IsUnicode="True" Label="Order (int)" MaxLength="None" Name="Order" PropertyAccessMode="PropertyAccessMode.Default" Type="int" ValueGenerated="None" />
+    <Node Id="MatchEntity.Round" Category="Property Required" AfterSaveBehavior="PropertySaveBehavior.Save" Annotations="" BeforeSaveBehavior="PropertySaveBehavior.Save" Bounds="40,473.02,78.7933333333334,25.96" Field="" IsAlternateKey="False" IsConcurrencyToken="False" IsForeignKey="False" IsIndexed="False" IsPrimaryKey="False" IsRequired="True" IsShadow="False" IsUnicode="True" Label="Round (int)" MaxLength="None" Name="Round" PropertyAccessMode="PropertyAccessMode.Default" Type="int" ValueGenerated="None" />
+    <Node Id="MatchEntity.Score1" Category="Property Required" AfterSaveBehavior="PropertySaveBehavior.Save" Annotations="" BeforeSaveBehavior="PropertySaveBehavior.Save" Bounds="40,640.9,80.1566666666667,25.96" Field="" IsAlternateKey="False" IsConcurrencyToken="False" IsForeignKey="False" IsIndexed="False" IsPrimaryKey="False" IsRequired="True" IsShadow="False" IsUnicode="True" Label="Score1 (int)" MaxLength="None" Name="Score1" PropertyAccessMode="PropertyAccessMode.Default" Type="int" ValueGenerated="None" />
+    <Node Id="MatchEntity.Score2" Category="Property Required" AfterSaveBehavior="PropertySaveBehavior.Save" Annotations="" BeforeSaveBehavior="PropertySaveBehavior.Save" Bounds="148.793333333333,473.02,80.1566666666666,25.96" Field="" IsAlternateKey="False" IsConcurrencyToken="False" IsForeignKey="False" IsIndexed="False" IsPrimaryKey="False" IsRequired="True" IsShadow="False" IsUnicode="True" Label="Score2 (int)" MaxLength="None" Name="Score2" PropertyAccessMode="PropertyAccessMode.Default" Type="int" ValueGenerated="None" />
+    <Node Id="MatchEntity.Team1" Category="Navigation Property" Bounds="175.47,528.98,71.3033333333333,25.96" Dependent="" Field="" Inverse="Matches" Label="Team1 (1)" Name="Team1" Principal="TeamEntity" PropertyAccessMode="PropertyAccessMode.Default" Type="TeamEntity" />
+    <Node Id="MatchEntity.Team1Id" Category="Property Foreign" AfterSaveBehavior="PropertySaveBehavior.Save" Annotations="" BeforeSaveBehavior="PropertySaveBehavior.Save" Bounds="40,528.98,105.47,25.96" Field="" IsAlternateKey="False" IsConcurrencyToken="False" IsForeignKey="True" IsIndexed="True" IsPrimaryKey="False" IsRequired="False" IsShadow="False" IsUnicode="True" Label="Team1Id (Guid?)" MaxLength="None" Name="Team1Id" PropertyAccessMode="PropertyAccessMode.Default" Type="Guid?" ValueGenerated="None" />
+    <Node Id="MatchEntity.Team2" Category="Navigation Property" Bounds="276.773333333333,528.98,71.3033333333333,25.96" Dependent="" Field="" Inverse="" Label="Team2 (1)" Name="Team2" Principal="TeamEntity" PropertyAccessMode="PropertyAccessMode.Default" Type="TeamEntity" />
+    <Node Id="MatchEntity.Team2Id" Category="Property Foreign" AfterSaveBehavior="PropertySaveBehavior.Save" Annotations="" BeforeSaveBehavior="PropertySaveBehavior.Save" Bounds="145.026666666667,584.94,105.47,25.96" Field="" IsAlternateKey="False" IsConcurrencyToken="False" IsForeignKey="True" IsIndexed="True" IsPrimaryKey="False" IsRequired="False" IsShadow="False" IsUnicode="True" Label="Team2Id (Guid?)" MaxLength="None" Name="Team2Id" PropertyAccessMode="PropertyAccessMode.Default" Type="Guid?" ValueGenerated="None" />
+    <Node Id="MatchEntity.Tournament" Category="Navigation Property" Bounds="150.156666666667,640.9,100.473333333333,25.96" Dependent="" Field="" Inverse="Matches" Label="Tournament (1)" Name="Tournament" Principal="TournamentEntity" PropertyAccessMode="PropertyAccessMode.Default" Type="TournamentEntity" />
+    <Node Id="MatchEntity.TournamentId" Category="Property Foreign" AfterSaveBehavior="PropertySaveBehavior.Save" Annotations="" BeforeSaveBehavior="PropertySaveBehavior.Save" Bounds="280.63,640.9,129.26,25.9599999999999" Field="" IsAlternateKey="False" IsConcurrencyToken="False" IsForeignKey="True" IsIndexed="True" IsPrimaryKey="False" IsRequired="True" IsShadow="False" IsUnicode="True" Label="TournamentId (Guid)" MaxLength="None" Name="TournamentId" PropertyAccessMode="PropertyAccessMode.Default" Type="Guid" ValueGenerated="None" />
+    <Node Id="SportEntity" Category="EntityType" Annotations="Relational:TableName: Sports RelationshipDiscoveryConvention:NavigationCandidates: System.Collections.Immutable.ImmutableSortedDictionary`2[System.Reflection.PropertyInfo,System.ValueTuple`2[System.Type,System.Nullable`1[System.Boolean]]]" BaseClass="" Bounds="1184.305,468.98,228.103333333333,141.92" ChangeTrackingStrategy="ChangeTrackingStrategy.Snapshot" Group="Expanded" IsAbstract="False" Label="SportEntity" Name="SportEntity" />
+    <Node Id="SportEntity.Id" Category="Property Primary" AfterSaveBehavior="PropertySaveBehavior.Save" Annotations="" BeforeSaveBehavior="PropertySaveBehavior.Save" Bounds="1204.305,508.98,65.7833333333333,25.96" Field="" IsAlternateKey="False" IsConcurrencyToken="False" IsForeignKey="False" IsIndexed="False" IsPrimaryKey="True" IsRequired="True" IsShadow="False" IsUnicode="True" Label="Id (Guid)" MaxLength="None" Name="Id" PropertyAccessMode="PropertyAccessMode.Default" Type="Guid" ValueGenerated="ValueGenerated.OnAdd" />
+    <Node Id="SportEntity.Name" Category="Property Required" AfterSaveBehavior="PropertySaveBehavior.Save" Annotations="" BeforeSaveBehavior="PropertySaveBehavior.Save" Bounds="1300.08833333333,508.98,92.3199999999999,25.96" Field="" IsAlternateKey="False" IsConcurrencyToken="False" IsForeignKey="False" IsIndexed="False" IsPrimaryKey="False" IsRequired="True" IsShadow="False" IsUnicode="True" Label="Name (string)" MaxLength="None" Name="Name" PropertyAccessMode="PropertyAccessMode.Default" Type="string" ValueGenerated="None" />
+    <Node Id="SportEntity.Tournaments" Category="Navigation Collection" Bounds="1204.305,564.94,104.1,25.96" Dependent="TournamentEntity" Field="" Inverse="Sport" Label="Tournaments (*)" Name="Tournaments" Principal="" PropertyAccessMode="PropertyAccessMode.Default" Type="IList&lt;TournamentEntity&gt;" />
+    <Node Id="TeamEntity" Category="EntityType" Annotations="Relational:TableName: Teams RelationshipDiscoveryConvention:AmbiguousNavigations: System.Collections.Immutable.ImmutableSortedDictionary`2[System.Reflection.MemberInfo,System.Type] RelationshipDiscoveryConvention:NavigationCandidates: System.Collections.Immutable.ImmutableSortedDictionary`2[System.Reflection.PropertyInfo,System.ValueTuple`2[System.Type,System.Nullable`1[System.Boolean]]]" BaseClass="" Bounds="1108.07666666667,185.02,380.56,253.84" ChangeTrackingStrategy="ChangeTrackingStrategy.Snapshot" Group="Expanded" IsAbstract="False" Label="TeamEntity" Name="TeamEntity" />
+    <Node Id="TeamEntity.Id" Category="Property Primary" AfterSaveBehavior="PropertySaveBehavior.Save" Annotations="" BeforeSaveBehavior="PropertySaveBehavior.Save" Bounds="1128.07666666667,225.02,65.7833333333333,25.96" Field="" IsAlternateKey="False" IsConcurrencyToken="False" IsForeignKey="False" IsIndexed="False" IsPrimaryKey="True" IsRequired="True" IsShadow="False" IsUnicode="True" Label="Id (Guid)" MaxLength="None" Name="Id" PropertyAccessMode="PropertyAccessMode.Default" Type="Guid" ValueGenerated="ValueGenerated.OnAdd" />
+    <Node Id="TeamEntity.IsPersonal" Category="Property Required" AfterSaveBehavior="PropertySaveBehavior.Save" Annotations="" BeforeSaveBehavior="PropertySaveBehavior.Save" Bounds="1128.07666666667,392.9,107.486666666667,25.96" Field="" IsAlternateKey="False" IsConcurrencyToken="False" IsForeignKey="False" IsIndexed="False" IsPrimaryKey="False" IsRequired="True" IsShadow="False" IsUnicode="True" Label="IsPersonal (bool)" MaxLength="None" Name="IsPersonal" PropertyAccessMode="PropertyAccessMode.Default" Type="bool" ValueGenerated="None" />
+    <Node Id="TeamEntity.Leader" Category="Navigation Property" Bounds="1223.86,225.02,72.5466666666666,25.96" Dependent="" Field="" Inverse="TeamsAsLeader" Label="Leader (1)" Name="Leader" Principal="UserEntity" PropertyAccessMode="PropertyAccessMode.Default" Type="UserEntity" />
+    <Node Id="TeamEntity.LeaderId" Category="Property Foreign" AfterSaveBehavior="PropertySaveBehavior.Save" Annotations="" BeforeSaveBehavior="PropertySaveBehavior.Save" Bounds="1264.70333333333,336.94,106.713333333333,25.96" Field="" IsAlternateKey="False" IsConcurrencyToken="False" IsForeignKey="True" IsIndexed="True" IsPrimaryKey="False" IsRequired="False" IsShadow="False" IsUnicode="True" Label="LeaderId (Guid?)" MaxLength="None" Name="LeaderId" PropertyAccessMode="PropertyAccessMode.Default" Type="Guid?" ValueGenerated="None" />
+    <Node Id="TeamEntity.LogoUrl" Category="Property Optional" AfterSaveBehavior="PropertySaveBehavior.Save" Annotations="" BeforeSaveBehavior="PropertySaveBehavior.Save" Bounds="1365.91333333333,280.98,102.723333333333,25.96" Field="" IsAlternateKey="False" IsConcurrencyToken="False" IsForeignKey="False" IsIndexed="False" IsPrimaryKey="False" IsRequired="False" IsShadow="False" IsUnicode="True" Label="LogoUrl (string)" MaxLength="None" Name="LogoUrl" PropertyAccessMode="PropertyAccessMode.Default" Type="string" ValueGenerated="None" />
+    <Node Id="TeamEntity.Matches" Category="Navigation Collection" Bounds="1326.40666666667,225.02,80.1833333333334,25.96" Dependent="MatchEntity" Field="" Inverse="Team1" Label="Matches (*)" Name="Matches" Principal="" PropertyAccessMode="PropertyAccessMode.Default" Type="IList&lt;MatchEntity&gt;" />
+    <Node Id="TeamEntity.Members" Category="Navigation Collection" Bounds="1128.07666666667,280.98,85.5166666666667,25.96" Dependent="UserIsInTeamEntity" Field="" Inverse="Team" Label="Members (*)" Name="Members" Principal="" PropertyAccessMode="PropertyAccessMode.Default" Type="IList&lt;UserIsInTeamEntity&gt;" />
+    <Node Id="TeamEntity.Name" Category="Property Required" AfterSaveBehavior="PropertySaveBehavior.Save" Annotations="" BeforeSaveBehavior="PropertySaveBehavior.Save" Bounds="1243.59333333333,280.98,92.3200000000002,25.96" Field="" IsAlternateKey="False" IsConcurrencyToken="False" IsForeignKey="False" IsIndexed="False" IsPrimaryKey="False" IsRequired="True" IsShadow="False" IsUnicode="True" Label="Name (string)" MaxLength="None" Name="Name" PropertyAccessMode="PropertyAccessMode.Default" Type="string" ValueGenerated="None" />
+    <Node Id="TeamEntity.Participatings" Category="Navigation Collection" Bounds="1128.07666666667,336.94,106.626666666667,25.96" Dependent="TeamIsParticipatingEntity" Field="" Inverse="Team" Label="Participatings (*)" Name="Participatings" Principal="" PropertyAccessMode="PropertyAccessMode.Default" Type="IList&lt;TeamIsParticipatingEntity&gt;" />
+    <Node Id="TeamEntity.WinnedTournaments" Category="Navigation Collection" Bounds="1265.56333333333,392.9,145.14,25.96" Dependent="TournamentEntity" Field="" Inverse="WinnerTeam" Label="WinnedTournaments (*)" Name="WinnedTournaments" Principal="" PropertyAccessMode="PropertyAccessMode.Default" Type="IList&lt;TournamentEntity&gt;" />
+    <Node Id="TeamIsParticipatingEntity" Category="EntityType" Annotations="Relational:TableName: Participatings RelationshipDiscoveryConvention:NavigationCandidates: System.Collections.Immutable.ImmutableSortedDictionary`2[System.Reflection.PropertyInfo,System.ValueTuple`2[System.Type,System.Nullable`1[System.Boolean]]]" BaseClass="" Bounds="75.0783333333334,149.02,299.733333333333,253.84" ChangeTrackingStrategy="ChangeTrackingStrategy.Snapshot" Group="Expanded" IsAbstract="False" Label="TeamIsParticipatingEntity" Name="TeamIsParticipatingEntity" />
+    <Node Id="TeamIsParticipatingEntity.Approved" Category="Property Required" AfterSaveBehavior="PropertySaveBehavior.Save" Annotations="" BeforeSaveBehavior="PropertySaveBehavior.Save" Bounds="95.0783333333334,356.9,106.686666666667,25.96" Field="" IsAlternateKey="False" IsConcurrencyToken="False" IsForeignKey="False" IsIndexed="False" IsPrimaryKey="False" IsRequired="True" IsShadow="False" IsUnicode="True" Label="Approved (bool)" MaxLength="None" Name="Approved" PropertyAccessMode="PropertyAccessMode.Default" Type="bool" ValueGenerated="None" />
+    <Node Id="TeamIsParticipatingEntity.CreatedOn" Category="Property Required" AfterSaveBehavior="PropertySaveBehavior.Save" Annotations="" BeforeSaveBehavior="PropertySaveBehavior.Save" Bounds="95.0783333333334,244.98,138.43,25.96" Field="" IsAlternateKey="False" IsConcurrencyToken="False" IsForeignKey="False" IsIndexed="False" IsPrimaryKey="False" IsRequired="True" IsShadow="False" IsUnicode="True" Label="CreatedOn (DateTime)" MaxLength="None" Name="CreatedOn" PropertyAccessMode="PropertyAccessMode.Default" Type="DateTime" ValueGenerated="None" />
+    <Node Id="TeamIsParticipatingEntity.Id" Category="Property Primary" AfterSaveBehavior="PropertySaveBehavior.Save" Annotations="" BeforeSaveBehavior="PropertySaveBehavior.Save" Bounds="95.0783333333334,300.94,65.7833333333333,25.96" Field="" IsAlternateKey="False" IsConcurrencyToken="False" IsForeignKey="False" IsIndexed="False" IsPrimaryKey="True" IsRequired="True" IsShadow="False" IsUnicode="True" Label="Id (Guid)" MaxLength="None" Name="Id" PropertyAccessMode="PropertyAccessMode.Default" Type="Guid" ValueGenerated="ValueGenerated.OnAdd" />
+    <Node Id="TeamIsParticipatingEntity.Team" Category="Navigation Property" Bounds="263.508333333333,244.98,64.8333333333333,25.96" Dependent="" Field="" Inverse="Participatings" Label="Team (1)" Name="Team" Principal="TeamEntity" PropertyAccessMode="PropertyAccessMode.Default" Type="TeamEntity" />
+    <Node Id="TeamIsParticipatingEntity.TeamId" Category="Property Foreign" AfterSaveBehavior="PropertySaveBehavior.Save" Annotations="" BeforeSaveBehavior="PropertySaveBehavior.Save" Bounds="190.861666666667,300.94,93.62,25.96" Field="" IsAlternateKey="False" IsConcurrencyToken="False" IsForeignKey="True" IsIndexed="True" IsPrimaryKey="False" IsRequired="True" IsShadow="False" IsUnicode="True" Label="TeamId (Guid)" MaxLength="None" Name="TeamId" PropertyAccessMode="PropertyAccessMode.Default" Type="Guid" ValueGenerated="None" />
+    <Node Id="TeamIsParticipatingEntity.Tournament" Category="Navigation Property" Bounds="95.0783333333334,189.02,100.473333333333,25.96" Dependent="" Field="" Inverse="Participatings" Label="Tournament (1)" Name="Tournament" Principal="TournamentEntity" PropertyAccessMode="PropertyAccessMode.Default" Type="TournamentEntity" />
+    <Node Id="TeamIsParticipatingEntity.TournamentId" Category="Property Foreign" AfterSaveBehavior="PropertySaveBehavior.Save" Annotations="" BeforeSaveBehavior="PropertySaveBehavior.Save" Bounds="225.551666666667,189.02,129.26,25.96" Field="" IsAlternateKey="False" IsConcurrencyToken="False" IsForeignKey="True" IsIndexed="True" IsPrimaryKey="False" IsRequired="True" IsShadow="False" IsUnicode="True" Label="TournamentId (Guid)" MaxLength="None" Name="TournamentId" PropertyAccessMode="PropertyAccessMode.Default" Type="Guid" ValueGenerated="None" />
+    <Node Id="TournamentEntity" Category="EntityType" Annotations="Relational:TableName: Tournaments RelationshipDiscoveryConvention:NavigationCandidates: System.Collections.Immutable.ImmutableSortedDictionary`2[System.Reflection.PropertyInfo,System.ValueTuple`2[System.Type,System.Nullable`1[System.Boolean]]]" BaseClass="" Bounds="473.963333333334,376.06,590.04,365.76" ChangeTrackingStrategy="ChangeTrackingStrategy.Snapshot" Group="Expanded" IsAbstract="False" Label="TournamentEntity" Name="TournamentEntity" />
+    <Node Id="TournamentEntity.Creator" Category="Navigation Property" Bounds="685.44,416.06,76.2533333333333,25.96" Dependent="" Field="" Inverse="Tournaments" Label="Creator (1)" Name="Creator" Principal="UserEntity" PropertyAccessMode="PropertyAccessMode.Default" Type="UserEntity" />
+    <Node Id="TournamentEntity.CreatorId" Category="Property Foreign" AfterSaveBehavior="PropertySaveBehavior.Save" Annotations="" BeforeSaveBehavior="PropertySaveBehavior.Save" Bounds="493.963333333334,583.94,110.42,25.96" Field="" IsAlternateKey="False" IsConcurrencyToken="False" IsForeignKey="True" IsIndexed="True" IsPrimaryKey="False" IsRequired="False" IsShadow="False" IsUnicode="True" Label="CreatorId (Guid?)" MaxLength="None" Name="CreatorId" PropertyAccessMode="PropertyAccessMode.Default" Type="Guid?" ValueGenerated="None" />
+    <Node Id="TournamentEntity.Date" Category="Property Required" AfterSaveBehavior="PropertySaveBehavior.Save" Annotations="" BeforeSaveBehavior="PropertySaveBehavior.Save" Bounds="748.576666666667,472.02,106.06,25.96" Field="" IsAlternateKey="False" IsConcurrencyToken="False" IsForeignKey="False" IsIndexed="False" IsPrimaryKey="False" IsRequired="True" IsShadow="False" IsUnicode="True" Label="Date (DateTime)" MaxLength="None" Name="Date" PropertyAccessMode="PropertyAccessMode.Default" Type="DateTime" ValueGenerated="None" />
+    <Node Id="TournamentEntity.Description" Category="Property Optional" AfterSaveBehavior="PropertySaveBehavior.Save" Annotations="" BeforeSaveBehavior="PropertySaveBehavior.Save" Bounds="493.963333333334,639.9,120.876666666667,25.96" Field="" IsAlternateKey="False" IsConcurrencyToken="False" IsForeignKey="False" IsIndexed="False" IsPrimaryKey="False" IsRequired="False" IsShadow="False" IsUnicode="True" Label="Description (string)" MaxLength="None" Name="Description" PropertyAccessMode="PropertyAccessMode.Default" Type="string" ValueGenerated="None" />
+    <Node Id="TournamentEntity.Id" Category="Property Primary" AfterSaveBehavior="PropertySaveBehavior.Save" Annotations="" BeforeSaveBehavior="PropertySaveBehavior.Save" Bounds="589.656666666667,416.06,65.7833333333333,25.96" Field="" IsAlternateKey="False" IsConcurrencyToken="False" IsForeignKey="False" IsIndexed="False" IsPrimaryKey="True" IsRequired="True" IsShadow="False" IsUnicode="True" Label="Id (Guid)" MaxLength="None" Name="Id" PropertyAccessMode="PropertyAccessMode.Default" Type="Guid" ValueGenerated="ValueGenerated.OnAdd" />
+    <Node Id="TournamentEntity.InProgress" Category="Property Required" AfterSaveBehavior="PropertySaveBehavior.Save" Annotations="" BeforeSaveBehavior="PropertySaveBehavior.Save" Bounds="493.963333333334,527.98,110.156666666667,25.96" Field="" IsAlternateKey="False" IsConcurrencyToken="False" IsForeignKey="False" IsIndexed="False" IsPrimaryKey="False" IsRequired="True" IsShadow="False" IsUnicode="True" Label="InProgress (bool)" MaxLength="None" Name="InProgress" PropertyAccessMode="PropertyAccessMode.Default" Type="bool" ValueGenerated="None" />
+    <Node Id="TournamentEntity.IsApproved" Category="Property Required" AfterSaveBehavior="PropertySaveBehavior.Save" Annotations="" BeforeSaveBehavior="PropertySaveBehavior.Save" Bounds="778.696666666667,583.94,114.973333333333,25.96" Field="" IsAlternateKey="False" IsConcurrencyToken="False" IsForeignKey="False" IsIndexed="False" IsPrimaryKey="False" IsRequired="True" IsShadow="False" IsUnicode="True" Label="IsApproved (bool)" MaxLength="None" Name="IsApproved" PropertyAccessMode="PropertyAccessMode.Default" Type="bool" ValueGenerated="None" />
+    <Node Id="TournamentEntity.IsIndividual" Category="Property Required" AfterSaveBehavior="PropertySaveBehavior.Save" Annotations="" BeforeSaveBehavior="PropertySaveBehavior.Save" Bounds="634.383333333334,583.94,114.313333333333,25.96" Field="" IsAlternateKey="False" IsConcurrencyToken="False" IsForeignKey="False" IsIndexed="False" IsPrimaryKey="False" IsRequired="True" IsShadow="False" IsUnicode="True" Label="IsIndividual (bool)" MaxLength="None" Name="IsIndividual" PropertyAccessMode="PropertyAccessMode.Default" Type="bool" ValueGenerated="None" />
+    <Node Id="TournamentEntity.IsPublic" Category="Property Required" AfterSaveBehavior="PropertySaveBehavior.Save" Annotations="" BeforeSaveBehavior="PropertySaveBehavior.Save" Bounds="493.963333333334,472.02,94.7533333333333,25.96" Field="" IsAlternateKey="False" IsConcurrencyToken="False" IsForeignKey="False" IsIndexed="False" IsPrimaryKey="False" IsRequired="True" IsShadow="False" IsUnicode="True" Label="IsPublic (bool)" MaxLength="None" Name="IsPublic" PropertyAccessMode="PropertyAccessMode.Default" Type="bool" ValueGenerated="None" />
+    <Node Id="TournamentEntity.Matches" Category="Navigation Collection" Bounds="791.693333333334,416.06,80.1833333333334,25.96" Dependent="MatchEntity" Field="" Inverse="Tournament" Label="Matches (*)" Name="Matches" Principal="" PropertyAccessMode="PropertyAccessMode.Default" Type="IList&lt;MatchEntity&gt;" />
+    <Node Id="TournamentEntity.MaxAttendees" Category="Property Required" AfterSaveBehavior="PropertySaveBehavior.Save" Annotations="" BeforeSaveBehavior="PropertySaveBehavior.Save" Bounds="923.67,583.94,120.333333333333,25.96" Field="" IsAlternateKey="False" IsConcurrencyToken="False" IsForeignKey="False" IsIndexed="False" IsPrimaryKey="False" IsRequired="True" IsShadow="False" IsUnicode="True" Label="MaxAttendees (int)" MaxLength="None" Name="MaxAttendees" PropertyAccessMode="PropertyAccessMode.Default" Type="int" ValueGenerated="None" />
+    <Node Id="TournamentEntity.Name" Category="Property Required" AfterSaveBehavior="PropertySaveBehavior.Save" Annotations="" BeforeSaveBehavior="PropertySaveBehavior.Save" Bounds="901.876666666667,416.06,92.3200000000002,25.96" Field="" IsAlternateKey="False" IsConcurrencyToken="False" IsForeignKey="False" IsIndexed="False" IsPrimaryKey="False" IsRequired="True" IsShadow="False" IsUnicode="True" Label="Name (string)" MaxLength="None" Name="Name" PropertyAccessMode="PropertyAccessMode.Default" Type="string" ValueGenerated="None" />
+    <Node Id="TournamentEntity.NumOfRounds" Category="Property Required" AfterSaveBehavior="PropertySaveBehavior.Save" Annotations="" BeforeSaveBehavior="PropertySaveBehavior.Save" Bounds="644.84,639.9,122.793333333333,25.96" Field="" IsAlternateKey="False" IsConcurrencyToken="False" IsForeignKey="False" IsIndexed="False" IsPrimaryKey="False" IsRequired="True" IsShadow="False" IsUnicode="True" Label="NumOfRounds (int)" MaxLength="None" Name="NumOfRounds" PropertyAccessMode="PropertyAccessMode.Default" Type="int" ValueGenerated="None" />
+    <Node Id="TournamentEntity.Participatings" Category="Navigation Collection" Bounds="884.636666666667,472.02,106.626666666667,25.96" Dependent="TeamIsParticipatingEntity" Field="" Inverse="Tournament" Label="Participatings (*)" Name="Participatings" Principal="" PropertyAccessMode="PropertyAccessMode.Default" Type="IList&lt;TeamIsParticipatingEntity&gt;" />
+    <Node Id="TournamentEntity.Sport" Category="Navigation Property" Bounds="493.963333333334,416.06,65.6933333333334,25.96" Dependent="" Field="" Inverse="Tournaments" Label="Sport (1)" Name="Sport" Principal="SportEntity" PropertyAccessMode="PropertyAccessMode.Default" Type="SportEntity" />
+    <Node Id="TournamentEntity.SportId" Category="Property Foreign" AfterSaveBehavior="PropertySaveBehavior.Save" Annotations="" BeforeSaveBehavior="PropertySaveBehavior.Save" Bounds="618.716666666667,472.02,99.8600000000001,25.96" Field="" IsAlternateKey="False" IsConcurrencyToken="False" IsForeignKey="True" IsIndexed="True" IsPrimaryKey="False" IsRequired="False" IsShadow="False" IsUnicode="True" Label="SportId (Guid?)" MaxLength="None" Name="SportId" PropertyAccessMode="PropertyAccessMode.Default" Type="Guid?" ValueGenerated="None" />
+    <Node Id="TournamentEntity.WinnerTeam" Category="Navigation Property" Bounds="493.963333333334,695.86,102.98,25.96" Dependent="" Field="" Inverse="WinnedTournaments" Label="WinnerTeam (1)" Name="WinnerTeam" Principal="TeamEntity" PropertyAccessMode="PropertyAccessMode.Default" Type="TeamEntity" />
+    <Node Id="TournamentEntity.WinnerTeamId" Category="Property Foreign" AfterSaveBehavior="PropertySaveBehavior.Save" Annotations="" BeforeSaveBehavior="PropertySaveBehavior.Save" Bounds="797.633333333333,639.9,137.146666666667,25.96" Field="" IsAlternateKey="False" IsConcurrencyToken="False" IsForeignKey="True" IsIndexed="True" IsPrimaryKey="False" IsRequired="False" IsShadow="False" IsUnicode="True" Label="WinnerTeamId (Guid?)" MaxLength="None" Name="WinnerTeamId" PropertyAccessMode="PropertyAccessMode.Default" Type="Guid?" ValueGenerated="None" />
+    <Node Id="UserEntity" Category="EntityType" Annotations="Relational:TableName: Users RelationshipDiscoveryConvention:NavigationCandidates: System.Collections.Immutable.ImmutableSortedDictionary`2[System.Reflection.PropertyInfo,System.ValueTuple`2[System.Type,System.Nullable`1[System.Boolean]]]" BaseClass="" Bounds="1532.71,185.02,386.726666666666,253.84" ChangeTrackingStrategy="ChangeTrackingStrategy.Snapshot" Group="Expanded" IsAbstract="False" Label="UserEntity" Name="UserEntity" />
+    <Node Id="UserEntity.ApplicationUserId" Category="Property Optional" AfterSaveBehavior="PropertySaveBehavior.Save" Annotations="" BeforeSaveBehavior="PropertySaveBehavior.Save" Bounds="1552.71,392.9,154.773333333333,25.96" Field="" IsAlternateKey="False" IsConcurrencyToken="False" IsForeignKey="False" IsIndexed="False" IsPrimaryKey="False" IsRequired="False" IsShadow="False" IsUnicode="True" Label="ApplicationUserId (string)" MaxLength="None" Name="ApplicationUserId" PropertyAccessMode="PropertyAccessMode.Default" Type="string" ValueGenerated="None" />
+    <Node Id="UserEntity.Id" Category="Property Primary" AfterSaveBehavior="PropertySaveBehavior.Save" Annotations="" BeforeSaveBehavior="PropertySaveBehavior.Save" Bounds="1552.71,225.02,65.7833333333333,25.96" Field="" IsAlternateKey="False" IsConcurrencyToken="False" IsForeignKey="False" IsIndexed="False" IsPrimaryKey="True" IsRequired="True" IsShadow="False" IsUnicode="True" Label="Id (Guid)" MaxLength="None" Name="Id" PropertyAccessMode="PropertyAccessMode.Default" Type="Guid" ValueGenerated="ValueGenerated.OnAdd" />
+    <Node Id="UserEntity.IsAdministrator" Category="Property Required" AfterSaveBehavior="PropertySaveBehavior.Save" Annotations="" BeforeSaveBehavior="PropertySaveBehavior.Save" Bounds="1708.89666666667,280.98,135.29,25.96" Field="" IsAlternateKey="False" IsConcurrencyToken="False" IsForeignKey="False" IsIndexed="False" IsPrimaryKey="False" IsRequired="True" IsShadow="False" IsUnicode="True" Label="IsAdministrator (bool)" MaxLength="None" Name="IsAdministrator" PropertyAccessMode="PropertyAccessMode.Default" Type="bool" ValueGenerated="None" />
+    <Node Id="UserEntity.RegisteredAt" Category="Property Required" AfterSaveBehavior="PropertySaveBehavior.Save" Annotations="" BeforeSaveBehavior="PropertySaveBehavior.Save" Bounds="1552.71,336.94,149.033333333333,25.96" Field="" IsAlternateKey="False" IsConcurrencyToken="False" IsForeignKey="False" IsIndexed="False" IsPrimaryKey="False" IsRequired="True" IsShadow="False" IsUnicode="True" Label="RegisteredAt (DateTime)" MaxLength="None" Name="RegisteredAt" PropertyAccessMode="PropertyAccessMode.Default" Type="DateTime" ValueGenerated="None" />
+    <Node Id="UserEntity.TeamsAsLeader" Category="Navigation Collection" Bounds="1782.59333333333,225.02,116.843333333333,25.96" Dependent="TeamEntity" Field="" Inverse="Leader" Label="TeamsAsLeader (*)" Name="TeamsAsLeader" Principal="" PropertyAccessMode="PropertyAccessMode.Default" Type="IList&lt;TeamEntity&gt;" />
+    <Node Id="UserEntity.TeamsAsMember" Category="Navigation Collection" Bounds="1552.71,280.98,126.186666666666,25.96" Dependent="UserIsInTeamEntity" Field="" Inverse="User" Label="TeamsAsMember (*)" Name="TeamsAsMember" Principal="" PropertyAccessMode="PropertyAccessMode.Default" Type="IList&lt;UserIsInTeamEntity&gt;" />
+    <Node Id="UserEntity.Tournaments" Category="Navigation Collection" Bounds="1648.49333333333,225.02,104.1,25.96" Dependent="TournamentEntity" Field="" Inverse="Creator" Label="Tournaments (*)" Name="Tournaments" Principal="" PropertyAccessMode="PropertyAccessMode.Default" Type="IList&lt;TournamentEntity&gt;" />
+    <Node Id="UserIsInTeamEntity" Category="EntityType" Annotations="" BaseClass="" Bounds="629.686666666667,40,278.593333333333,197.88" ChangeTrackingStrategy="ChangeTrackingStrategy.Snapshot" Group="Expanded" IsAbstract="False" Label="UserIsInTeamEntity" Name="UserIsInTeamEntity" />
+    <Node Id="UserIsInTeamEntity.Id" Category="Property Primary" AfterSaveBehavior="PropertySaveBehavior.Save" Annotations="" BeforeSaveBehavior="PropertySaveBehavior.Save" Bounds="649.686666666667,135.96,65.7833333333333,25.96" Field="" IsAlternateKey="False" IsConcurrencyToken="False" IsForeignKey="False" IsIndexed="False" IsPrimaryKey="True" IsRequired="True" IsShadow="False" IsUnicode="True" Label="Id (Guid)" MaxLength="None" Name="Id" PropertyAccessMode="PropertyAccessMode.Default" Type="Guid" ValueGenerated="ValueGenerated.OnAdd" />
+    <Node Id="UserIsInTeamEntity.IsApproved" Category="Property Required" AfterSaveBehavior="PropertySaveBehavior.Save" Annotations="" BeforeSaveBehavior="PropertySaveBehavior.Save" Bounds="773.306666666667,191.92,114.973333333333,25.96" Field="" IsAlternateKey="False" IsConcurrencyToken="False" IsForeignKey="False" IsIndexed="False" IsPrimaryKey="False" IsRequired="True" IsShadow="False" IsUnicode="True" Label="IsApproved (bool)" MaxLength="None" Name="IsApproved" PropertyAccessMode="PropertyAccessMode.Default" Type="bool" ValueGenerated="None" />
+    <Node Id="UserIsInTeamEntity.Team" Category="Navigation Property" Bounds="740.47,80,64.8333333333334,25.96" Dependent="" Field="" Inverse="Members" Label="Team (1)" Name="Team" Principal="TeamEntity" PropertyAccessMode="PropertyAccessMode.Default" Type="TeamEntity" />
+    <Node Id="UserIsInTeamEntity.TeamId" Category="Property Foreign" AfterSaveBehavior="PropertySaveBehavior.Save" Annotations="" BeforeSaveBehavior="PropertySaveBehavior.Save" Bounds="649.686666666667,191.92,93.62,25.96" Field="" IsAlternateKey="False" IsConcurrencyToken="False" IsForeignKey="True" IsIndexed="True" IsPrimaryKey="False" IsRequired="True" IsShadow="False" IsUnicode="True" Label="TeamId (Guid)" MaxLength="None" Name="TeamId" PropertyAccessMode="PropertyAccessMode.Default" Type="Guid" ValueGenerated="None" />
+    <Node Id="UserIsInTeamEntity.User" Category="Navigation Property" Bounds="649.686666666667,80,60.7833333333333,25.96" Dependent="" Field="" Inverse="TeamsAsMember" Label="User (1)" Name="User" Principal="UserEntity" PropertyAccessMode="PropertyAccessMode.Default" Type="UserEntity" />
+    <Node Id="UserIsInTeamEntity.UserId" Category="Property Foreign" AfterSaveBehavior="PropertySaveBehavior.Save" Annotations="" BeforeSaveBehavior="PropertySaveBehavior.Save" Bounds="745.47,135.96,89.5700000000001,25.96" Field="" IsAlternateKey="False" IsConcurrencyToken="False" IsForeignKey="True" IsIndexed="True" IsPrimaryKey="False" IsRequired="True" IsShadow="False" IsUnicode="True" Label="UserId (Guid)" MaxLength="None" Name="UserId" PropertyAccessMode="PropertyAccessMode.Default" Type="Guid" ValueGenerated="None" />
+  </Nodes>
+  <Links>
+    <Link Source="IModel" Target="MatchEntity" Category="Contains" />
+    <Link Source="IModel" Target="SportEntity" Category="Contains" />
+    <Link Source="IModel" Target="TeamEntity" Category="Contains" />
+    <Link Source="IModel" Target="TeamIsParticipatingEntity" Category="Contains" />
+    <Link Source="IModel" Target="TournamentEntity" Category="Contains" />
+    <Link Source="IModel" Target="UserEntity" Category="Contains" />
+    <Link Source="IModel" Target="UserIsInTeamEntity" Category="Contains" />
+    <Link Source="MatchEntity" Target="MatchEntity.Id" Category="Contains" />
+    <Link Source="MatchEntity" Target="MatchEntity.IsLocked" Category="Contains" />
+    <Link Source="MatchEntity" Target="MatchEntity.Order" Category="Contains" />
+    <Link Source="MatchEntity" Target="MatchEntity.Round" Category="Contains" />
+    <Link Source="MatchEntity" Target="MatchEntity.Score1" Category="Contains" />
+    <Link Source="MatchEntity" Target="MatchEntity.Score2" Category="Contains" />
+    <Link Source="MatchEntity" Target="MatchEntity.Team1" Category="Contains" />
+    <Link Source="MatchEntity" Target="MatchEntity.Team1Id" Category="Contains" />
+    <Link Source="MatchEntity" Target="MatchEntity.Team2" Category="Contains" />
+    <Link Source="MatchEntity" Target="MatchEntity.Team2Id" Category="Contains" />
+    <Link Source="MatchEntity" Target="MatchEntity.Tournament" Category="Contains" />
+    <Link Source="MatchEntity" Target="MatchEntity.TournamentId" Category="Contains" />
+    <Link Source="MatchEntity" Target="TeamEntity" Category="Foreign Key" Annotations="" Bounds="350.199401855469,316.177795410156,748.879333496094,116.842193603516" From="MatchEntity.Team2Id" IsUnique="False" Label="1:*" LabelBounds="761.797935080582,323.862509965205,14.0733333333335,15.96" Name="MatchEntity -&gt; TeamEntity" To="TeamEntity.Id" />
+    <Link Source="MatchEntity" Target="TournamentEntity" Category="Foreign Key" Annotations="" Bounds="429.890014648438,559.498840332031,35.0733337402344,0.064453125" From="MatchEntity.TournamentId" IsUnique="False" Label="1:*" LabelBounds="444.89,559.522783688649,14.0733333333333,15.96" Name="MatchEntity -&gt; TournamentEntity" To="TournamentEntity.Id" />
+    <Link Source="SportEntity" Target="SportEntity.Id" Category="Contains" />
+    <Link Source="SportEntity" Target="SportEntity.Name" Category="Contains" />
+    <Link Source="SportEntity" Target="SportEntity.Tournaments" Category="Contains" />
+    <Link Source="TeamEntity" Target="TeamEntity.Id" Category="Contains" />
+    <Link Source="TeamEntity" Target="TeamEntity.IsPersonal" Category="Contains" />
+    <Link Source="TeamEntity" Target="TeamEntity.Leader" Category="Contains" />
+    <Link Source="TeamEntity" Target="TeamEntity.LeaderId" Category="Contains" />
+    <Link Source="TeamEntity" Target="TeamEntity.LogoUrl" Category="Contains" />
+    <Link Source="TeamEntity" Target="TeamEntity.Matches" Category="Contains" />
+    <Link Source="TeamEntity" Target="TeamEntity.Members" Category="Contains" />
+    <Link Source="TeamEntity" Target="TeamEntity.Name" Category="Contains" />
+    <Link Source="TeamEntity" Target="TeamEntity.Participatings" Category="Contains" />
+    <Link Source="TeamEntity" Target="TeamEntity.WinnedTournaments" Category="Contains" />
+    <Link Source="TeamEntity" Target="UserEntity" Category="Foreign Key" Annotations="" Bounds="1488.63671875,311.940002441406,35.0732421875,0" From="TeamEntity.LeaderId" IsUnique="False" Label="1:*" LabelBounds="1503.63666666667,311.94,14.0733333333333,15.96" Name="TeamEntity -&gt; UserEntity" To="UserEntity.Id" />
+    <Link Source="TeamIsParticipatingEntity" Target="TeamEntity" Category="Foreign Key" Annotations="" Bounds="374.811676025391,275.940002441406,724.283294677734,8.80679321289063" From="TeamIsParticipatingEntity.TeamId" IsUnique="False" Label="1:*" LabelBounds="761.946666666667,275.94,14.0733333333333,15.96" Name="TeamIsParticipatingEntity -&gt; TeamEntity" To="TeamEntity.Id" />
+    <Link Source="TeamIsParticipatingEntity" Target="TeamIsParticipatingEntity.Approved" Category="Contains" />
+    <Link Source="TeamIsParticipatingEntity" Target="TeamIsParticipatingEntity.CreatedOn" Category="Contains" />
+    <Link Source="TeamIsParticipatingEntity" Target="TeamIsParticipatingEntity.Id" Category="Contains" />
+    <Link Source="TeamIsParticipatingEntity" Target="TeamIsParticipatingEntity.Team" Category="Contains" />
+    <Link Source="TeamIsParticipatingEntity" Target="TeamIsParticipatingEntity.TeamId" Category="Contains" />
+    <Link Source="TeamIsParticipatingEntity" Target="TeamIsParticipatingEntity.Tournament" Category="Contains" />
+    <Link Source="TeamIsParticipatingEntity" Target="TeamIsParticipatingEntity.TournamentId" Category="Contains" />
+    <Link Source="TeamIsParticipatingEntity" Target="TournamentEntity" Category="Foreign Key" Annotations="" Bounds="374.811676025391,353.898223876953,91.1672973632813,47.4237670898438" From="TeamIsParticipatingEntity.TournamentId" IsUnique="False" Label="1:*" LabelBounds="444.89,378.052216112222,14.0733333333335,15.96" Name="TeamIsParticipatingEntity -&gt; TournamentEntity" To="TournamentEntity.Id" />
+    <Link Source="TournamentEntity" Target="SportEntity" Category="Foreign Key" Annotations="" Bounds="1064.00329589844,544.356323242188,111.307495117188,3.9949951171875" From="TournamentEntity.SportId" IsUnique="False" Label="1:*" LabelBounds="1079.00333333333,547.560362441125,14.0733333333333,15.96" Name="TournamentEntity -&gt; SportEntity" To="SportEntity.Id" />
+    <Link Source="TournamentEntity" Target="TeamEntity" Category="Foreign Key" Annotations="" Bounds="1064.00329589844,404.528076171875,35.91748046875,16.7586975097656" From="TournamentEntity.WinnerTeamId" IsUnique="False" Label="1:*" LabelBounds="1079.00333333333,395.04471173463,14.0733333333335,15.96" Name="TournamentEntity -&gt; TeamEntity" To="TeamEntity.Id" />
+    <Link Source="TournamentEntity" Target="TournamentEntity.Creator" Category="Contains" />
+    <Link Source="TournamentEntity" Target="TournamentEntity.CreatorId" Category="Contains" />
+    <Link Source="TournamentEntity" Target="TournamentEntity.Date" Category="Contains" />
+    <Link Source="TournamentEntity" Target="TournamentEntity.Description" Category="Contains" />
+    <Link Source="TournamentEntity" Target="TournamentEntity.Id" Category="Contains" />
+    <Link Source="TournamentEntity" Target="TournamentEntity.InProgress" Category="Contains" />
+    <Link Source="TournamentEntity" Target="TournamentEntity.IsApproved" Category="Contains" />
+    <Link Source="TournamentEntity" Target="TournamentEntity.IsIndividual" Category="Contains" />
+    <Link Source="TournamentEntity" Target="TournamentEntity.IsPublic" Category="Contains" />
+    <Link Source="TournamentEntity" Target="TournamentEntity.Matches" Category="Contains" />
+    <Link Source="TournamentEntity" Target="TournamentEntity.MaxAttendees" Category="Contains" />
+    <Link Source="TournamentEntity" Target="TournamentEntity.Name" Category="Contains" />
+    <Link Source="TournamentEntity" Target="TournamentEntity.NumOfRounds" Category="Contains" />
+    <Link Source="TournamentEntity" Target="TournamentEntity.Participatings" Category="Contains" />
+    <Link Source="TournamentEntity" Target="TournamentEntity.Sport" Category="Contains" />
+    <Link Source="TournamentEntity" Target="TournamentEntity.SportId" Category="Contains" />
+    <Link Source="TournamentEntity" Target="TournamentEntity.WinnerTeam" Category="Contains" />
+    <Link Source="TournamentEntity" Target="TournamentEntity.WinnerTeamId" Category="Contains" />
+    <Link Source="TournamentEntity" Target="UserEntity" Category="Foreign Key" Annotations="" Bounds="1064.00329589844,446.443298339844,576.099731445313,202.496704101563" From="TournamentEntity.CreatorId" IsUnique="False" Label="1:*" LabelBounds="1291.32,648.94,14.0733333333333,15.96" Name="TournamentEntity -&gt; UserEntity" To="UserEntity.Id" />
+    <Link Source="UserEntity" Target="UserEntity.ApplicationUserId" Category="Contains" />
+    <Link Source="UserEntity" Target="UserEntity.Id" Category="Contains" />
+    <Link Source="UserEntity" Target="UserEntity.IsAdministrator" Category="Contains" />
+    <Link Source="UserEntity" Target="UserEntity.RegisteredAt" Category="Contains" />
+    <Link Source="UserEntity" Target="UserEntity.TeamsAsLeader" Category="Contains" />
+    <Link Source="UserEntity" Target="UserEntity.TeamsAsMember" Category="Contains" />
+    <Link Source="UserEntity" Target="UserEntity.Tournaments" Category="Contains" />
+    <Link Source="UserIsInTeamEntity" Target="TeamEntity" Category="Foreign Key" Annotations="" Bounds="908.280029296875,182.215301513672,191.254150390625,60.967041015625" From="UserIsInTeamEntity.TeamId" IsUnique="False" Label="1:*" LabelBounds="1079.00333333333,221.48,14.0733333333333,15.96" Name="UserIsInTeamEntity -&gt; TeamEntity" To="TeamEntity.Id" />
+    <Link Source="UserIsInTeamEntity" Target="UserEntity" Category="Foreign Key" Annotations="" Bounds="908.280029296875,138.940002441406,624.190307617188,43.1707916259766" From="UserIsInTeamEntity.UserId" IsUnique="False" Label="1:*" LabelBounds="1291.32,138.94,14.0733333333333,15.96" Name="UserIsInTeamEntity -&gt; UserEntity" To="UserEntity.Id" />
+    <Link Source="UserIsInTeamEntity" Target="UserIsInTeamEntity.Id" Category="Contains" />
+    <Link Source="UserIsInTeamEntity" Target="UserIsInTeamEntity.IsApproved" Category="Contains" />
+    <Link Source="UserIsInTeamEntity" Target="UserIsInTeamEntity.Team" Category="Contains" />
+    <Link Source="UserIsInTeamEntity" Target="UserIsInTeamEntity.TeamId" Category="Contains" />
+    <Link Source="UserIsInTeamEntity" Target="UserIsInTeamEntity.User" Category="Contains" />
+    <Link Source="UserIsInTeamEntity" Target="UserIsInTeamEntity.UserId" Category="Contains" />
+  </Links>
+  <Categories>
+    <Category Id="Contains" Label="Obsahuje" Description="Určuje, zda zdroj vazby obsahuje cílový objekt" CanBeDataDriven="False" CanLinkedNodesBeDataDriven="True" IncomingActionLabel="Obsaženo" IsContainment="True" OutgoingActionLabel="Obsahuje" />
+    <Category Id="EntityType" />
+    <Category Id="Foreign Key" />
+    <Category Id="Model" />
+    <Category Id="Navigation Collection" />
+    <Category Id="Navigation Property" />
+    <Category Id="Property Foreign" />
+    <Category Id="Property Optional" />
+    <Category Id="Property Primary" />
+    <Category Id="Property Required" />
+  </Categories>
+  <Properties>
+    <Property Id="AfterSaveBehavior" Group="Property Flags" DataType="System.String" />
+    <Property Id="Annotations" Description="Annotations" Group="Model Properties" DataType="System.String" />
+    <Property Id="BaseClass" Description="Base class" Group="Model Properties" DataType="System.String" />
+    <Property Id="BeforeSaveBehavior" Group="Property Flags" DataType="System.String" />
+    <Property Id="Bounds" DataType="System.Windows.Rect" />
+    <Property Id="CanBeDataDriven" Label="CanBeDataDriven" Description="CanBeDataDriven" DataType="System.Boolean" />
+    <Property Id="CanLinkedNodesBeDataDriven" Label="CanLinkedNodesBeDataDriven" Description="CanLinkedNodesBeDataDriven" DataType="System.Boolean" />
+    <Property Id="ChangeTrackingStrategy" Description="Change tracking strategy" Group="Model Properties" DataType="System.String" />
+    <Property Id="Dependent" Description="Dependent entity" Group="Model Properties" DataType="System.String" />
+    <Property Id="Expression" DataType="System.String" />
+    <Property Id="Field" Description="Backing field" Group="Model Properties" DataType="System.String" />
+    <Property Id="From" Description="Target property" Group="Model Properties" DataType="System.String" />
+    <Property Id="GraphDirection" DataType="Microsoft.VisualStudio.Diagrams.Layout.LayoutOrientation" />
+    <Property Id="Group" Label="Skupina" Description="Zobrazit uzel jako skupinu" DataType="Microsoft.VisualStudio.GraphModel.GraphGroupStyle" />
+    <Property Id="GroupLabel" DataType="System.String" />
+    <Property Id="IncomingActionLabel" Label="IncomingActionLabel" Description="IncomingActionLabel" DataType="System.String" />
+    <Property Id="Inverse" Description="Inverse entity" Group="Model Properties" DataType="System.String" />
+    <Property Id="IsAbstract" Label="IsAbstract" Description="IsAbstract" Group="Model Properties" DataType="System.Boolean" />
+    <Property Id="IsAlternateKey" Group="Property Flags" DataType="System.Boolean" />
+    <Property Id="IsConcurrencyToken" Group="Property Flags" DataType="System.Boolean" />
+    <Property Id="IsContainment" DataType="System.Boolean" />
+    <Property Id="IsEnabled" DataType="System.Boolean" />
+    <Property Id="IsForeignKey" Group="Property Flags" DataType="System.Boolean" />
+    <Property Id="IsIndexed" Group="Property Flags" DataType="System.Boolean" />
+    <Property Id="IsPrimaryKey" Group="Property Flags" DataType="System.Boolean" />
+    <Property Id="IsRequired" Group="Property Flags" DataType="System.Boolean" />
+    <Property Id="IsShadow" Group="Property Flags" DataType="System.Boolean" />
+    <Property Id="IsUnicode" Group="Property Flags" DataType="System.Boolean" />
+    <Property Id="IsUnique" Group="Model Properties" DataType="System.Boolean" />
+    <Property Id="Label" Label="Popisek" Description="Zobrazitelná jmenovka objektu Annotable" DataType="System.String" />
+    <Property Id="LabelBounds" DataType="System.Windows.Rect" />
+    <Property Id="Layout" DataType="System.String" />
+    <Property Id="MaxLength" DataType="System.String" />
+    <Property Id="Name" Group="Model Properties" DataType="System.String" />
+    <Property Id="OutgoingActionLabel" Label="OutgoingActionLabel" Description="OutgoingActionLabel" DataType="System.String" />
+    <Property Id="Principal" Description="Principal entity" Group="Model Properties" DataType="System.String" />
+    <Property Id="ProductVersion" Label="Product Version" Description="EF Core product version" Group="Model Properties" DataType="System.String" />
+    <Property Id="PropertyAccessMode" Group="Property Flags" DataType="System.String" />
+    <Property Id="TargetType" DataType="System.Type" />
+    <Property Id="To" Description="Source property" Group="Model Properties" DataType="System.String" />
+    <Property Id="Type" Description="CLR data type" Group="Model Properties" DataType="System.String" />
+    <Property Id="Value" DataType="System.String" />
+    <Property Id="ValueGenerated" Group="Property Flags" DataType="System.String" />
+    <Property Id="ValueLabel" DataType="System.String" />
+    <Property Id="ZoomLevel" DataType="System.String" />
+  </Properties>
+  <Styles>
+    <Style TargetType="Node" GroupLabel="EntityType" ValueLabel="True">
+      <Condition Expression="HasCategory('EntityType')" />
+      <Setter Property="Background" Value="#FFC0C0C0" />
+    </Style>
+    <Style TargetType="Node" GroupLabel="Property Primary" ValueLabel="True">
+      <Condition Expression="HasCategory('Property Primary')" />
+      <Setter Property="Background" Value="#FF008000" />
+    </Style>
+    <Style TargetType="Node" GroupLabel="Property Optional" ValueLabel="True">
+      <Condition Expression="HasCategory('Property Optional')" />
+      <Setter Property="Background" Value="#FF808040" />
+    </Style>
+    <Style TargetType="Node" GroupLabel="Property Foreign" ValueLabel="True">
+      <Condition Expression="HasCategory('Property Foreign')" />
+      <Setter Property="Background" Value="#FF8080FF" />
+    </Style>
+    <Style TargetType="Node" GroupLabel="Property Required" ValueLabel="True">
+      <Condition Expression="HasCategory('Property Required')" />
+      <Setter Property="Background" Value="#FFC0A000" />
+    </Style>
+    <Style TargetType="Node" GroupLabel="Navigation Property" ValueLabel="True">
+      <Condition Expression="HasCategory('Navigation Property')" />
+      <Setter Property="Background" Value="#FF990000" />
+    </Style>
+    <Style TargetType="Node" GroupLabel="Navigation Collection" ValueLabel="True">
+      <Condition Expression="HasCategory('Navigation Collection')" />
+      <Setter Property="Background" Value="#FFFF3232" />
+    </Style>
+    <Style TargetType="Node" GroupLabel="Model" ValueLabel="True">
+      <Condition Expression="HasCategory('Model')" />
+      <Setter Property="Background" Value="#FFFFFFFF" />
+    </Style>
+  </Styles>
+</DirectedGraph>
