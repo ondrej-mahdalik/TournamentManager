@@ -39,6 +39,9 @@ public class UserIsInTeamController : AuthorizedControllerBase
     [HttpPut]
     public async Task<ActionResult> InsertOrUpdate([FromBody] UserIsInTeamModel? newUserInTeam)
     {
+        ModelState.Remove(nameof(newUserInTeam.Team));
+        ModelState.Remove(nameof(newUserInTeam.User));
+        
         if (newUserInTeam is null)
             return BadRequest();
 

@@ -633,7 +633,7 @@
             {
                 participant.Approved = false;
                 _resultOk = false;
-                _errorMessage = "Unable to approve the participant.";
+                _errorMessage = await result.Content.ReadAsStringAsync();
             }
             else
             {

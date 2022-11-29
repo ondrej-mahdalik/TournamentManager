@@ -58,6 +58,10 @@ public class UserController : AuthorizedControllerBase
     [HttpPut]
     public async Task<ActionResult> InsertOrUpdate([FromBody] UserModel? user)
     {
+        ModelState.Remove(nameof(user.Tournaments));
+        ModelState.Remove(nameof(user.TeamsAsLeader));
+        ModelState.Remove(nameof(user.TeamsAsMember));
+
         if (user is null)
             return BadRequest();
 
@@ -87,7 +91,7 @@ public class UserController : AuthorizedControllerBase
                 await _userManager.DeleteAsync(applicationUser);
         }
 
-        await _userFacade.DeleteAsync(user);
+        await _userFacade.DeleteAsync(user.Id);
         return Ok();
     }
 }

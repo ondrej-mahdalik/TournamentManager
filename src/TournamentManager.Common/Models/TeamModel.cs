@@ -1,6 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace TournamentManager.Common.Models;
 
@@ -22,14 +20,14 @@ public class TeamModel : ModelBase
     
     public Guid? LeaderId { get; set; }
     
-    [ValidateNever]
     public UserModel? Leader { get; set; }
-    
-    [ValidateNever]
+
     public IList<UserIsInTeamModel> Members { get; set; } = new List<UserIsInTeamModel>();
-    [ValidateNever]
+
     public IList<MatchModel> Matches { get; set; } = new List<MatchModel>();
-    [ValidateNever]
+
     public IList<TeamIsParticipatingModel> Participatings { get; set; } = new List<TeamIsParticipatingModel>();
+    
+    public IList<TournamentModel> WinnedTournaments { get; set; } = new List<TournamentModel>();
     public static TeamModel Empty => new(string.Empty, null, false);
 }

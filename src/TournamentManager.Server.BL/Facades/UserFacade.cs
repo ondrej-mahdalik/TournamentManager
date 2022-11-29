@@ -52,12 +52,22 @@ public class UserFacade : CRUDFacade<UserEntity, UserModel>
     {
         // Delete related entities
         await using var uow = UnitOfWorkFactory.Create();
+        
         var teamsAsMember = await uow.GetRepository<UserIsInTeamEntity>()
             .Get()
             .Where(x => x.UserId == id)
             .ToListAsync();
-        uow.GetRepository<UserIsInTeamEntity>()
-            .DeleteRange(teamsAsMember.Select(x => x.Id));
+        
+        foreach (var teamEntity in teamsAsMember)
+            uow.GetRepository<UserIsInTeamEntity>().Delete(teamEntity.Id);
+        
+        var teamsAsLeader = await uow.GetRepository<TeamEntity>()
+            .Get()
+            .Where(x => x.LeaderId == id)
+            .ToListAsync();
+
+        foreach (var teamEntity in teamsAsLeader)
+            uow.GetRepository<TeamEntity>().Delete(teamEntity.Id);
 
         await uow.CommitAsync();
         await base.DeleteAsync(id);

@@ -93,6 +93,10 @@ public class MatchController : AuthorizedControllerBase
     [HttpPut]
     public async Task<ActionResult> InsertOrUpdate([FromBody] MatchModel? match)
     {
+        ModelState.Remove(nameof(match.Team1));
+        ModelState.Remove(nameof(match.Team2));
+        ModelState.Remove(nameof(match.Tournament));
+
         if (match is null)
             return BadRequest();
         var tournament = await _tournamentFacade.GetAsync(match.TournamentId);

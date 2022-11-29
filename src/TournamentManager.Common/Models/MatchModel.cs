@@ -1,6 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
-using Microsoft.EntityFrameworkCore;
 
 namespace TournamentManager.Common.Models;
 
@@ -28,17 +26,14 @@ public class MatchModel : ModelBase, IValidatableObject
     
     public Guid TournamentId { get; set; }
     
-    [ValidateNever]
     public TournamentModel? Tournament { get; set; }
     
     public Guid? Team1Id { get; set; }
     
-    [ValidateNever]
     public TeamModel? Team1 { get; set; }
     
     public Guid? Team2Id { get; set; }
     
-    [ValidateNever]
     public TeamModel? Team2 { get; set; }
     public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
     {

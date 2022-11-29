@@ -47,6 +47,12 @@ public class TeamController : AuthorizedControllerBase
     [HttpPut]
     public async Task<ActionResult> InsertOrUpdate([FromBody] TeamModel? team)
     {
+        ModelState.Remove(nameof(team.Leader));
+        ModelState.Remove(nameof(team.Matches));
+        ModelState.Remove(nameof(team.Members));
+        ModelState.Remove(nameof(team.Participatings));
+        
+        
         if (team is null)
             return BadRequest();
         

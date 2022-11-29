@@ -68,7 +68,11 @@ public class TournamentController : AuthorizedControllerBase
     [HttpPut]
     public async Task<ActionResult> InsertOrUpdate([FromBody] TournamentModel? tournament)
     {
-        Console.WriteLine(JsonConvert.SerializeObject(tournament));
+        ModelState.Remove(nameof(tournament.Creator));
+        ModelState.Remove(nameof(tournament.Matches));
+        ModelState.Remove(nameof(tournament.Participatings));
+        ModelState.Remove(nameof(tournament.Sport));
+        ModelState.Remove(nameof(tournament.WinnerTeam));
         
         if (tournament is null || tournament.MaxAttendees < 1)
             return BadRequest();

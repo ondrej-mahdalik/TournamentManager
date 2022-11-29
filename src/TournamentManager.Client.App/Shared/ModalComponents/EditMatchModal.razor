@@ -78,6 +78,10 @@ else
 
     private async Task HandleValidSubmitAsync()
     {
+        Match.Team1 = null;
+        Match.Team2 = null;
+        Match.Tournament = null;
+
         var response = await Http.PutAsJsonAsync("api/Match", Match);
         if (!response.IsSuccessStatusCode)
         {

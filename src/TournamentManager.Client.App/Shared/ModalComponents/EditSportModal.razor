@@ -35,6 +35,7 @@ else
     
     private async Task HandleValidSubmitAsync()
     {
+        Sport.Tournaments = new List<TournamentModel>();
         var response = await Http.PutAsJsonAsync("api/Sport", Sport);
         if (!response.IsSuccessStatusCode)
         {
