@@ -14,6 +14,7 @@ public class TeamMapperProfile : Profile
             .ForMember(x => x.Matches, action => action.Ignore())
             .ForMember(x => x.Members, action => action.Ignore())
             .ForMember(x => x.Participatings, action => action.Ignore())
-            .ForMember(x => x.Leader, action => action.Ignore());
+            .ForMember(x => x.Leader, action => action.Ignore())
+            .ForMember(x => x.WinnedTournaments, action => action.Ignore());
     }
 }

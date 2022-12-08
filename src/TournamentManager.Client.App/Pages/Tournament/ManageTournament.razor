@@ -431,7 +431,7 @@
                                      <div class="col col-auto">
                                          @if (!match.IsLocked)
                                          {
-                                             <button class="btn btn-primary me-1" type="button" @onclick="() => ManageTournamentAsync(match)">Manage</button>
+                                             <button class="btn btn-primary me-1" type="button" @onclick="() => ManageMatchAsync(match)">Manage</button>
                                          }
                                          @if (_tournament != null && _showWinner && match.Round == _tournament.NumOfRounds)
                                          {
@@ -633,7 +633,7 @@
             {
                 participant.Approved = false;
                 _resultOk = false;
-                _errorMessage = "Unable to approve the participant.";
+                _errorMessage = await result.Content.ReadAsStringAsync();
             }
             else
             {
@@ -822,20 +822,21 @@
         _selectedPageIndex2 = 0;
     }
     
-    private async Task ManageTournamentAsync(MatchModel match)
+    private async Task ManageMatchAsync(MatchModel match)
     {
         var parameters = new ModalParameters()
-            .Add(nameof(EditMatchModal.Match), match);
+            .Add(nameof(EditMatchModal.Match), (MatchModel)match.Clone());
         
         var result = await Modal.Show<EditMatchModal>("Edit Match", parameters).Result;
         if (result.Confirmed)
         {
+            match = (MatchModel)(result.Data ?? throw new NullReferenceException());
+            
             _matches = null;
             await OnInitializedAsync();
-            if (!_editedMatches.Any(x => x.Id == match.Id))
-            {
+            if (_editedMatches.All(x => x.Id != match.Id))
                 _editedMatches.Add(match);
-            }
+            
             if (_tournament != null && _tournament.NumOfRounds != match.Round)
                 _generateMoreMatches = true;
             else

@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace TournamentManager.Common.Models;
+﻿namespace TournamentManager.Common.Models;
 
 public class UserIsInTeamModel : ModelBase
 {

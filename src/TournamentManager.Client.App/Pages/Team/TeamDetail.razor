@@ -368,8 +368,7 @@ else
     private List<UserModel>? _members; 
     private UserModel? _currentUser;
     private List<TournamentModel>? _tournaments;
-    private Dictionary<Guid, List<Guid>> _participantsInATournament = new();
-    List<TeamIsParticipatingModel> _participatings;
+    List<TeamIsParticipatingModel>? _participatings;
 
     protected override async Task OnInitializedAsync()
     {

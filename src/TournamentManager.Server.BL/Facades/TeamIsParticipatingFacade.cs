@@ -25,4 +25,17 @@ public class TeamIsParticipatingFacade : CRUDFacade<TeamIsParticipatingEntity, T
         return await Mapper.ProjectTo<TeamIsParticipatingModel>(query).ToArrayAsync().ConfigureAwait(false);
     }
     
+    public async Task<IEnumerable<TeamIsParticipatingModel>> GetByUserIdAsync(Guid userId)
+    {
+        await using var uow = UnitOfWorkFactory.Create();
+        var query = uow
+            .GetRepository<TeamIsParticipatingEntity>()
+            .Get()
+            .Include(x => x.Tournament)
+            .Include(x => x.Team)
+            .Where(x => x.Team != null && (x.Team.LeaderId == userId || x.Team.Members.Any(y => y.UserId == userId)));
+
+        return await Mapper.ProjectTo<TeamIsParticipatingModel>(query).ToArrayAsync().ConfigureAwait(false);
+    }
+    
 }

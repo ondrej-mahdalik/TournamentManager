@@ -1,0 +1,52 @@
+@using TournamentManager.Common.Enums
+@inject HttpClient Http
+
+@if (_error)
+{
+    <MessageBox Title="Error" Message="@_errorMessage" MessageType="MessageType.Error" ShowCloseButton="true" />
+}
+else
+{
+    <EditForm Model="@Sport" OnValidSubmit="HandleValidSubmitAsync">
+        <DataAnnotationsValidator/>
+        <ValidationSummary/>
+        <div class="row">
+            <div class="col mb-2">
+                <label class="form-label" for="name">Sport Name</label>
+                <InputText id="name" class="form-control" @bind-Value="Sport.Name"/>
+            </div>
+            <div class="d-flex justify-content-end gap-2">
+                <a class="btn btn-danger" @onclick="CancelAsync">Cancel</a>
+                <button type="submit" class="btn btn-primary">Save Changes</button>
+            </div>
+        </div>
+    </EditForm>
+}
+
+@code {
+    [CascadingParameter]
+    BlazoredModalInstance BlazoredModal { get; set; } = default!;
+    
+    [Parameter]
+    public SportModel Sport { get; set; } = default!;
+    
+    private bool _error;
+    private string? _errorMessage;
+    
+    private async Task HandleValidSubmitAsync()
+    {
+        Sport.Tournaments = new List<TournamentModel>();
+        var response = await Http.PutAsJsonAsync("api/Sport", Sport);
+        if (!response.IsSuccessStatusCode)
+        {
+            _errorMessage = await response.Content.ReadAsStringAsync();
+            _error = true;
+        }
+        else
+        {
+            await BlazoredModal.CloseAsync(ModalResult.Ok());
+        }
+    }
+
+    private async Task CancelAsync() => await BlazoredModal.CancelAsync();
+}

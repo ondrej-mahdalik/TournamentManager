@@ -2,7 +2,7 @@
 
 namespace TournamentManager.Common.Models;
 
-public class TournamentModel : ModelBase, IValidatableObject
+public class TournamentModel : ModelBase
 {
     public TournamentModel(string name,
         DateTime date,
@@ -58,11 +58,4 @@ public class TournamentModel : ModelBase, IValidatableObject
     public IList<MatchModel> Matches { get; set; } = new List<MatchModel>();
     
     public static TournamentModel Empty => new(string.Empty, DateTime.Now, false, false, false, false, 2, 0);
-    public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
-    {
-        if (Date < DateTime.Today)
-        {
-            yield return new ValidationResult("The date of the tournament has to be in the future", new[] { nameof(Date) });
-        }
-    }
 }

@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace TournamentManager.Common.Models;
+﻿namespace TournamentManager.Common.Models;
 
 public class TeamIsParticipatingModel : ModelBase
 {
@@ -17,9 +15,10 @@ public class TeamIsParticipatingModel : ModelBase
     public bool Approved { get; set; }
     
     public Guid TeamId { get; set; }
-    public TeamModel? Team { get; set; }
     
+    public TeamModel? Team { get; set; }
     public Guid TournamentId { get; set; }
+    
     public TournamentModel? Tournament { get; set; }
     public DateTime CreatedOn { get; init; }
 }

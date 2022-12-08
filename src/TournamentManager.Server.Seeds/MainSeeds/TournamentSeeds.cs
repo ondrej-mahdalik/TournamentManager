@@ -9,7 +9,7 @@ public static class TournamentSeeds
 {
     public static readonly TournamentEntity Tournament1 = new(
         "Awesome Tournament",
-        DateTime.Now,
+        DateTime.Now + TimeSpan.FromDays(60),
         "This is a tournament",
         true,
         true,
@@ -79,7 +79,7 @@ public static class TournamentSeeds
         "2021",
         true,
         true,
-        false,
+        true,
         false,
         54,
         0)
@@ -108,7 +108,7 @@ public static class TournamentSeeds
 
     public static readonly TournamentEntity UnapprovedTournament = new(
         "Unapproved",
-        DateTime.Now,
+        DateTime.Now + TimeSpan.FromDays(45),
         "Unapproved Tournament",
         true,
         false,
