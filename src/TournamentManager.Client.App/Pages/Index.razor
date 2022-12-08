@@ -513,12 +513,12 @@
 
     protected override async Task OnInitializedAsync()
     {
+        var _allTeams = await PublicHttp.Client.GetFromJsonAsync<List<TeamModel>>("api/Team");
         try
         {
             _currentUser = await Http.GetFromJsonAsync<UserModel>("api/User/current");
             var teamMemberships = await Http.GetFromJsonAsync<List<UserIsInTeamModel>>("/api/UserIsInTeam/");
             _currentUserTeamIds = teamMemberships?.Where(m => m.UserId == _currentUser?.Id).Select(m => m.TeamId).ToList();
-            var _allTeams = await Http.GetFromJsonAsync<List<TeamModel>>("api/Team");
             if (_currentUser is not null && _currentUserTeamIds is not null && _allTeams is not null)
             {
                 _currentUserTeamIds.AddRange(_allTeams.Where(x => x.LeaderId == _currentUser.Id).Select(x => x.Id));
@@ -547,7 +547,9 @@
             foreach (var user in users) // get points for all the users
             {
                 var usersTeamsIds = memberships.Where(m => m.UserId == user.Id).Select(m => m.TeamId).ToList();
-                var points = _tournaments.Where(t => t.InProgress == false && usersTeamsIds.Contains(t.WinnerTeamId ?? Guid.Empty)).Count();
+                var userAsLeaderTeams = await PublicHttp.Client.GetFromJsonAsync<List<TeamModel>>($"/api/Team/ByUser/{user.Id}") ?? new();
+                usersTeamsIds.AddRange(userAsLeaderTeams.Select(t => t.Id));
+                var points = _tournaments.Where(t => usersTeamsIds.Contains(t.WinnerTeamId ?? Guid.Empty)).Count();
                 usersPoints.Add(user.Id, points);
             }
             _bestPlayers = users.OrderByDescending(u => usersPoints[u.Id]).ToList();
