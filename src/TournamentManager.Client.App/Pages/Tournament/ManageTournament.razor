@@ -159,7 +159,7 @@
                                              <td>@leader?.FirstName @leader?.LastName</td>
                                          }
                                          <td>@participant.CreatedOn.ToString("dd. MM. yyyy")</td>
-                                         <td class="@(_tournament != null && _tournament.IsIndividual ? "" : "text-center")"><i @onclick="() => ApproveParticipant(participant)" class="fas fa-user-check me-1" data-bs-toggle="tooltip" data-bss-tooltip="" data-bs-placement="right" title="Approve participant"></i><i @onclick="() => DeleteParticipant(participant)" class="fas fa-user-times" data-bs-toggle="tooltip" data-bss-tooltip="" data-bs-placement="right" title="Reject participant"></i></td>
+                                         <td class="@(_tournament != null && _tournament.IsIndividual ? "" : "text-center")"><i type="button" @onclick="() => ApproveParticipant(participant)" class="fas fa-user-check me-1" data-bs-toggle="tooltip" data-bss-tooltip="" data-bs-placement="right" title="Approve participant"></i><i type="button" @onclick="() => DeleteParticipant(participant)" class="fas fa-user-times" data-bs-toggle="tooltip" data-bss-tooltip="" data-bs-placement="right" title="Reject participant"></i></td>
                                      </tr>
                                  }
                                  </tbody>
@@ -273,7 +273,7 @@
                                          <td class=@(_tournament != null && _tournament.IsIndividual ? "" : "text-center")>
                                              @if (_tournament is not null && !_tournament.InProgress)
                                              {
-                                                 <i @onclick="() => DeleteParticipant(participant)" class="fas fa-user-times" data-bs-toggle="tooltip" data-bss-tooltip="" data-bs-placement="right" title="Reject participant"></i>
+                                                 <i @onclick="() => DeleteParticipant(participant)" type="button" class="fas fa-user-times" data-bs-toggle="tooltip" data-bss-tooltip="" data-bs-placement="right" title="Reject participant"></i>
                                              }
                                          </td>
                                      </tr>
