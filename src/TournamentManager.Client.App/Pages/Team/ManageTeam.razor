@@ -7,7 +7,7 @@
 @inject HttpClient Http
 @inject NavigationManager NavigationManager;
 
-
+<PageTitle>Manage Team</PageTitle>
 
 @if(_team is null || _currentUser is null)
 {
@@ -133,8 +133,8 @@ else
                                                         @member.FirstName @member.LastName
                                                     </td>
                                                     <td class="mb-0">@member.Email</td>
-                                                    <td class="text-end"><a href="/Profile/Detail/@member.Id" class="btn btn-primary">Detail</a></td>
-                                                    <td class="text-end"><a class="btn btn-danger" @onclick="() => RemoveMember(member.Id)">Remove</a></td>
+                                                    <td class="text-end"><i class="fas fa-user-times" @onclick="() => RemoveMember(member.Id)" type="button" title="Remove member"></i></td>
+                                                    <td class="text-end"><a href="/Profile/Detail/@member.Id" class="btn btn-primary btn-sm">Detail</a></td>
                                                 </tr>
                                             }
                                         </tbody>
@@ -266,9 +266,9 @@ else
                                                         @requestMember.FirstName @requestMember.LastName
                                                     </td>
                                                     <td class="mb-0">@requestMember.Email</td>
-                                                    <td class="text-end"><a href="/Profile/Detail/@requestMember.Id" class="btn btn-primary">Detail</a></td>
-                                                    <td class="text-end"><a class="btn btn-success" @onclick="() => AcceptRequest(requestMember)">Accept</a></td>
-                                                    <td class="text-end"><a class="btn btn-danger" @onclick="() => RemoveRequest(requestMember)">Remove</a></td>
+                                                    <td class="text-end"><i class="fas fa-user-check" type="button" @onclick="() => AcceptRequest(requestMember)" title="Accept request" data-bs-placement="right"></i></td>
+                                                    <td class="text-end"><i class="fas fa-user-times" type="button" @onclick="() => RemoveRequest(requestMember)" title="Remove request" data-bs-placement="right"></i></td>
+                                                    <td class="text-end"><a href="/Profile/Detail/@requestMember.Id" class="btn btn-primary btn-sm">Detail</a></td>
                                                 </tr>
                                             }
                                         </tbody>
