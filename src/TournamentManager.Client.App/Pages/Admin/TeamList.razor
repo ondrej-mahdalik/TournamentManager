@@ -76,8 +76,8 @@
                                             <td class="mb-0">@team.Leader?.FirstName @team.Leader?.LastName</td>
                                             <td class="mb-0">@(team.Members.Count + 1) @(team.Members.Count + 1 == 1 ? "member" : "members")</td>
                                             <td class="text-end">
-                                                <a data-bs-target="/Team/@team.Id" href="/Team/Manage/@team.Id" class="btn btn-primary">Manage</a>
-                                                <a data-bs-target="/Team/@team.Id" class="btn btn-danger" @onclick="@(() => DeleteTeam(team) )">Delete</a>
+                                                <a data-bs-target="/Team/@team.Id" href="/Team/Manage/@team.Id" class="btn btn-primary btn-sm">Manage</a>
+                                                <a data-bs-target="/Team/@team.Id" class="btn btn-danger btn-sm" @onclick="@(() => DeleteTeam(team) )">Delete</a>
                                             </td>
                                         </tr>
                                     }

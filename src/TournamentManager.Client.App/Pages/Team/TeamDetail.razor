@@ -87,7 +87,7 @@ else
                                         @_leader.FirstName @_leader.LastName
                                     </td>
                                     <td>@_leader.Email</td>
-                                    <td class="text-end"><a href="/Profile/Detail/@_leader.Id" class="btn btn-primary">Detail</a></td>
+                                    <td class="text-end"><a href="/Profile/Detail/@_leader.Id" class="btn btn-primary btn-sm">Detail</a></td>
                                 </tr>
                             }
                             </tbody>
@@ -164,7 +164,7 @@ else
                                                 @member.FirstName @member.LastName
                                             </td>
                                             <td class="mb-0">@member.Email</td>
-                                            <td class="text-end"><a href="/Profile/Detail/@member.Id" class="btn btn-primary">Detail</a></td>
+                                            <td class="text-end"><a href="/Profile/Detail/@member.Id" class="btn btn-primary btn-sm">Detail</a></td>
                                         </tr>
                                     }
                                     </tbody>
@@ -294,7 +294,7 @@ else
                                             <td>@tournament.Date.ToString("dd. MM. yyyy")</td>
                                             <td>@(tournament.IsPublic ? "Public" : "Private")</td>
                                             <td>@_participatings.Where(p => p.TournamentId == tournament.Id).Count() / @tournament.MaxAttendees</td>
-                                            <td class="text-end"><a data-bs-target="/Tournament/@tournament.Id" href="/Tournament/Detail/@tournament.Id" class="btn btn-primary">Detail</a></td>
+                                            <td class="text-end"><a data-bs-target="/Tournament/@tournament.Id" href="/Tournament/Detail/@tournament.Id" class="btn btn-primary btn-sm">Detail</a></td>
                                         </tr>
                                     }
                                     </tbody>

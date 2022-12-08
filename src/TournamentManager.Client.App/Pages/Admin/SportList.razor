@@ -79,8 +79,8 @@
                                             @sport.Tournaments.Count
                                         </td>
                                         <td class="text-end">
-                                            <a class="btn btn-primary" data-bs-target="/Admin/Sport/Edit/@sport.Id" href="/Admin/Sport/Edit/@sport.Id">Edit</a>
-                                            <button class="btn btn-danger" @onclick="() => DeleteSportAsync(sport)">Edit</button>
+                                            <a class="btn btn-primary btn-sm" data-bs-target="/Admin/Sport/Edit/@sport.Id" href="/Admin/Sport/Edit/@sport.Id">Edit</a>
+                                            <button class="btn btn-danger btn-sm" @onclick="() => DeleteSportAsync(sport)">Delete</button>
                                         </td>
                                     </tr>
                                 }
