@@ -54,6 +54,9 @@ public class TeamIsParticipatingController : AuthorizedControllerBase
     [HttpPut]
     public async Task<ActionResult> InsertOrUpdate([FromBody] TeamIsParticipatingModel? participation)
     {
+        ModelState.Remove(nameof(participation.Team));
+        ModelState.Remove(nameof(participation.Tournament));
+        
         if (participation is null)
             return BadRequest();
 

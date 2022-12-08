@@ -12,7 +12,7 @@
                 <h3 class="text-dark d-xl-flex">Sports</h3>
             </div>
             <div class="col col-auto d-flex align-items-center">
-                <a class="btn btn-primary" href="/Admin/Sport/Create">Add New Sport</a>
+                <button class="btn btn-primary" @onclick="CreateSportAsync">Add New Sport</button>
             </div>
         </div>
         @if (_displayError)
@@ -79,7 +79,7 @@
                                             @sport.Tournaments.Count
                                         </td>
                                         <td class="text-end">
-                                            <a class="btn btn-primary btn-sm" data-bs-target="/Admin/Sport/Edit/@sport.Id" href="/Admin/Sport/Edit/@sport.Id">Edit</a>
+                                            <button class="btn btn-primary btn-sm" data-bs-target="/Admin/Sport/Edit/@sport.Id" href="/Admin/Sport/Edit/@sport.Id">Edit</button>
                                             <button class="btn btn-danger btn-sm" @onclick="() => DeleteSportAsync(sport)">Delete</button>
                                         </td>
                                     </tr>
@@ -193,5 +193,29 @@
             _errorMessage = await response.Content.ReadAsStringAsync();
             _displayError = true;
         }
+        else
+        {
+            _sports = await Http.GetFromJsonAsync<List<SportModel>>("api/Sport");
+        }
+    }
+
+    private async Task EditSportAsync(SportModel sport)
+    {
+        var parameters = new ModalParameters()
+            .Add(nameof(EditSportModal.Sport), (SportModel)sport.Clone());
+        
+        var modalResult = await Modal.Show<EditSportModal>("Edit Sport", parameters).Result;
+        if (modalResult.Confirmed)
+            _sports = await Http.GetFromJsonAsync<List<SportModel>>("api/Sport");
+    }
+
+    private async Task CreateSportAsync()
+    {
+        var parameters = new ModalParameters()
+            .Add(nameof(EditSportModal.Sport), new SportModel(String.Empty));
+        
+        var modalResult = await Modal.Show<EditSportModal>("Create Sport", parameters).Result;
+        if (modalResult.Confirmed)
+            _sports = await Http.GetFromJsonAsync<List<SportModel>>("api/Sport");
     }
 }

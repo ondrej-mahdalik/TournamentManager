@@ -40,6 +40,8 @@ public class SportController : AuthorizedControllerBase
     [HttpPut]
     public async Task<ActionResult> InsertOrUpdate([FromBody] SportModel? sport)
     {
+        ModelState.Remove(nameof(sport.Tournaments));
+        
         if (sport is null)
             return BadRequest();
 

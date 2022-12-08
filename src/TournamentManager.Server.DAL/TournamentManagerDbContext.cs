@@ -41,6 +41,10 @@ public class TournamentManagerDbContext : DbContext
             entity.HasMany(i => i.Participatings)
                 .WithOne(i => i.Team)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasMany(i => i.WinnedTournaments)
+                .WithOne(x => x.WinnerTeam)
+                .OnDelete(DeleteBehavior.SetNull);
         });
 
         modelBuilder.Entity<MatchEntity>()
@@ -67,7 +71,7 @@ public class TournamentManagerDbContext : DbContext
 
             entity.HasMany(i => i.TeamsAsLeader)
                 .WithOne(i => i.Leader)
-                .OnDelete(DeleteBehavior.SetNull);
+                .OnDelete(DeleteBehavior.ClientCascade);
 
             entity.HasMany(i => i.TeamsAsMember)
                 .WithOne(i => i.User)
