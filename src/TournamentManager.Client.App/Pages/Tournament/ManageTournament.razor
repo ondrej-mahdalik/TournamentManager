@@ -45,15 +45,25 @@
      {
          <div class="row">
              <div class="col">
-                 @if (_allTeamsHaveMatch)
-                 {
-
-                     <MessageBox MessageType="MessageType.Error" Title="Error" Message="@_errorMessage" ShowCloseButton="true"></MessageBox>
-
-                     <MessageBox MessageType="MessageType.Warning" Title="Warning" Message="Not all participants have a match assigned" ShowCloseButton="false"></MessageBox>
-
-                 }
-                 
+                 <MessageBox MessageType="MessageType.Error" Title="Error" Message="@_errorMessage" ShowCloseButton="true"></MessageBox>
+             </div>
+         </div>
+     }
+     @if (_tournament is not null && !_tournament.IsApproved)
+     {
+         <div class="row">
+             <div class="col">
+                 <MessageBox MessageType="MessageType.Warning" Title="Warning" Message="Tournament isn't approved by the administrator"
+                             ShowCloseButton="false"></MessageBox>
+             </div>
+         </div>
+     }
+     @if (_tournament is not null && _approvedParticipants is not null && _approvedParticipants.Count < 2)
+     {
+         <div class="row">
+             <div class="col">
+                 <MessageBox MessageType="MessageType.Warning" Title="Warning" Message="Tournament has less than 2 participants"
+                             ShowCloseButton="false"></MessageBox>
              </div>
          </div>
      }
