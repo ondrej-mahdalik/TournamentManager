@@ -133,9 +133,11 @@ else
                                                         @member.FirstName @member.LastName
                                                     </td>
                                                     <td class="mb-0">@member.Email</td>
-                                                    <td class="d-flex justify-content-end gap-4">
-                                                        <i class="fas fa-user-times" @onclick="() => RemoveMember(member.Id)" type="button" title="Remove member"></i>
-                                                        <i href="/Profile/Detail/@member.Id" class="fas fa-info-circle"></i>
+                                                    <td class="mb-0">
+                                                        <div class="d-flex mt-1 justify-content-end gap-4">
+                                                            <i class="fas fa-user-times" @onclick="() => RemoveMember(member.Id)" type="button" title="Remove member"></i>
+                                                            <i href="/Profile/Detail/@member.Id" type="button" class="fas fa-info-circle"></i>
+                                                        </div>
                                                     </td>
                                                 </tr>
                                             }
