@@ -63,12 +63,12 @@
                                         <td>@(tournament.IsIndividual ? "Individual" : "Teams")</td>
                                         <td>@(tournament.Creator?.FirstName is not null ? $"{tournament.Creator.FirstName} {tournament.Creator.LastName}" : "Deleted user")</td>
                                         <td class="text-end">
-                                            <button @onclick="() => ApproveTournamentAsync(tournament)" class="btn btn-primary">
+                                            <button @onclick="() => ApproveTournamentAsync(tournament)" class="btn btn-primary btn-sm">
                                                 Approve
                                             </button>
                                         </td>
                                         <td class="text-end">
-                                            <a data-bs-target="/Tournament/@tournament.Id" @onclick="@(() => DeleteTournamentAsync(tournament))" class="btn btn-danger">
+                                            <a data-bs-target="/Tournament/@tournament.Id" @onclick="@(() => DeleteTournamentAsync(tournament))" class="btn btn-danger btn-sm">
                                                 Delete
                                             </a>
                                         </td>
@@ -162,10 +162,10 @@
                                                     }
                                                 </td>
                                                 <td class="text-end">
-                                                    <a href="/Tournament/Manage/@tournament.Id" class="btn btn-primary">
+                                                    <a href="/Tournament/Manage/@tournament.Id" class="btn btn-primary btn-sm">
                                                         Manage
                                                     </a>
-                                                    <a @onclick="@(() => DeleteTournamentAsync(tournament))" class="btn btn-danger">
+                                                    <a @onclick="@(() => DeleteTournamentAsync(tournament))" class="btn btn-danger btn-sm">
                                                         Remove
                                                     </a>
                                                 </td>

@@ -95,7 +95,7 @@
                                         <td><a class="text-body text-decoration-none" href="/Profile/Detail/@tournament.CreatorId">@(tournament.Creator?.FirstName is not null ? $"{tournament.Creator.FirstName} {tournament.Creator.LastName}" : "Deleted user")</a></td>
                                         <td>@_numberOfParticipants[@tournament.Id] / @tournament.MaxAttendees</td>
                                         <td><a class="text-body text-decoration-none" href="Team/Detail/@tournament.WinnerTeamId">@_winners[tournament.Id]</a></td>
-                                        <td class="text-end"><a data-bs-target="/Tournament/@tournament.Id" href="/Tournament/Detail/@tournament.Id"><button class="btn btn-primary" type="button">Detail</button></a></td>
+                                        <td class="text-end"><a data-bs-target="/Tournament/@tournament.Id" href="/Tournament/Detail/@tournament.Id" class="btn btn-primary btn-sm" type="button">Detail</a></td>
                                     </tr>
                                 }
                                 </tbody>

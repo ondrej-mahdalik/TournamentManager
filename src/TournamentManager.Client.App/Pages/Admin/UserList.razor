@@ -71,10 +71,10 @@
                                         <td>@user.PhoneNumber</td>
                                         <td class="text-end">
                                             <div class="d-inline-flex gap-2">
-                                                <a class="btn btn-primary" data-bs-target="/Profile/Detail/@user.Id" href="/Profile/Detail/@user.Id">Detail</a>
+                                                <a class="btn btn-primary btn-sm" data-bs-target="/Profile/Detail/@user.Id" href="/Profile/Detail/@user.Id">Detail</a>
                                                 @if (_currentUser?.Id != user.Id)
                                                 {
-                                                    <button class="btn btn-danger" value="@user.Id" @onclick="() => DeleteUserAsync(user)" type="button">Delete</button>
+                                                    <button class="btn btn-danger btn-sm" value="@user.Id" @onclick="() => DeleteUserAsync(user)" type="button">Delete</button>
                                                 }
                                             </div>
                                         </td>
