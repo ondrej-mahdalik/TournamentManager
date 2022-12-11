@@ -145,7 +145,7 @@
                                         <th>Team Leader</th>
                                      }
                                      <th>Date Registered</th>
-                                     <th>Actions</th>
+                                     <th></th>
                                  </tr>
                                  </thead>
                                  <tbody>
@@ -159,7 +159,13 @@
                                              <td>@leader?.FirstName @leader?.LastName</td>
                                          }
                                          <td>@participant.CreatedOn.ToString("dd. MM. yyyy")</td>
-                                         <td class="@(_tournament != null && _tournament.IsIndividual ? "" : "text-center")"><i type="button" @onclick="() => ApproveParticipant(participant)" class="fas fa-user-check me-1" data-bs-toggle="tooltip" data-bss-tooltip="" data-bs-placement="right" title="Approve participant"></i><i type="button" @onclick="() => DeleteParticipant(participant)" class="fas fa-user-times" data-bs-toggle="tooltip" data-bss-tooltip="" data-bs-placement="right" title="Reject participant"></i></td>
+                                         <td class="@(_tournament != null && _tournament.IsIndividual ? "" : "text-center")">
+                                             <div class="d-flex mt-1 justify-content-end gap-2">
+                                                 <i type="button" @onclick="() => ApproveParticipant(participant)" class="fas fa-user-check" data-bs-toggle="tooltip" data-bss-tooltip="" data-bs-placement="right" title="Approve participant"></i>
+                                                 <i type="button" @onclick="() => DeleteParticipant(participant)" class="fas fa-user-times" data-bs-toggle="tooltip" data-bss-tooltip="" data-bs-placement="right" title="Reject participant"></i>
+                                                 <i type="button" href="Team/Detail/@participant.TeamId" class="fas fa-info-circle"></i>
+                                             </div>
+                                         </td>
                                      </tr>
                                  }
                                  </tbody>
@@ -273,8 +279,9 @@
                                          <td class=@(_tournament != null && _tournament.IsIndividual ? "" : "text-center")>
                                              @if (_tournament is not null && !_tournament.InProgress)
                                              {
-                                                 <i @onclick="() => DeleteParticipant(participant)" type="button" class="fas fa-user-times" data-bs-toggle="tooltip" data-bss-tooltip="" data-bs-placement="right" title="Reject participant"></i>
+                                                 <i @onclick="() => DeleteParticipant(participant)" type="button" class="fas fa-user-times" data-bs-toggle="tooltip" data-bss-tooltip="" data-bs-placement="right" title="Remove participant"></i>
                                              }
+                                             <i type="button" href="Team/Detail/@participant.TeamId" class="fas fa-info-circle"></i>
                                          </td>
                                      </tr>
                                  }

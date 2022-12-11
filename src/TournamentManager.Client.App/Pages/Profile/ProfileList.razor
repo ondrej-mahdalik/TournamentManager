@@ -2,6 +2,8 @@
 @using Microsoft.AspNetCore.Components
 @inject PublicHttpClient PublicHttp
 
+<PageTitle>Profile list</PageTitle>
+
 <div id="content">
     <div class="container-fluid">
         <div class="row mb-3">
@@ -64,7 +66,7 @@
                                         <td>@user.RegisteredAt.ToShortDateString()</td>
                                         <td>@_countOfTeamsUserIsLeaderOf[user.Id]</td>
                                         <td>@user.Tournaments.Count(x => x.CreatorId == user.Id)</td>
-                                        <td class="text-end"><a data-bs-target="/Profile/Detail/@user.Id" href="/Profile/Detail/@user.Id"><button class="btn btn-primary" type="button">Detail</button></a></td>
+                                        <td class="text-end"><a data-bs-target="/Profile/Detail/@user.Id" href="/Profile/Detail/@user.Id"><button class="btn btn-primary btn-sm" type="button">Detail</button></a></td>
                                     </tr>
                                 }
                                 </tbody>
