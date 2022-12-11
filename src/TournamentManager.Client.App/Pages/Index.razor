@@ -7,8 +7,6 @@
 
 <AuthorizeView>
 <Authorized>
-<div id="content">
-<div class="container-fluid mb-5">
 <div class="d-sm-flex justify-content-between align-items-center mb-4">
     <h3 class="text-dark mb-0">Dashboard</h3>
 </div>
@@ -19,7 +17,7 @@
             <div class="card-header">
                 <div class="row d-lg-flex align-items-lg-center">
                     <div class="col">
-                    <h6 class="text-primary mb-0">Your ongoing tournaments</h6>
+                        <h6 class="text-primary mb-0">Your ongoing tournaments</h6>
                     </div>
                     <!-- <div class="col text-end"><a href="/Tournament/List" class="btn btn-primary btn-sm">Show all</a></div> -->
                 </div>
@@ -349,145 +347,138 @@
         </div>
     </div>
 </div>
-</div>
-</div>
 </Authorized>
 <NotAuthorized>
-    <div id="content">
-        <div class="container-fluid mb-5">
-            <div class="d-sm-flex justify-content-between align-items-center mb-4">
-                <h3 class="text-dark mb-0">Dashboard</h3>
-            </div>
-            <div class="row">
-                <div class="col">
-                    <div class="card shadow m-2">
-                        <div class="card-header">
-                            <div class="row d-lg-flex align-items-lg-center">
-                                <div class="col">
-                                    <h6 class="text-primary mb-0">Upcoming tournaments</h6>
-                                </div>
-                                <div class="col text-end">
-                                    <a href="/Tournament/List" class="btn btn-primary btn-sm">Show all</a>
-                                </div>
-                            </div>
+    <div class="d-sm-flex justify-content-between align-items-center mb-4">
+        <h3 class="text-dark mb-0">Dashboard</h3>
+    </div>
+    <div class="row">
+        <div class="col">
+            <div class="card shadow m-2">
+                <div class="card-header">
+                    <div class="row d-lg-flex align-items-lg-center">
+                        <div class="col">
+                            <h6 class="text-primary mb-0">Upcoming tournaments</h6>
                         </div>
-                        <div class="card-body">
-                            @if (_tournamentsUpcoming is null)
-                            {
-                                <p class="text-center fw-bold">Loading...</p>
-                            }
-                            else
-                            {
-                                <div class="table-responsive table mt-2" role="grid">
-                                    @if (_tournamentsUpcoming.Count == 0)
-                                    {
-                                        <p class="text-center fw-bold">No tournaments found.</p>
-                                    }
-                                    else
-                                    {
-                                        <table class="table my-0" id="dataTable">
-                                            <thead>
-                                            <tr>
-                                                <th>Sport<i class="fas fa-baseball-ball pe-0 ms-2"></i></th>
-                                                <th>Name</th>
-                                                <th>Date</th>
-                                                <th>Occupation</th>
-                                                <th></th>
-                                            </tr>
-                                            </thead>
-                                            <tbody>
-                                            @for (var i = 0; i < 5 && i < _tournamentsUpcoming.Count; i++)
-                                            {
-                                                var tournament = _tournamentsUpcoming[i];
-                                                <tr>
-                                                    <td>@tournament.Sport?.Name</td>
-                                                    <td>@tournament.Name</td>
-                                                    <td>@tournament.Date.ToString("dd. MM. yyyy")</td>
-                                                    <td>@_numberOfParticipantsUpcoming[tournament.Id] / @tournament.MaxAttendees</td>
-                                                    <td class="text-end">
-                                                        <a data-bs-target="/Tournament/@tournament.Id" href="/Tournament/Detail/@tournament.Id" class="btn btn-primary btn-sm">Detail</a>
-                                                    </td>
-                                                </tr>
-                                            }
-                                            </tbody>
-                                        </table>
-                                    }
-                                </div>
-                            }
+                        <div class="col text-end">
+                            <a href="/Tournament/List" class="btn btn-primary btn-sm">Show all</a>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="row">
-                <div class="col">
-                    <div class="card shadow m-2">
-                        <div class="card-header">
-                            <div class="row d-lg-flex align-items-lg-center">
-                                <div class="col">
-                                    <h6 class="text-primary mb-0">Best players</h6>
-                                </div>
-                                <!-- <div class="col text-end"><a href="/User/List" class="btn btn-primary btn-sm">Show all users</a></div> -->
-                            </div>
-                        </div>
-                        <div class="card-body">
-                            @if (_bestPlayers == null)
+                <div class="card-body">
+                    @if (_tournamentsUpcoming is null)
+                    {
+                        <p class="text-center fw-bold">Loading...</p>
+                    }
+                    else
+                    {
+                        <div class="table-responsive table mt-2" role="grid">
+                            @if (_tournamentsUpcoming.Count == 0)
                             {
-                                <p class="text-center fw-bold">Loading...</p>
-                            }
-                            else if (_bestPlayers.Count == 0)
-                            {
-                                <p class="text-center fw-bold">No players found.</p>
+                                <p class="text-center fw-bold">No tournaments found.</p>
                             }
                             else
                             {
-                                <div class="row">
-                                    <div class="col">
-                                        <div id="dataTable-2" class="table-responsive table mt-2" role="grid" aria-describedby="dataTable_info">
-                                            <table id="dataTable" class="table my-0">
-                                                <thead>
-                                                <tr>
-                                                    <th>Name</th>
-                                                    <th>email</th>
-                                                    <th></th>
-                                                </tr>
-                                                </thead>
-                                                <tbody>
-                                                @for (var i = 0; i < _bestPlayers.Count && i < 3; i++)
-                                                {
-                                                    var player = _bestPlayers[i];
-                                                    <tr>
-                                                        <td class="mb-0">
-                                                            @if (player.ProfilePictureUrl is not null)
-                                                            {
-                                                                <img alt="Profile picture" class="rounded-circle me-2" width="30" height="30" src="@player.ProfilePictureUrl"/>
-                                                            }
-                                                            @player.FirstName @player.LastName
-                                                        </td>
-
-                                                        <td class="mb-0">@player.Email</td>
-                                                        <td class="text-end">
-                                                            <a href="/Profile/Detail/@player.Id" class="btn btn-primary btn-sm">Detail</a>
-                                                        </td>
-                                                    </tr>
-                                                }
-                                                </tbody>
-                                                <tfoot>
-                                                <tr></tr>
-                                                </tfoot>
-                                            </table>
-                                        </div>
-                                    </div>
-                                </div>
+                                <table class="table my-0" id="dataTable">
+                                    <thead>
+                                    <tr>
+                                        <th>Sport<i class="fas fa-baseball-ball pe-0 ms-2"></i></th>
+                                        <th>Name</th>
+                                        <th>Date</th>
+                                        <th>Occupation</th>
+                                        <th></th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    @for (var i = 0; i < 5 && i < _tournamentsUpcoming.Count; i++)
+                                    {
+                                        var tournament = _tournamentsUpcoming[i];
+                                        <tr>
+                                            <td>@tournament.Sport?.Name</td>
+                                            <td>@tournament.Name</td>
+                                            <td>@tournament.Date.ToString("dd. MM. yyyy")</td>
+                                            <td>@_numberOfParticipantsUpcoming[tournament.Id] / @tournament.MaxAttendees</td>
+                                            <td class="text-end">
+                                                <a data-bs-target="/Tournament/@tournament.Id" href="/Tournament/Detail/@tournament.Id" class="btn btn-primary btn-sm">Detail</a>
+                                            </td>
+                                        </tr>
+                                    }
+                                    </tbody>
+                                </table>
                             }
                         </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <div class="card shadow m-2">
+                <div class="card-header">
+                    <div class="row d-lg-flex align-items-lg-center">
+                        <div class="col">
+                            <h6 class="text-primary mb-0">Best players</h6>
+                        </div>
+                        <!-- <div class="col text-end"><a href="/User/List" class="btn btn-primary btn-sm">Show all users</a></div> -->
                     </div>
+                </div>
+                <div class="card-body">
+                    @if (_bestPlayers == null)
+                    {
+                        <p class="text-center fw-bold">Loading...</p>
+                    }
+                    else if (_bestPlayers.Count == 0)
+                    {
+                        <p class="text-center fw-bold">No players found.</p>
+                    }
+                    else
+                    {
+                        <div class="row">
+                            <div class="col">
+                                <div id="dataTable-2" class="table-responsive table mt-2" role="grid" aria-describedby="dataTable_info">
+                                    <table id="dataTable" class="table my-0">
+                                        <thead>
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>email</th>
+                                            <th></th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        @for (var i = 0; i < _bestPlayers.Count && i < 3; i++)
+                                        {
+                                            var player = _bestPlayers[i];
+                                            <tr>
+                                                <td class="mb-0">
+                                                    @if (player.ProfilePictureUrl is not null)
+                                                    {
+                                                        <img alt="Profile picture" class="rounded-circle me-2" width="30" height="30" src="@player.ProfilePictureUrl"/>
+                                                    }
+                                                    @player.FirstName @player.LastName
+                                                </td>
+
+                                                <td class="mb-0">@player.Email</td>
+                                                <td class="text-end">
+                                                    <a href="/Profile/Detail/@player.Id" class="btn btn-primary btn-sm">Detail</a>
+                                                </td>
+                                            </tr>
+                                        }
+                                        </tbody>
+                                        <tfoot>
+                                        <tr></tr>
+                                        </tfoot>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    }
                 </div>
             </div>
         </div>
     </div>
 </NotAuthorized>
 </AuthorizeView>
-
 
 @code {
     private UserModel? _currentUser;

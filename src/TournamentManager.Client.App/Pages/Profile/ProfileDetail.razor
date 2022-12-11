@@ -7,53 +7,51 @@
 }
 else
 {
-    <div class="container-fluid">
-        <div class="row mb-3">
+    <div class="row mb-3">
             <div class="col d-xl-flex d-flex align-items-center">
                 <h3 class="text-dark mb-4">@_user.FirstName @_user.LastName&#39;s Profile</h3>
             </div>
             <div class="col col-auto d-flex align-items-center"><a href="/Profile/List"><button class="btn btn-light" type="button">See all profiles</button></a></div>
         </div>
-        <div class="row mb-3">
-            <div class="col-lg-4">
-                <div class="card mb-3">
-                    <div class="card-header py-3">
-                        <p class="text-primary m-0 fw-bold">Profile Info</p>
-                    </div>
-                    <div class="card-body text-center shadow">
-                        <div class="row">
-                            <div class="col">
-                                <img class="rounded-circle mb-3 mt-4" src="@(_user.ProfilePictureUrl ?? "/assets/img/avatar_placeholder.png")" width="160" height="160" alt=""/>
-                                <h6 class="text-primary"><strong>@_user.FirstName @_user.LastName</strong></h6>
-                            </div>
+    <div class="row mb-3">
+        <div class="col-lg-4">
+            <div class="card mb-3">
+                <div class="card-header py-3">
+                    <p class="text-primary m-0 fw-bold">Profile Info</p>
+                </div>
+                <div class="card-body text-center shadow">
+                    <div class="row">
+                        <div class="col">
+                            <img class="rounded-circle mb-3 mt-4" src="@(_user.ProfilePictureUrl ?? "/assets/img/avatar_placeholder.png")" width="160" height="160" alt=""/>
+                            <h6 class="text-primary"><strong>@_user.FirstName @_user.LastName</strong></h6>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="col-lg-8">
-                <div class="row">
-                    <div class="col">
-                        <div class="card shadow">
-                            <div class="card-header py-3">
-                                <p class="text-primary m-0 fw-bold">@(_user.FirstName ?? "User")&#39;s Statistics</p>
-                            </div>
-                            <div class="card-body">
-                                <div class="row">
-                                    <div class="col">
-                                        <div>
-                                            <h6 class="text-primary">Tournaments attended</h6><span>@(_playedTournaments ?? 0)</span>
-                                        </div>
-                                        <div>
-                                            <h6 class="text-primary">Matches played</h6><span>@(_playedMatches ?? 0)</span>
-                                        </div>
+        </div>
+        <div class="col-lg-8">
+            <div class="row">
+                <div class="col">
+                    <div class="card shadow">
+                        <div class="card-header py-3">
+                            <p class="text-primary m-0 fw-bold">@(_user.FirstName ?? "User")&#39;s Statistics</p>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col">
+                                    <div>
+                                        <h6 class="text-primary">Tournaments attended</h6><span>@(_playedTournaments ?? 0)</span>
                                     </div>
-                                    <div class="col">
-                                        <div>
-                                            <h6 class="text-primary">Tournaments won</h6><span>@(_wonTournaments ?? 0)</span>
-                                        </div>
-                                        <div>
-                                            <h6 class="text-primary">Matches won</h6><span>@(_wonMatches ?? 0)</span>
-                                        </div>
+                                    <div>
+                                        <h6 class="text-primary">Matches played</h6><span>@(_playedMatches ?? 0)</span>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div>
+                                        <h6 class="text-primary">Tournaments won</h6><span>@(_wonTournaments ?? 0)</span>
+                                    </div>
+                                    <div>
+                                        <h6 class="text-primary">Matches won</h6><span>@(_wonMatches ?? 0)</span>
                                     </div>
                                 </div>
                             </div>

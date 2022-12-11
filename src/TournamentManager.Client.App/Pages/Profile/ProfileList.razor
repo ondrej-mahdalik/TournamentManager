@@ -4,121 +4,117 @@
 
 <PageTitle>Profile list</PageTitle>
 
-<div id="content">
-    <div class="container-fluid">
         <div class="row mb-3">
             <div class="col d-xl-flex d-flex align-items-center">
                 <h3 class="text-dark d-xl-flex">Users</h3>
             </div>
         </div>
-        <div class="card shadow">
-            <div class="card-body">
-                @if (_users is null)
+<div class="card shadow">
+    <div class="card-body">
+        @if (_users is null)
+        {
+            <p class="text-center fw-bold">Loading...</p>
+        }
+        else
+        {
+            <div class="row">
+                <div class="col-md-6 text-nowrap">
+                    <div id="dataTable_length" class="dataTables_length" aria-controls="dataTable">
+                        <label class="form-label">Show
+                            <select @onchange="OnItemsOnPageChanged" class="d-inline-block form-select form-select-sm">
+                                <option value="10" selected="selected">10</option>
+                                <option value="25">25</option>
+                                <option value="50">50</option>
+                                <option value="100">100</option>
+                            </select>
+                        </label>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="text-md-end dataTables_filter" id="dataTable_filter">
+                        <label class="form-label">
+                            <input type="text" @bind="@_search" @bind:event="oninput" class="form-control form-control-sm" placeholder="Search"/>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="table-responsive table mt-2" role="grid">
+                @if (UsersFiltered.Count == 0)
                 {
-                    <p class="text-center fw-bold">Loading...</p>
+                    <p class="text-center fw-bold">No users found</p>
                 }
                 else
                 {
-                    <div class="row">
-                        <div class="col-md-6 text-nowrap">
-                            <div id="dataTable_length" class="dataTables_length" aria-controls="dataTable">
-                                <label class="form-label">Show
-                                    <select @onchange="OnItemsOnPageChanged" class="d-inline-block form-select form-select-sm">
-                                        <option value="10" selected="selected">10</option>
-                                        <option value="25">25</option>
-                                        <option value="50">50</option>
-                                        <option value="100">100</option>
-                                    </select>
-                                </label>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="text-md-end dataTables_filter" id="dataTable_filter">
-                                <label class="form-label">
-                                    <input type="text" @bind="@_search" @bind:event="oninput" class="form-control form-control-sm" placeholder="Search"/>
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="table-responsive table mt-2" role="grid">
-                        @if (UsersFiltered.Count == 0)
+                    <table class="table my-0" id="dataTable">
+                        <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Date Registered</th>
+                            <th>Teams Leading</th>
+                            <th>Tournaments Organizing</th>
+                            <th></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        @foreach (var user in UsersFilteredPages[_selectedPageIndex])
                         {
-                            <p class="text-center fw-bold">No users found</p>
+
+                            <tr>
+                                <td>@user.FirstName @user.LastName</td>
+                                <td>@user.RegisteredAt.ToShortDateString()</td>
+                                <td>@_countOfTeamsUserIsLeaderOf[user.Id]</td>
+                                <td>@user.Tournaments.Count(x => x.CreatorId == user.Id)</td>
+                                <td class="text-end"><a data-bs-target="/Profile/Detail/@user.Id" href="/Profile/Detail/@user.Id"><button class="btn btn-primary btn-sm" type="button">Detail</button></a></td>
+                            </tr>
                         }
-                        else
-                        {
-                            <table class="table my-0" id="dataTable">
-                                <thead>
-                                <tr>
-                                    <th>Name</th>
-                                    <th>Date Registered</th>
-                                    <th>Teams Leading</th>
-                                    <th>Tournaments Organizing</th>
-                                    <th></th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                @foreach (var user in UsersFilteredPages[_selectedPageIndex])
+                        </tbody>
+                    </table>
+                }
+            </div>
+            <div class="row">
+                @if (UsersFiltered.Count > 0)
+                {
+                    <div class="col-md-6 align-self-center">
+                        <p id="dataTable_info" class="dataTables_info" role="status" aria-live="polite">Showing @(1 + _selectedPageIndex * _showCount) to @((_showCount + _selectedPageIndex * _showCount) < UsersFiltered.Count ? (_showCount + _selectedPageIndex * _showCount) : UsersFiltered.Count) of @(UsersFiltered.Count)</p>
+                    </div>
+
+                    <div class="col-md-6">
+                        <nav class="d-lg-flex justify-content-lg-end dataTables_paginate paging_simple_numbers">
+                            <ul class="pagination">
+                                <li class="page-item @(_selectedPageIndex <= 0 ? "disabled" : "")"><a role="button" class="page-link" aria-label="Previous" @onclick="() => _selectedPageIndex--"><span class="user-select-none" aria-hidden="true">«</span></a></li>
+                                @for (var i = _selectedPageIndex - 1; i <= _selectedPageIndex + 1; i++)
                                 {
+                                    var num = i;
+                                    if (_selectedPageIndex == 0)
+                                        num = i + 1; // So user cant go to page -1
 
-                                    <tr>
-                                        <td>@user.FirstName @user.LastName</td>
-                                        <td>@user.RegisteredAt.ToShortDateString()</td>
-                                        <td>@_countOfTeamsUserIsLeaderOf[user.Id]</td>
-                                        <td>@user.Tournaments.Count(x => x.CreatorId == user.Id)</td>
-                                        <td class="text-end"><a data-bs-target="/Profile/Detail/@user.Id" href="/Profile/Detail/@user.Id"><button class="btn btn-primary btn-sm" type="button">Detail</button></a></td>
-                                    </tr>
+                                    else if (_selectedPageIndex >= UsersFilteredPages.Count - 1)
+                                        num = i - 1; // So user cant go to a page that is too high
+
+                                    if (num > UsersFilteredPages.Count - 1)
+                                    {
+                                        break; // If there are fewer than 3 pages total
+                                    }
+                                    if (_selectedPageIndex == 1 && UsersFilteredPages.Count == 2 && i == 0)
+                                    {
+                                        // If only 2 pages are available, clicking the second one would make page 0 appear
+                                        // which is obviously not possible
+                                        continue;
+                                    }
+
+                                    <li class="page-item @(_selectedPageIndex == num ? "active" : "")">
+                                        <a class="page-link" @onclick="() => _selectedPageIndex = num" role="button">@(num + 1)</a>
+                                    </li>
                                 }
-                                </tbody>
-                            </table>
-                        }
-                    </div>
-                    <div class="row">
-                        @if (UsersFiltered.Count > 0)
-                        {
-                            <div class="col-md-6 align-self-center">
-                                <p id="dataTable_info" class="dataTables_info" role="status" aria-live="polite">Showing @(1 + _selectedPageIndex * _showCount) to @((_showCount + _selectedPageIndex * _showCount) < UsersFiltered.Count ? (_showCount + _selectedPageIndex * _showCount) : UsersFiltered.Count) of @(UsersFiltered.Count)</p>
-                            </div>
-
-                            <div class="col-md-6">
-                                <nav class="d-lg-flex justify-content-lg-end dataTables_paginate paging_simple_numbers">
-                                    <ul class="pagination">
-                                        <li class="page-item @(_selectedPageIndex <= 0 ? "disabled" : "")"><a role="button" class="page-link" aria-label="Previous" @onclick="() => _selectedPageIndex--"><span class="user-select-none" aria-hidden="true">«</span></a></li>
-                                        @for (var i = _selectedPageIndex - 1; i <= _selectedPageIndex + 1; i++)
-                                        {
-                                            var num = i;
-                                            if (_selectedPageIndex == 0)
-                                                num = i + 1; // So user cant go to page -1
-
-                                            else if (_selectedPageIndex >= UsersFilteredPages.Count - 1)
-                                                num = i - 1; // So user cant go to a page that is too high
-
-                                            if (num > UsersFilteredPages.Count - 1)
-                                            {
-                                                break; // If there are fewer than 3 pages total
-                                            }
-                                            if (_selectedPageIndex == 1 && UsersFilteredPages.Count == 2 && i == 0)
-                                            {
-                                                // If only 2 pages are available, clicking the second one would make page 0 appear
-                                                // which is obviously not possible
-                                                continue;
-                                            }
-
-                                            <li class="page-item @(_selectedPageIndex == num ? "active" : "")">
-                                                <a class="page-link" @onclick="() => _selectedPageIndex = num" role="button">@(num + 1)</a>
-                                            </li>
-                                        }
-                                        <li class="page-item @(_selectedPageIndex >= UsersFilteredPages.Count - 1 ? "disabled" : "")">
-                                            <a class="page-link" aria-label="Next" @onclick="() => _selectedPageIndex++" role="button"><span class="user-select-none" aria-hidden="true">»</span></a>
-                                        </li>
-                                    </ul>
-                                </nav>
-                            </div>
-                        }
+                                <li class="page-item @(_selectedPageIndex >= UsersFilteredPages.Count - 1 ? "disabled" : "")">
+                                    <a class="page-link" aria-label="Next" @onclick="() => _selectedPageIndex++" role="button"><span class="user-select-none" aria-hidden="true">»</span></a>
+                                </li>
+                            </ul>
+                        </nav>
                     </div>
                 }
             </div>
-        </div>
+        }
     </div>
 </div>
 
