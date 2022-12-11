@@ -54,11 +54,17 @@ public class TournamentController : AuthorizedControllerBase
     public async Task<ActionResult<TournamentModel>> GetById(Guid id)
     {
         var tournament = await _tournamentFacade.GetAsync(id);
-        if (tournament is null)
-            return NotFound();
-
+        bool participating = false;
+        
         var user = await GetLoggedUser();
-        if (tournament.IsPublic || user is not null && (user.IsAdministrator || tournament.CreatorId == user.Id))
+        if (user != null)
+        {
+            var teamsWithUser = await _teamIsParticipatingFacade.GetByUserIdAsync(user.Id);
+            participating = teamsWithUser.Any(x => x.TournamentId == id);
+        }
+        if (tournament is null) 
+            return NotFound();
+        if (tournament.IsPublic || user is not null && (user.IsAdministrator || tournament.CreatorId == user.Id || participating))
             return Ok(tournament);
 
         return Forbid();
