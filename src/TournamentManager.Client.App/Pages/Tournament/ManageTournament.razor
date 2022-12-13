@@ -165,13 +165,16 @@
                                              <td>@leader?.FirstName @leader?.LastName</td>
                                          }
                                          <td>@participant.CreatedOn.ToString("dd. MM. yyyy")</td>
-                                         <td class="@(_tournament != null && _tournament.IsIndividual ? "" : "text-center")">
-                                             <div class="d-flex mt-1 justify-content-end gap-2">
-                                                 <i type="button" @onclick="() => ApproveParticipant(participant)" class="fas fa-user-check" data-bs-toggle="tooltip" data-bss-tooltip="" data-bs-placement="right" title="Approve participant"></i>
-                                                 <i type="button" @onclick="() => DeleteParticipant(participant)" class="fas fa-user-times" data-bs-toggle="tooltip" data-bss-tooltip="" data-bs-placement="right" title="Reject participant"></i>
-                                                 <a href="/Team/Detail/@participant.TeamId" style="color:inherit"><i type="button" data-bs-toggle="tooltip" data-bss-tooltip="" data-bs-placement="right" title="See the participant detail" class="fas fa-info-circle"></i></a>
-                                             </div>
-                                         </td>
+                                         @if (_tournament is not null && _approvedParticipants.Count < _tournament.MaxAttendees)
+                                         {
+                                             <td class="@(_tournament != null && _tournament.IsIndividual ? "" : "text-center")">
+                                                 <div class="d-flex mt-1 justify-content-end gap-2">
+                                                     <i type="button" @onclick="() => ApproveParticipant(participant)" class="fas fa-user-check" data-bs-toggle="tooltip" data-bss-tooltip="" data-bs-placement="right" title="Approve participant"></i>
+                                                     <i type="button" @onclick="() => DeleteParticipant(participant)" class="fas fa-user-times" data-bs-toggle="tooltip" data-bss-tooltip="" data-bs-placement="right" title="Reject participant"></i>
+                                                     <a href="/Team/Detail/@participant.TeamId" style="color:inherit"><i type="button" data-bs-toggle="tooltip" data-bss-tooltip="" data-bs-placement="right" title="See the participant detail" class="fas fa-info-circle"></i></a>
+                                                 </div>
+                                             </td>
+                                         }
                                      </tr>
                                  }
                                  </tbody>

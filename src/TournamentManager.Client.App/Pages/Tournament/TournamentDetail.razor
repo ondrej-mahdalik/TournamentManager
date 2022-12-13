@@ -32,7 +32,7 @@ else
             <h3 class="text-dark d-flex">@_tournament.Name</h3>
         </div>
         <div class="col col-auto"><a href="/Tournament/list"><button class="btn btn-light" type="button">Back to All Tournaments</button></a></div>
-        @if (_tournament.Participatings.Count < _tournament.MaxAttendees && !_tournament.InProgress)
+        @if (_tournament.Participatings.Count(x => x.Approved) < _tournament.MaxAttendees && !_tournament.InProgress)
         {
             if (_teamParticipatingId == Guid.Empty)
             {

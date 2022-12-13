@@ -180,7 +180,7 @@
             
             return (name || sport || date || creatorFirstName || creatorLastName) && (x.Date.Date >= DateTime.Now.Date);
         })
-        .Where(x => (x.IsApproved || (_loggedUser is not null && (x.CreatorId == _loggedUser.Id || _loggedUser.IsAdministrator))))
+        .Where(x => (x.IsPublic || (_loggedUser is not null && (x.CreatorId == _loggedUser.Id || _loggedUser.IsAdministrator))))
         .OrderBy(x => x.Date).ToList()
         ?? new();
     
@@ -223,6 +223,7 @@
         {
             foreach (var tournament in _tournaments)
             {
+                Console.WriteLine(tournament.Name);
                 _numberOfParticipants.Add(tournament.Id, _participants.Count(x => x.Approved && x.TournamentId == tournament.Id));
                 tournament.Creator = _users?.FirstOrDefault(x => x.Id == tournament.CreatorId);
 
