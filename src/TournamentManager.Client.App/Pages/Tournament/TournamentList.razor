@@ -101,6 +101,7 @@
                 }
             </div>
             <div class="row">
+                @* Author: Aram Denk (xdenka00) *@
                 @if (TournamentsFiltered.Count > 0)
                 {
                     <div class="col-md-6 align-self-center">
@@ -142,6 +143,7 @@
                         </nav>
                     </div>
                 }
+                @*********************************@
             </div>
         }
     </div>
@@ -160,6 +162,8 @@
     private UserModel? _loggedUser;
     private List<UserModel>? _users = new();
     private List<TeamIsParticipatingModel> _participants = new();
+    
+    @* Author: Ondrej Mahdalik (xmahda14) *@
     private List<TournamentModel> TournamentsFiltered => _tournaments?
         .Where(x =>
         {
@@ -180,9 +184,10 @@
             
             return (name || sport || date || creatorFirstName || creatorLastName) && (x.Date.Date >= DateTime.Now.Date);
         })
-        .Where(x => (x.IsApproved || (_loggedUser is not null && (x.CreatorId == _loggedUser.Id || _loggedUser.IsAdministrator))))
+        .Where(x => (x.IsPublic || (_loggedUser is not null && (x.CreatorId == _loggedUser.Id || _loggedUser.IsAdministrator))))
         .OrderBy(x => x.Date).ToList()
         ?? new();
+    @**********************@
     
     private List<List<TournamentModel>> TournamentsFilteredPages => TournamentsFiltered.Select((x, i) => new  // Splits the one big list into smaller lists of size _showCount
     {
@@ -223,6 +228,7 @@
         {
             foreach (var tournament in _tournaments)
             {
+                Console.WriteLine(tournament.Name);
                 _numberOfParticipants.Add(tournament.Id, _participants.Count(x => x.Approved && x.TournamentId == tournament.Id));
                 tournament.Creator = _users?.FirstOrDefault(x => x.Id == tournament.CreatorId);
 
@@ -249,9 +255,11 @@
         _isLoading = false;
     }
 
+    @* Author: Aram Denk (xdenka00) *@
     private void OnItemsOnPageChanged(ChangeEventArgs e)
     {
         _selectedPageIndex = 0;
         _showCount = int.Parse(e.Value?.ToString() ?? "10");
     }
+    @**********************@
 }
