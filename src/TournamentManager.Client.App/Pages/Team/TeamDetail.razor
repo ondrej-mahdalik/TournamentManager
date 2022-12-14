@@ -1,4 +1,8 @@
-﻿@page "/Team/Detail/{Id}"
+﻿<!--
+ TeamDetail.razor
+ Author : Aram Denk (xdenka00)
+-->
+@page "/Team/Detail/{Id}"
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
 @using TournamentManager.Client.App.Extensions
 @using TournamentManager.Common.Enums
@@ -484,6 +488,7 @@ else
     private string _tournamentsSearch = "";
     private int _tournamentsShowCount = 10;
     private int _tournamentsSelectedPageIndex;
+    // Author of filtering : Ondřej Mahdalík (xmahda14)
     private List<TournamentModel> TournamentsFiltered => _tournaments?
         .Where(x =>
         {
