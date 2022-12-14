@@ -1,4 +1,8 @@
-﻿@page "/Team/List"
+﻿<!--
+ TeamList.razor
+ Author : Aram Denk (xdenka00)
+-->
+@page "/Team/List"
 @inject PublicHttpClient PublicHttp
 
 <PageTitle>Team List</PageTitle>
@@ -127,6 +131,7 @@
     private int _showCount = 10;
     private int _selectedPageIndex;
 
+    // Author of filtering : Onřej Mahdalík (xmahda14)
     private List<TeamModel> TeamsFiltered => _teams?
         .Where(x =>
         {

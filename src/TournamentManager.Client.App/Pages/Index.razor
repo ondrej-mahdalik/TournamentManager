@@ -1,5 +1,8 @@
-﻿@page "/"
-
+﻿<!--
+ Index.razor
+ Author : Aram Denk (xdenka00)
+-->
+@page "/"
 @inject HttpClient Http
 @inject PublicHttpClient PublicHttp
 
@@ -620,7 +623,6 @@
     private string _activeSearch = "";
     private int _activeShowCount = 5;
     private int _activeSelectedPageIndex;
-
     private List<TournamentModel> tournamentsActiveFiltered => _tournamentsActive?
         .Where(x =>
         {
