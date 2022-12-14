@@ -178,6 +178,7 @@
                             </table>
                         }
                     </div>
+                    @* Author: Aram Denk (xdenka00) *@
                     <div class="row">
                         @if (TournamentsFiltered.Count > 0)
                         {
@@ -227,6 +228,7 @@
                             </div>
                         }
                     </div>
+                    @*** ***@
                 }
             </div>
         </div>
@@ -268,6 +270,7 @@
         }).OrderBy(x => x.Date).ToList()
                                                          ?? new();
 
+    /// <author>Aram Denk (xdenka00)</author>
     private List<List<TournamentModel>> TournamentsFilteredPages => TournamentsFiltered.Select((x, i) => new // Splits the one big list into smaller lists of size _showCount
     {
         Index = i,
@@ -318,6 +321,7 @@
         _isLoading = false;
     }
 
+    /// <author>Aram Denk (xdenka00)</author>
     private void OnItemsOnPageChanged(ChangeEventArgs e)
     {
         _selectedPageIndex = 0;

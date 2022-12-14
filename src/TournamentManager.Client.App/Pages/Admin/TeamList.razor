@@ -88,6 +88,7 @@
                     </table>
 
                 </div>
+                @* Author: Aram Denk (xdenka00) *@
                 <div class="row">
                     <div class="col-md-6 align-self-center">
                         <p id="dataTable_info" class="dataTables_info" role="status" aria-live="polite">
@@ -128,6 +129,7 @@
                         </nav>
                     </div>
                 </div>
+                @*** ***@
             }
         }
     </div>
@@ -151,6 +153,7 @@
         .ToList()
         ?? new(); // Filtration based on _search
 
+    /// <author>Aram Denk (xdenka00)</author>
     private List<List<TeamModel>> TeamsFilteredPages => TeamsFiltered.Select((x, i) => new  // Splits the one big list into smaller lists of size _showCount
     {
         Index = i,
@@ -186,6 +189,7 @@
         _selectedPageIndex = 0;
     }
 
+    /// <author>Aram Denk (xdenka00)</author>
     private void OnItemsOnPageChanged(ChangeEventArgs e)
     {
         _selectedPageIndex = 0;

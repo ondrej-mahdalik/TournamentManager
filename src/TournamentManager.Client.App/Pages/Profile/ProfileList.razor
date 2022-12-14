@@ -76,6 +76,7 @@
                     </table>
                 }
             </div>
+            @* Author: Aram Denk (xdenka00) *@
             <div class="row">
                 @if (UsersFiltered.Count > 0)
                 {
@@ -119,6 +120,7 @@
                     </div>
                 }
             </div>
+            @*** ***@
         }
     </div>
 </div>
@@ -146,6 +148,7 @@
         }).ToList()
         ?? new();
 
+    /// <author>Aram Denk (xdenka00)</author>
     private List<List<UserModel>> UsersFilteredPages => UsersFiltered.Select((x, i) => new  // Splits the one big list into smaller lists of size _showCount
     {
         Index = i,
@@ -164,6 +167,7 @@
         }
     }
 
+    /// <author>Aram Denk (xdenka00)</author>
     private void OnItemsOnPageChanged(ChangeEventArgs e)
     {
         _selectedPageIndex = 0;
