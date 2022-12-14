@@ -10,10 +10,6 @@
 
 <PageTitle>Manage Tournament</PageTitle>
 
-<div id="wrapper">
-<div class="d-flex flex-column" id="content-wrapper">
-<div id="content">
-<div class="container-fluid">
  @if (@_isLoading)
     {
         <div class="card shadow">
@@ -45,15 +41,25 @@
      {
          <div class="row">
              <div class="col">
-                 @if (_allTeamsHaveMatch)
-                 {
-
-                     <MessageBox MessageType="MessageType.Error" Title="Error" Message="@_errorMessage" ShowCloseButton="true"></MessageBox>
-
-                     <MessageBox MessageType="MessageType.Warning" Title="Warning" Message="Not all participants have a match assigned" ShowCloseButton="false"></MessageBox>
-
-                 }
-                 
+                 <MessageBox MessageType="MessageType.Error" Title="Error" Message="@_errorMessage" ShowCloseButton="true"></MessageBox>
+             </div>
+         </div>
+     }
+     @if (_tournament is not null && !_tournament.IsApproved)
+     {
+         <div class="row">
+             <div class="col">
+                 <MessageBox MessageType="MessageType.Warning" Title="Warning" Message="Tournament is not approved by the administrator"
+                             ShowCloseButton="false"></MessageBox>
+             </div>
+         </div>
+     }
+     @if (_tournament is not null && _approvedParticipants is not null && _approvedParticipants.Count < 2)
+     {
+         <div class="row">
+             <div class="col">
+                 <MessageBox MessageType="MessageType.Warning" Title="Warning" Message="Tournament has less than 2 participants"
+                             ShowCloseButton="false"></MessageBox>
              </div>
          </div>
      }
@@ -145,7 +151,7 @@
                                         <th>Team Leader</th>
                                      }
                                      <th>Date Registered</th>
-                                     <th>Actions</th>
+                                     <th></th>
                                  </tr>
                                  </thead>
                                  <tbody>
@@ -160,9 +166,11 @@
                                          }
                                          <td>@participant.CreatedOn.ToString("dd. MM. yyyy")</td>
                                          <td class="@(_tournament != null && _tournament.IsIndividual ? "" : "text-center")">
-                                             <i type="button" @onclick="() => ApproveParticipant(participant)" class="fas fa-user-check me-1" data-bs-toggle="tooltip" data-bss-tooltip="" data-bs-placement="right" title="Approve participant"></i>
-                                             <i type="button" @onclick="() => DeleteParticipant(participant)" class="fas fa-user-times" data-bs-toggle="tooltip" data-bss-tooltip="" data-bs-placement="right" title="Reject participant"></i>
-                                             <i type="button" href="Team/Detail/@participant.TeamId" class="fas fa-info-circle"></i>
+                                             <div class="d-flex mt-1 justify-content-end gap-2">
+                                                 <i type="button" @onclick="() => ApproveParticipant(participant)" class="fas fa-user-check" data-bs-toggle="tooltip" data-bss-tooltip="" data-bs-placement="right" title="Approve participant"></i>
+                                                 <i type="button" @onclick="() => DeleteParticipant(participant)" class="fas fa-user-times" data-bs-toggle="tooltip" data-bss-tooltip="" data-bs-placement="right" title="Reject participant"></i>
+                                                 <a href="/Team/Detail/@participant.TeamId" style="color:inherit"><i type="button" data-bs-toggle="tooltip" data-bss-tooltip="" data-bs-placement="right" title="See the participant detail" class="fas fa-info-circle"></i></a>
+                                             </div>
                                          </td>
                                      </tr>
                                  }
@@ -259,7 +267,7 @@
                                      <th>Date Registered</th>
                                      @if (_tournament is not null && !_tournament.InProgress)
                                      {
-                                         <th>Actions</th>
+                                         <th></th>
                                      }
                                  </tr>
                                  </thead>
@@ -275,11 +283,13 @@
                                           }
                                          <td>@participant.CreatedOn.ToString("dd. MM. yyyy")</td>
                                          <td class=@(_tournament != null && _tournament.IsIndividual ? "" : "text-center")>
-                                             @if (_tournament is not null && !_tournament.InProgress)
-                                             {
-                                                 <i @onclick="() => DeleteParticipant(participant)" type="button" class="fas fa-user-times" data-bs-toggle="tooltip" data-bss-tooltip="" data-bs-placement="right" title="Reject participant"></i>
-                                             }
-                                             <i type="button" href="Team/Detail/@participant.TeamId" class="fas fa-info-circle"></i>
+                                             <div class="d-flex mt-1 justify-content-end gap-2">
+                                                 @if (_tournament is not null && !_tournament.InProgress)
+                                                 {
+                                                     <i type="button" @onclick="() => DeleteParticipant(participant)" class="fas fa-user-times" data-bs-toggle="tooltip" data-bss-tooltip="" data-bs-placement="right" title="Reject participant"></i>
+                                                 }
+                                                 <a href="/Team/Detail/@participant.TeamId" style="color:inherit"><i type="button" data-bs-toggle="tooltip" data-bss-tooltip="" data-bs-placement="right" title="See the participant detail" class="fas fa-info-circle"></i></a>
+                                             </div>
                                          </td>
                                      </tr>
                                  }
@@ -451,10 +461,6 @@
          }
      </div>
  }
-</div>
-</div>
-</div>
-</div>
 
 @code {
 
