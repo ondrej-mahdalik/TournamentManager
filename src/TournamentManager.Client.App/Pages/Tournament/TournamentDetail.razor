@@ -1,4 +1,8 @@
-﻿@page "/Tournament/Detail/{Id}"
+﻿@*
+Author: Jan Vaclavik (xvacla35)
+*@
+
+@page "/Tournament/Detail/{Id}"
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
 @using TournamentManager.Client.App.Shared.ModalComponents
 @using TournamentManager.Common.Enums
@@ -206,11 +210,9 @@ else
                     foreach (var userAsLeaderTeam in userAsLeaderTeams)
                     {
                         var teamParticipating = _tournament.Participatings.FirstOrDefault(x => x.TeamId == userAsLeaderTeam.Id);
-                        if (teamParticipating is not null)
-                        {
-                            _participantApproved = teamParticipating.Approved;
-                            _teamParticipatingId = teamParticipating.Id;
-                        }
+                        if (teamParticipating is null) continue;
+                        _participantApproved = teamParticipating.Approved;
+                        _teamParticipatingId = teamParticipating.Id;
                     }
                 }
             }

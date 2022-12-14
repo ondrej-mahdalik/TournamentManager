@@ -1,4 +1,8 @@
-﻿@page "/Tournament/Manage/{Id}"
+﻿@*
+Author: Jan Vaclavik (xvacla35)
+*@
+
+@page "/Tournament/Manage/{Id}"
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
 @using Microsoft.AspNetCore.Authorization
 @using TournamentManager.Client.App.Shared.ModalComponents
@@ -148,7 +152,7 @@
                                      <th>@(_tournament != null && _tournament.IsIndividual ? "Player Name" : "Team Name")</th>
                                      @if (_tournament != null && !_tournament.IsIndividual)
                                      {
-                                        <th>Team Leader</th>
+                                         <th>Team Leader</th>
                                      }
                                      <th>Date Registered</th>
                                      <th></th>
@@ -185,6 +189,7 @@
                          }
                      </div>
                      <div class="row">
+                         @* Author: Aram Denk (xdenka00) *@
                          @if (PendingParticipantsFiltered.Count > 0)
                          {
                              <div class="col-md-6 align-self-center">
@@ -224,6 +229,7 @@
                                  </nav>
                              </div>
                          }
+                         @***************************@
                      </div>
                  }
              </div>
@@ -304,6 +310,7 @@
                          }
                      </div>
                      <div class="row">
+                        @* Author: Aram Denk (xdenka00) *@
                          @if (_approvedParticipants is {Count: > 0 })
                          {
                              <div class="col-md-6 align-self-center">
@@ -343,6 +350,7 @@
                                  </nav>
                              </div>
                          }
+                        @***************************@
                      </div>
                      </div>
          </div>
@@ -499,6 +507,7 @@
     private bool _resultOk = true;
     private string _errorMessage = string.Empty;
 
+    @* Author: Ondrej Mahdalik (xmahda14) *@
     private List<TeamIsParticipatingModel> PendingParticipantsFiltered => _pendingParticipants?
         .Where(x =>
         {
@@ -530,7 +539,7 @@
         .Select(x => x.Select(v => v.Value).ToList())
         .ToList();
     
-
+    @***********************@
     protected override async Task OnInitializedAsync()
     {
         try
@@ -811,7 +820,8 @@
             }
         }
     }
-     
+    
+    @* Author: Aram Denk (xdenka00) *@
     private void OnItemsOnPageChanged(ChangeEventArgs e)
     {
         _selectedPageIndex = 0;
@@ -823,7 +833,9 @@
         _selectedPageIndex2 = 0;
         _showCount2 = int.Parse(e.Value?.ToString() ?? "10");
     }
-
+    @*************************@
+    
+    @* Author: Ondrej Mahdalik (xmahda14) *@
     private void OnSearchQueryChanged(ChangeEventArgs e)
     {
         _searchPending = e.Value?.ToString() ?? "";
@@ -835,6 +847,7 @@
         _searchApproved = e.Value?.ToString() ?? "";
         _selectedPageIndex2 = 0;
     }
+    @**********************@
     
     private async Task ManageMatchAsync(MatchModel match)
     {
