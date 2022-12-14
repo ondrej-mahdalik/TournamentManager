@@ -1,3 +1,8 @@
+@***
+ * File: SportList.razor
+ * Author: Ondřej Mahdalík (xmahda14)
+*@
+
 @page "/Admin/Sports"
 @using TournamentManager.Client.App.Shared.ModalComponents
 @using TournamentManager.Common.Enums
@@ -30,7 +35,6 @@
         else
         {
             <div class="row">
-
                 <div class="col-md-6 text-nowrap">
                     <div id="dataTable_length" class="dataTables_length" aria-controls="dataTable">
                         <label class="form-label">
@@ -86,6 +90,7 @@
                     </table>
 
                 </div>
+                @* Author: Aram Denk (xdenka00) *@
                 <div class="row">
                     <div class="col-md-6 align-self-center">
                         <p id="dataTable_info" class="dataTables_info" role="status" aria-live="polite">
@@ -94,8 +99,9 @@
                     </div>
                     <div class="col-md-6">
                         <nav class="d-lg-flex justify-content-lg-end dataTables_paginate paging_simple_numbers">
+                            
                             <ul class="pagination">
-                                <li class="page-item @(_selectedPageIndex <= 0 ? "disabled" : "")"><a role="button" class="page-link" aria-label="Previous" @onclick="() => _selectedPageIndex--" ><span class="user-select-none" aria-hidden="true">«</span></a></li>
+                                <li class="page-item @(_selectedPageIndex <= 0 ? "disabled" : "")"><a role="button" class="page-link" aria-label="Previous" @onclick="() => _selectedPageIndex--"><span class="user-select-none" aria-hidden="true">«</span></a></li>
                                 @for (var i = _selectedPageIndex - 1; i <= _selectedPageIndex + 1; i++)
                                 {
                                     var num = i;
@@ -126,6 +132,7 @@
                         </nav>
                     </div>
                 </div>
+                @*** ***@
             }
         }
     </div>
@@ -148,7 +155,8 @@
         )
         .OrderBy(x => x.Name)
         .ToList() ?? new(); // Filtration based on _search
-
+    
+    /// <author>Aram Denk (xdenka00)</author>
     private List<List<SportModel>> SportsFilteredPages => SportsFiltered.Select((x, i) => new  // Splits the one big list into smaller lists of size _showCount
     {
         Index = i,
@@ -168,6 +176,7 @@
         _selectedPageIndex = 0;
     }
     
+    /// <author>Aram Denk (xdenka00)</author>
     private void OnItemsOnPageChanged(ChangeEventArgs e)
     {
         _selectedPageIndex = 0;
