@@ -136,7 +136,7 @@ else
                                         <td class="mb-0">@member.Email</td>
                                         <td class="mb-0">
                                             <div class="d-flex mt-1 justify-content-end gap-2">
-                                                <i class="fas fa-user-times" @onclick="() => RemoveMember(member.Id)" type="button" title="Remove member"></i>
+                                                <i class="fas fa-user-times" @onclick="() => RemoveMember(member)" type="button" title="Remove member"></i>
                                                 <i href="/Profile/Detail/@member.Id" type="button" class="fas fa-info-circle"></i>
                                             </div>
                                         </td>
@@ -448,17 +448,8 @@ else
         .ToList();
 
 
-    private async void RemoveMember(Guid id)
+    private async Task RemoveMember(UserModel member)
     {
-        var member = await Http.GetFromJsonAsync<UserModel>($"api/User/current");
-        if(member is null)
-        {
-            _showError = true;
-            _errorMessage = "Internal database error. User does not exist.";
-            return; 
-        }
-
-
         var result = await Modal.Show<ConfirmationModal>($"Do you really want to remove {member.FirstName} {member.LastName} from {_team?.Name}? This operation is permanent !").Result;
         if (result.Cancelled)
             return;
